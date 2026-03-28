@@ -179,7 +179,7 @@ fetch_openclash_package_url() {
     PKG_MGR="$1"
     VERSION_JSON="$TMP_ROOT/openclash_version.json"
 
-    log "获取 OpenClash 最新发布信息"
+    printf '%s\n' "==> 获取 OpenClash 最新发布信息" >&2
     download_file "$API_URL" "$VERSION_JSON" || die "获取 OpenClash 发布信息失败"
 
     if [ "$PKG_MGR" = "opkg" ]; then

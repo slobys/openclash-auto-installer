@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.2.1
+
+- 修复 `fetch_openclash_package_url()` 日志输出混入命令替换结果，导致下载 URL 异常的问题
+- 保持日志可见，同时确保函数返回值纯净
+
 ## v0.2.0
 
 - 调整仓库结构到根目录，更适合 GitHub 展示
