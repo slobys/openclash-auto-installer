@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.3.0
+
+- 为 `install.sh` 增加参数模式：`--plugin-only`、`--core-only`、`--skip-restart`、`--skip-opkg-update`
+- 增加当前已安装版本与最新发布标签输出
+- 增加相关服务自动重启逻辑（可跳过）
+- 优化更新脚本，默认复用安装脚本并跳过索引刷新
+- 完善 README 的高级用法和参数说明
+
 ## v0.2.1
 
 - 修复 `fetch_openclash_package_url()` 日志输出混入命令替换结果，导致下载 URL 异常的问题

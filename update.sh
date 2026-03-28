@@ -20,4 +20,4 @@ curl -fsSL --retry 3 "$SCRIPT_URL" -o "$TMP_FILE" || die "下载远程脚本失�
 chmod +x "$TMP_FILE"
 
 log "开始执行更新"
-sh "$TMP_FILE"
+sh "$TMP_FILE" --skip-opkg-update "$@"

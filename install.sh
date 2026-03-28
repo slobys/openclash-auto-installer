@@ -9,6 +9,9 @@ TMP_ROOT="/tmp/openclash-auto-install"
 API_URL="https://api.github.com/repos/vernesong/OpenClash/releases/latest"
 CORE_BASE_URL="https://raw.githubusercontent.com/vernesong/OpenClash/core/master/meta"
 SCRIPT_NAME="openclash-auto-install"
+MODE="full"
+RESTART_SERVICES="1"
+FORCE_OPKG_UPDATE="1"
 
 cleanup() {
     rm -rf "$TMP_ROOT"
@@ -32,7 +35,50 @@ need_cmd() {
     command -v "$1" >/dev/null 2>&1 || die "缺少命令: $1"
 }
 
+usage() {
+    cat <<'EOF_USAGE'
+用法:
+  sh install.sh [选项]
+
+选项:
+  --plugin-only       只安装/更新 OpenClash 插件，不安装 Meta 内核
+  --core-only         只下载并安装 Meta 内核，不安装/更新插件
+  --skip-restart      完成后不尝试重启 openclash / uhttpd
+  --skip-opkg-update  跳过软件源更新（适合你已手动 opkg update 后再次执行）
+  -h, --help          显示帮助
+EOF_USAGE
+}
+
+parse_args() {
+    while [ "$#" -gt 0 ]; do
+        case "$1" in
+            --plugin-only)
+                MODE="plugin-only"
+                ;;
+            --core-only)
+                MODE="core-only"
+                ;;
+            --skip-restart)
+                RESTART_SERVICES="0"
+                ;;
+            --skip-opkg-update)
+                FORCE_OPKG_UPDATE="0"
+                ;;
+            -h|--help)
+                usage
+                exit 0
+                ;;
+            *)
+                die "未知参数: $1"
+                ;;
+        esac
+        shift
+    done
+}
+
 trap cleanup EXIT INT TERM
+
+parse_args "$@"
 
 if ! mkdir "$LOCKDIR" 2>/dev/null; then
     die "已有另一个安装/更新任务正在运行"
@@ -145,10 +191,40 @@ download_file() {
     return 0
 }
 
+get_installed_openclash_version() {
+    PKG_MGR="$1"
+    case "$PKG_MGR" in
+        opkg)
+            opkg status luci-app-openclash 2>/dev/null | sed -n 's/^Version: //p' | head -n1
+            ;;
+        apk)
+            apk info -e luci-app-openclash >/dev/null 2>&1 || return 0
+            apk info -a luci-app-openclash 2>/dev/null | sed -n 's/^version: //p' | head -n1
+            ;;
+    esac
+}
+
+maybe_update_index_opkg() {
+    if [ "$FORCE_OPKG_UPDATE" = "1" ]; then
+        log "更新 opkg 软件索引"
+        opkg update
+    else
+        log "按参数跳过 opkg update"
+    fi
+}
+
+maybe_update_index_apk() {
+    if [ "$FORCE_OPKG_UPDATE" = "1" ]; then
+        log "更新 apk 软件索引"
+        apk update
+    else
+        log "按参数跳过 apk update"
+    fi
+}
+
 install_dependencies_opkg() {
     FIREWALL_STACK="$1"
-    log "更新 opkg 软件索引"
-    opkg update
+    maybe_update_index_opkg
 
     if [ "$FIREWALL_STACK" = "nft" ]; then
         PKGS="bash dnsmasq-full curl ca-bundle ip-full ruby ruby-yaml kmod-tun kmod-inet-diag unzip kmod-nft-tproxy luci-compat luci luci-base jsonfilter"
@@ -162,8 +238,7 @@ install_dependencies_opkg() {
 
 install_dependencies_apk() {
     FIREWALL_STACK="$1"
-    log "更新 apk 软件索引"
-    apk update
+    maybe_update_index_apk
 
     if [ "$FIREWALL_STACK" = "nft" ]; then
         PKGS="bash dnsmasq-full curl ca-bundle ip-full ruby ruby-yaml kmod-tun kmod-inet-diag unzip kmod-nft-tproxy luci-compat luci luci-base jsonfilter"
@@ -175,12 +250,24 @@ install_dependencies_apk() {
     apk add $PKGS
 }
 
+fetch_openclash_release_meta() {
+    VERSION_JSON="$TMP_ROOT/openclash_version.json"
+    printf '%s\n' "==> 获取 OpenClash 最新发布信息" >&2
+    download_file "$API_URL" "$VERSION_JSON" || die "获取 OpenClash 发布信息失败"
+}
+
+get_latest_tag() {
+    VERSION_JSON="$TMP_ROOT/openclash_version.json"
+    jsonfilter -i "$VERSION_JSON" -e '@.tag_name' 2>/dev/null || true
+}
+
 fetch_openclash_package_url() {
     PKG_MGR="$1"
     VERSION_JSON="$TMP_ROOT/openclash_version.json"
 
-    printf '%s\n' "==> 获取 OpenClash 最新发布信息" >&2
-    download_file "$API_URL" "$VERSION_JSON" || die "获取 OpenClash 发布信息失败"
+    if [ ! -f "$VERSION_JSON" ]; then
+        fetch_openclash_release_meta
+    fi
 
     if [ "$PKG_MGR" = "opkg" ]; then
         URL="$(jsonfilter -i "$VERSION_JSON" -e '@.assets[*].browser_download_url' | grep -E '/luci-app-openclash_.*_all\.ipk$' | head -n1 || true)"
@@ -260,6 +347,23 @@ extract_and_install_core() {
     log "Meta 内核已安装到 /etc/openclash/core/clash_meta"
 }
 
+restart_related_services() {
+    if [ "$RESTART_SERVICES" != "1" ]; then
+        log "按参数跳过服务重启"
+        return 0
+    fi
+
+    if [ -x /etc/init.d/openclash ]; then
+        log "尝试重启 OpenClash 服务"
+        /etc/init.d/openclash restart >/dev/null 2>&1 || warn "OpenClash 服务重启失败，可稍后手动重启"
+    fi
+
+    if [ -x /etc/init.d/uhttpd ]; then
+        log "尝试重启 uhttpd"
+        /etc/init.d/uhttpd restart >/dev/null 2>&1 || warn "uhttpd 重启失败，可稍后手动重启"
+    fi
+}
+
 show_summary() {
     cat <<EOF_SUMMARY
 ==> 完成
@@ -277,50 +381,65 @@ main() {
     need_cmd grep
     need_cmd head
     need_cmd find
+    need_cmd sed
 
     PKG_MGR="$(detect_pkg_mgr)"
     FIREWALL_STACK="$(detect_firewall_stack)"
     RAW_ARCH="$(uname -m 2>/dev/null || true)"
     DIST_ARCH="$(get_distr_arch)"
     DIST_RELEASE="$(get_distr_release)"
+    OLD_VER="$(get_installed_openclash_version "$PKG_MGR" || true)"
 
     log "脚本名称: $SCRIPT_NAME"
+    log "执行模式: $MODE"
     log "包管理器: $PKG_MGR"
     log "防火墙栈: $FIREWALL_STACK"
     log "uname -m: ${RAW_ARCH:-unknown}"
     log "DISTRIB_ARCH: ${DIST_ARCH:-unknown}"
     [ -n "$DIST_RELEASE" ] && log "DISTRIB_RELEASE: $DIST_RELEASE"
+    log "当前已安装版本: ${OLD_VER:-not installed}"
 
-    case "$PKG_MGR" in
-        opkg) install_dependencies_opkg "$FIREWALL_STACK" ;;
-        apk) install_dependencies_apk "$FIREWALL_STACK" ;;
+    case "$MODE" in
+        full|plugin-only)
+            case "$PKG_MGR" in
+                opkg) install_dependencies_opkg "$FIREWALL_STACK" ;;
+                apk) install_dependencies_apk "$FIREWALL_STACK" ;;
+            esac
+            need_cmd jsonfilter
+            fetch_openclash_release_meta
+            LATEST_TAG="$(get_latest_tag)"
+            [ -n "$LATEST_TAG" ] && log "OpenClash 最新发布标签: $LATEST_TAG"
+            PACKAGE_URL="$(fetch_openclash_package_url "$PKG_MGR")"
+            log "安装 / 更新 OpenClash 插件"
+            install_openclash_package "$PKG_MGR" "$PACKAGE_URL"
+            NEW_VER="$(get_installed_openclash_version "$PKG_MGR" || true)"
+            log "安装后版本: ${NEW_VER:-unknown}"
+            ;;
     esac
 
-    need_cmd jsonfilter
+    case "$MODE" in
+        full|core-only)
+            CORE_CANDIDATES="$(detect_core_candidates)"
+            if [ -z "$CORE_CANDIDATES" ]; then
+                warn "未识别的 CPU 架构，无法自动匹配 Meta 内核"
+                warn "请在 OpenClash 页面中手动下载匹配内核"
+                show_summary
+                exit 0
+            fi
 
-    PACKAGE_URL="$(fetch_openclash_package_url "$PKG_MGR")"
-    log "安装 / 更新 OpenClash 插件"
-    install_openclash_package "$PKG_MGR" "$PACKAGE_URL"
+            log "候选 Meta 内核: $CORE_CANDIDATES"
+            if download_core "$CORE_CANDIDATES"; then
+                log "已下载匹配内核包: $CHOSEN_CORE_FILE"
+                extract_and_install_core
+            else
+                warn "自动下载 Meta 内核失败，请在 OpenClash 页面手动下载"
+                show_summary
+                exit 0
+            fi
+            ;;
+    esac
 
-    CORE_CANDIDATES="$(detect_core_candidates)"
-    if [ -z "$CORE_CANDIDATES" ]; then
-        warn "未识别的 CPU 架构，已完成插件安装，但未自动下载内核"
-        warn "请在 OpenClash 页面中手动下载匹配内核"
-        show_summary
-        exit 0
-    fi
-
-    log "候选 Meta 内核: $CORE_CANDIDATES"
-
-    if download_core "$CORE_CANDIDATES"; then
-        log "已下载匹配内核包: $CHOSEN_CORE_FILE"
-        extract_and_install_core
-    else
-        warn "自动下载 Meta 内核失败，插件已安装，请在 OpenClash 页面手动下载"
-        show_summary
-        exit 0
-    fi
-
+    restart_related_services
     show_summary
 }
 
