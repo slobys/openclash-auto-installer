@@ -62,6 +62,14 @@ curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/mai
 
 ## 菜单式管理命令
 
+推荐直接执行：
+
+```sh
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/main/menu.sh)"
+```
+
+如果你的环境支持 `/dev/tty` 交互，也可以用：
+
 ```sh
 curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/main/menu.sh | sh
 ```

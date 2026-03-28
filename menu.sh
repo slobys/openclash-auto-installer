@@ -40,13 +40,21 @@ show_menu() {
 EOF_MENU
 }
 
+read_from_tty() {
+    if [ -r /dev/tty ]; then
+        read -r "$1" </dev/tty
+    else
+        die "当前环境不可交互，请改用先下载再执行，或直接运行 install.sh / uninstall.sh"
+    fi
+}
+
 main() {
     need_cmd curl
 
     while true; do
         show_menu
-        printf '请输入选项 [0-4]: '
-        read -r choice
+        printf '请输入选项 [0-4]: ' >/dev/tty
+        read_from_tty choice
 
         case "$choice" in
             1)
@@ -70,8 +78,8 @@ main() {
                 ;;
         esac
 
-        printf '\n按回车键返回菜单...'
-        read -r _dummy
+        printf '\n按回车键返回菜单...' >/dev/tty
+        read_from_tty _dummy
         printf '\n'
     done
 }
