@@ -42,7 +42,6 @@
 ├─ .github/workflows/shell-check.yml
 ├─ .github/ISSUE_TEMPLATE/
 ├─ README.md
-├─ BLOG_POST.md
 ├─ CHANGELOG.md
 ├─ LICENSE
 ├─ install.sh
@@ -207,7 +206,6 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-inst
 
 仓库里还额外提供了：
 
-- `BLOG_POST.md`：可直接作为博客文章初稿参考
 - `.github/workflows/shell-check.yml`：自动检查脚本语法与 ShellCheck
 - `.github/ISSUE_TEMPLATE/`：用于规范 bug 反馈和功能建议
 
