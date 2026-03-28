@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.1.0
+
+- 新增 `passwall.sh`，支持安装 / 更新 PassWall
+- 新增 `passwall2.sh`，支持安装 / 更新 PassWall2
+- 新增 `nikki.sh`，支持安装 / 更新 Nikki
+- 扩展 `menu.sh` 为多插件管理入口，支持 OpenClash / PassWall / PassWall2 / Nikki
+- 更新 README，改为脚本集合项目说明
+
 ## v1.0.6
 
 - 优化 `opkg update` 失败处理：检测锁文件后自动等待并重试一次
