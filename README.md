@@ -1,5 +1,10 @@
 # OpenClash Auto Installer
 
+![Release](https://img.shields.io/github/v/release/slobys/openclash-auto-installer?style=flat-square)
+![License](https://img.shields.io/github/license/slobys/openclash-auto-installer?style=flat-square)
+![Workflow](https://img.shields.io/github/actions/workflow/status/slobys/openclash-auto-installer/shell-check.yml?branch=main&style=flat-square)
+![Stars](https://img.shields.io/github/stars/slobys/openclash-auto-installer?style=flat-square)
+
 一个面向 **OpenWrt / iStoreOS / ImmortalWrt** 的 **OpenClash 一键安装 / 更新脚本项目**。
 
 这个仓库不只是放一段临时命令，而是尽量整理成一个适合：
@@ -13,9 +18,7 @@
 
 ---
 
-## 项目功能
-
-目前已支持：
+## 功能概览
 
 - 一键安装 OpenClash
 - 一键更新 OpenClash
@@ -24,13 +27,11 @@
 - 菜单式管理入口
 - 自动识别 `opkg` / `apk`
 - 自动识别 `fw4/nft` 或 `iptables`
-- 自动安装依赖组件
 - 自动获取 OpenClash 最新发布版本
 - 自动匹配并安装 Meta 内核
-- 对 x86_64 自动识别 v1 / v2 / v3 / v4 指令级别
-- 可选只装插件 / 只装内核
-- 可选跳过服务重启 / 跳过索引更新
-- GitHub Actions 自动检查 shell 脚本语法
+- x86_64 自动识别 v1 / v2 / v3 / v4 指令级别
+- 支持插件-only / 内核-only 模式
+- 支持 GitHub Actions 自动检查 shell 脚本语法
 
 ---
 
@@ -124,7 +125,31 @@ curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/mai
 
 ---
 
-## 脚本参数
+## 脚本说明
+
+### install.sh
+
+负责安装或更新 OpenClash 插件，并自动尝试下载和安装匹配的 Meta 内核。
+
+### update.sh
+
+适合已安装用户快速升级，默认复用 `install.sh` 并跳过索引刷新。
+
+### uninstall.sh
+
+卸载 OpenClash 插件与 Meta 内核，但默认不主动删除 `/etc/openclash` 配置目录。
+
+### repair.sh
+
+执行基础修复动作，包括目录检查、权限修复、服务重启和状态输出。
+
+### menu.sh
+
+提供菜单式交互入口，适合不想记命令的用户。
+
+---
+
+## 参数说明
 
 ```text
 --plugin-only       只安装/更新 OpenClash 插件，不安装 Meta 内核
@@ -136,43 +161,7 @@ curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/mai
 
 ---
 
-## 安装脚本会做什么
-
-安装脚本会自动执行以下流程：
-
-1. 检测当前系统包管理器
-2. 检测当前防火墙模式
-3. 输出当前系统架构和版本信息
-4. 检测当前已安装的 OpenClash 版本
-5. 安装 OpenClash 所需依赖
-6. 获取 OpenClash 最新发布包
-7. 自动下载并安装插件
-8. 自动识别 CPU 架构
-9. 自动下载并安装匹配的 Meta 内核
-10. 根据版本变化和参数设置决定是否重启相关服务
-
----
-
-## 修复脚本会做什么
-
-`repair.sh` 目前会执行这些基础修复动作：
-
-- 检测当前包管理器
-- 刷新软件源索引
-- 检查并创建 `/etc/openclash` 与 `/etc/openclash/core`
-- 修复 `clash_meta` 可执行权限
-- 尝试重启 `openclash` 与 `uhttpd`
-- 输出当前检测到的 OpenClash 状态
-
-适合用于：
-
-- 重新整理基础目录结构
-- 修复核心权限问题
-- 快速确认当前安装状态
-
----
-
-## 适用环境
+## 兼容性说明
 
 理论适用于：
 
@@ -181,21 +170,16 @@ curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/mai
 - ImmortalWrt
 - 其它兼容 `opkg` / `apk` 的类 OpenWrt 系统
 
----
+注意事项：
 
-## 风险与注意事项
-
-- 本脚本会调用系统包管理器安装依赖
-- 会写入 `/etc/openclash/core/`
 - 依赖 GitHub API 与 OpenClash 核心下载地址可访问
 - 部分精简固件的软件包名称可能和标准源不同，需要按环境自行微调
+- 如果某些依赖包在当前源中不存在，脚本后续会继续朝“更柔和提示”方向增强
 - 卸载脚本默认只移除 OpenClash 插件与 Meta 内核，不主动删除 `/etc/openclash` 配置目录，避免误删订阅和配置
 
 ---
 
 ## 博客引用推荐命令
-
-如果你准备写博客，可以优先贴这几个命令：
 
 ### 一键安装 / 更新
 
@@ -242,17 +226,7 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-inst
 - 补充许可证，更适合公开发布
 - 增加 GitHub Actions 自动检查，降低后续维护出错率
 - 增加 issue 模板，后续协作更方便
-
----
-
-## 后续计划
-
-接下来还可以继续增强：
-
-- 增加更完整的回滚与修复逻辑
-- 增加更多固件兼容提示
-- 增加博客长文可直接复用的发布文案模板
-- 进一步细化依赖检测与缺失包提示
+- 增加 Release 版本，项目形态更完整
 
 ---
 
