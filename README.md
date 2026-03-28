@@ -20,6 +20,7 @@
 - 一键安装 OpenClash
 - 一键更新 OpenClash
 - 一键卸载 OpenClash
+- 一键修复 OpenClash 基础运行环境
 - 菜单式管理入口
 - 自动识别 `opkg` / `apk`
 - 自动识别 `fw4/nft` 或 `iptables`
@@ -38,6 +39,7 @@
 ```text
 .
 ├─ .github/workflows/shell-check.yml
+├─ .github/ISSUE_TEMPLATE/
 ├─ README.md
 ├─ BLOG_POST.md
 ├─ CHANGELOG.md
@@ -45,6 +47,7 @@
 ├─ install.sh
 ├─ update.sh
 ├─ uninstall.sh
+├─ repair.sh
 ├─ menu.sh
 └─ .gitignore
 ```
@@ -69,6 +72,12 @@ curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/mai
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/main/uninstall.sh | sh
+```
+
+### 修复 OpenClash 基础环境
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/main/repair.sh | sh
 ```
 
 ### 菜单式管理
@@ -144,6 +153,25 @@ curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/mai
 
 ---
 
+## 修复脚本会做什么
+
+`repair.sh` 目前会执行这些基础修复动作：
+
+- 检测当前包管理器
+- 刷新软件源索引
+- 检查并创建 `/etc/openclash` 与 `/etc/openclash/core`
+- 修复 `clash_meta` 可执行权限
+- 尝试重启 `openclash` 与 `uhttpd`
+- 输出当前检测到的 OpenClash 状态
+
+适合用于：
+
+- 重新整理基础目录结构
+- 修复核心权限问题
+- 快速确认当前安装状态
+
+---
+
 ## 适用环境
 
 理论适用于：
@@ -175,6 +203,12 @@ curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/mai
 curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/main/install.sh | sh
 ```
 
+### 一键修复
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/main/repair.sh | sh
+```
+
 ### 一键卸载
 
 ```sh
@@ -182,8 +216,6 @@ curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/mai
 ```
 
 ### 菜单式管理
-
-推荐直接执行：
 
 ```sh
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/main/menu.sh)"
@@ -193,6 +225,7 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-inst
 
 - `BLOG_POST.md`：可直接作为博客文章初稿参考
 - `.github/workflows/shell-check.yml`：自动检查脚本语法与 ShellCheck
+- `.github/ISSUE_TEMPLATE/`：用于规范 bug 反馈和功能建议
 
 ---
 
@@ -201,13 +234,14 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-inst
 相比临时拼接版，这个仓库版本做了这些增强：
 
 - 结构更清晰，适合 GitHub 首页展示
-- 安装、更新、卸载、菜单入口职责拆分
+- 安装、更新、卸载、修复、菜单入口职责拆分
 - 安装脚本支持参数模式
 - 日志输出更清楚，便于排障
 - 自动识别当前已安装版本和最新发布标签
 - 出错时更容易定位问题
 - 补充许可证，更适合公开发布
 - 增加 GitHub Actions 自动检查，降低后续维护出错率
+- 增加 issue 模板，后续协作更方便
 
 ---
 
