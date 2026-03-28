@@ -29,6 +29,7 @@
 - 对 x86_64 自动识别 v1 / v2 / v3 / v4 指令级别
 - 可选只装插件 / 只装内核
 - 可选跳过服务重启 / 跳过索引更新
+- GitHub Actions 自动检查 shell 脚本语法
 
 ---
 
@@ -36,7 +37,9 @@
 
 ```text
 .
+├─ .github/workflows/shell-check.yml
 ├─ README.md
+├─ BLOG_POST.md
 ├─ CHANGELOG.md
 ├─ LICENSE
 ├─ install.sh
@@ -53,25 +56,25 @@
 ### 安装 / 更新 OpenClash
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/master/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/main/install.sh | sh
 ```
 
 ### 单独更新
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/master/update.sh | sh
+curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/main/update.sh | sh
 ```
 
 ### 卸载 OpenClash
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/master/uninstall.sh | sh
+curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/main/uninstall.sh | sh
 ```
 
 ### 菜单式管理
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/master/menu.sh | sh
+curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/main/menu.sh | sh
 ```
 
 ---
@@ -81,25 +84,25 @@ curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/mas
 ### 只安装 / 更新插件，不安装内核
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/master/install.sh | sh -s -- --plugin-only
+curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/main/install.sh | sh -s -- --plugin-only
 ```
 
 ### 只安装 Meta 内核
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/master/install.sh | sh -s -- --core-only
+curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/main/install.sh | sh -s -- --core-only
 ```
 
 ### 跳过服务重启
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/master/install.sh | sh -s -- --skip-restart
+curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/main/install.sh | sh -s -- --skip-restart
 ```
 
 ### 跳过软件源更新
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/master/install.sh | sh -s -- --skip-opkg-update
+curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/main/install.sh | sh -s -- --skip-opkg-update
 ```
 
 ---
@@ -149,7 +152,7 @@ curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/mas
 - 本脚本会调用系统包管理器安装依赖
 - 会写入 `/etc/openclash/core/`
 - 依赖 GitHub API 与 OpenClash 核心下载地址可访问
-- 个别精简固件的软件包名称可能不完全一致，需要按环境自行微调
+- 部分精简固件的软件包名称可能和标准源不同，需要按环境自行微调
 - 卸载脚本默认只移除 OpenClash 插件与 Meta 内核，不主动删除 `/etc/openclash` 配置目录，避免误删订阅和配置
 
 ---
@@ -161,20 +164,25 @@ curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/mas
 ### 一键安装 / 更新
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/master/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/main/install.sh | sh
 ```
 
 ### 一键卸载
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/master/uninstall.sh | sh
+curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/main/uninstall.sh | sh
 ```
 
 ### 菜单式管理
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/master/menu.sh | sh
+curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/main/menu.sh | sh
 ```
+
+仓库里还额外提供了：
+
+- `BLOG_POST.md`：可直接作为博客文章初稿参考
+- `.github/workflows/shell-check.yml`：自动检查脚本语法与 ShellCheck
 
 ---
 
@@ -189,6 +197,7 @@ curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/mas
 - 自动识别当前已安装版本和最新发布标签
 - 出错时更容易定位问题
 - 补充许可证，更适合公开发布
+- 增加 GitHub Actions 自动检查，降低后续维护出错率
 
 ---
 
@@ -196,10 +205,10 @@ curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/mas
 
 接下来还可以继续增强：
 
-- 增加 GitHub Actions 语法检查
 - 增加更完整的回滚与修复逻辑
 - 增加更多固件兼容提示
-- 增加博客长文可直接复用的发布文案
+- 增加博客长文可直接复用的发布文案模板
+- 进一步细化依赖检测与缺失包提示
 
 ---
 
