@@ -13,6 +13,7 @@ MODE="full"
 RESTART_SERVICES="1"
 FORCE_OPKG_UPDATE="1"
 CORE_CHANNEL="auto"
+OPKG_RETRY_SECONDS="10"
 
 cleanup() {
     rm -rf "$TMP_ROOT"
@@ -200,26 +201,56 @@ download_file() {
     return 0
 }
 
+is_openclash_installed() {
+    PKG_MGR="$1"
+    case "$PKG_MGR" in
+        opkg)
+            opkg status luci-app-openclash 2>/dev/null | grep -q '^Status: .* installed'
+            ;;
+        apk)
+            apk info -e luci-app-openclash >/dev/null 2>&1
+            ;;
+    esac
+}
+
 get_installed_openclash_version() {
     PKG_MGR="$1"
+    if ! is_openclash_installed "$PKG_MGR"; then
+        return 0
+    fi
+
     case "$PKG_MGR" in
         opkg)
             opkg status luci-app-openclash 2>/dev/null | sed -n 's/^Version: //p' | head -n1
             ;;
         apk)
-            apk info -e luci-app-openclash >/dev/null 2>&1 || return 0
             apk info -a luci-app-openclash 2>/dev/null | sed -n 's/^version: //p' | head -n1
             ;;
     esac
 }
 
 maybe_update_index_opkg() {
-    if [ "$FORCE_OPKG_UPDATE" = "1" ]; then
-        log "更新 opkg 软件索引"
-        opkg update
-    else
+    if [ "$FORCE_OPKG_UPDATE" != "1" ]; then
         log "按参数跳过 opkg update"
+        return 0
     fi
+
+    log "更新 opkg 软件索引"
+    if opkg update; then
+        return 0
+    fi
+
+    if [ -e /var/lock/opkg.lock ]; then
+        warn "检测到 opkg.lock，可能有其他包管理任务正在运行"
+        warn "将在 ${OPKG_RETRY_SECONDS} 秒后重试一次 opkg update"
+        sleep "$OPKG_RETRY_SECONDS"
+        if opkg update; then
+            return 0
+        fi
+        die "opkg update 仍然失败；如你刚执行过软件源刷新，可改用 --skip-opkg-update 重试"
+    fi
+
+    die "opkg update 失败"
 }
 
 maybe_update_index_apk() {
@@ -423,6 +454,12 @@ restart_related_services() {
 }
 
 show_runtime_versions() {
+    if [ -n "${NEW_VER:-}" ]; then
+        log "当前 OpenClash 插件版本: ${NEW_VER}"
+    elif [ -n "${OLD_VER:-}" ]; then
+        log "当前 OpenClash 插件版本: ${OLD_VER}"
+    fi
+
     if [ -n "${CHOSEN_CORE_CHANNEL:-}" ]; then
         log "本次安装核心通道: ${CHOSEN_CORE_CHANNEL}"
     fi

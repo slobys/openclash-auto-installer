@@ -24,7 +24,7 @@
 
 ## 文件说明
 
-- `install.sh`：安装或更新 OpenClash，并尝试安装匹配的 Meta/Smart 内核；完成后输出实际内核版本
+- `install.sh`：安装或更新 OpenClash，并尝试安装匹配的 Meta/Smart 内核；完成后输出实际插件版本与内核版本
 - `update.sh`：快速更新入口
 - `uninstall.sh`：卸载 OpenClash 插件与 Meta 内核
 - `repair.sh`：执行基础修复流程
@@ -115,6 +115,7 @@ curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/mai
 - 部分精简固件的软件包名称可能和标准源不同，必要时需自行微调
 - 卸载脚本默认不删除 `/etc/openclash` 配置目录，避免误删订阅和配置
 - 脚本默认会自动判断使用普通 Meta 还是 Smart Meta 内核，也可通过参数强制指定
+- 遇到 `opkg.lock` 时，脚本会提示并自动重试一次；如你刚刷新过软件源，也可使用 `--skip-opkg-update`
 - 如果 LuCI 页面中的内核版本未及时刷新，请以命令行输出的实际内核版本为准
 
 ---

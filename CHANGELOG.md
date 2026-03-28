@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.0.6
+
+- 优化 `opkg update` 失败处理：检测锁文件后自动等待并重试一次
+- 增强错误提示，明确建议使用 `--skip-opkg-update` 进行重试
+- 修正 OpenClash 安装状态识别逻辑，减少已安装场景被误判为 `not installed`
+- 安装完成后同时输出当前插件版本与当前 Meta 内核版本
+
 ## v1.0.5
 
 - `install.sh` 新增普通 Meta / Smart Meta 核心通道选择能力
