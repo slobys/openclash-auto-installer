@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.2.0
+
+- 调整仓库结构到根目录，更适合 GitHub 展示
+- 新增 `update.sh`
+- 新增 `uninstall.sh`
+- 重写并完善仓库首页 README
+- 保留 OpenClash 自动安装、升级与 Meta 内核自动匹配能力
+
 ## v0.1.0
 
 - 初始发布
