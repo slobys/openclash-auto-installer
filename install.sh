@@ -371,13 +371,26 @@ restart_related_services() {
     fi
 }
 
+show_runtime_versions() {
+    if [ -x /etc/openclash/core/clash_meta ]; then
+        CORE_VER="$(/etc/openclash/core/clash_meta -v 2>/dev/null | head -n1 || true)"
+        if [ -n "$CORE_VER" ]; then
+            log "当前 Meta 内核版本: $CORE_VER"
+        else
+            warn "已检测到 clash_meta 文件，但未能读取版本信息"
+        fi
+    else
+        warn "未检测到 /etc/openclash/core/clash_meta"
+    fi
+}
+
 show_summary() {
     cat <<EOF_SUMMARY
 ==> 完成
 ==> 建议下一步：
  1. 刷新 LuCI 页面
  2. 进入 服务 -> OpenClash
- 3. 检查内核是否已识别为 clash_meta
+ 3. 如果页面中的内核版本未及时刷新，请以命令行输出为准
  4. 导入订阅后再启动
 EOF_SUMMARY
 }
@@ -459,6 +472,7 @@ main() {
     fi
 
     restart_related_services "$CHANGED"
+    show_runtime_versions
     show_summary
 }
 

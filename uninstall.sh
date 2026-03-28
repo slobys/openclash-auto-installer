@@ -38,10 +38,18 @@ remove_openclash_package() {
 
     case "$PKG_MGR" in
         opkg)
-            opkg remove luci-app-openclash || warn "移除 luci-app-openclash 失败或未安装"
+            if opkg status luci-app-openclash >/dev/null 2>&1; then
+                opkg remove luci-app-openclash || warn "移除 luci-app-openclash 失败"
+            else
+                warn "luci-app-openclash 未安装，跳过插件卸载"
+            fi
             ;;
         apk)
-            apk del luci-app-openclash || warn "移除 luci-app-openclash 失败或未安装"
+            if apk info -e luci-app-openclash >/dev/null 2>&1; then
+                apk del luci-app-openclash || warn "移除 luci-app-openclash 失败"
+            else
+                warn "luci-app-openclash 未安装，跳过插件卸载"
+            fi
             ;;
     esac
 }
