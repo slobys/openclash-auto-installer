@@ -348,8 +348,15 @@ extract_and_install_core() {
 }
 
 restart_related_services() {
+    CHANGED="${1:-1}"
+
     if [ "$RESTART_SERVICES" != "1" ]; then
         log "按参数跳过服务重启"
+        return 0
+    fi
+
+    if [ "$CHANGED" != "1" ]; then
+        log "版本未变化且未强制变更，跳过服务重启"
         return 0
     fi
 
@@ -389,6 +396,8 @@ main() {
     DIST_ARCH="$(get_distr_arch)"
     DIST_RELEASE="$(get_distr_release)"
     OLD_VER="$(get_installed_openclash_version "$PKG_MGR" || true)"
+    PLUGIN_CHANGED="0"
+    CORE_CHANGED="0"
 
     log "脚本名称: $SCRIPT_NAME"
     log "执行模式: $MODE"
@@ -414,6 +423,9 @@ main() {
             install_openclash_package "$PKG_MGR" "$PACKAGE_URL"
             NEW_VER="$(get_installed_openclash_version "$PKG_MGR" || true)"
             log "安装后版本: ${NEW_VER:-unknown}"
+            if [ "${OLD_VER:-}" != "${NEW_VER:-}" ]; then
+                PLUGIN_CHANGED="1"
+            fi
             ;;
     esac
 
@@ -431,6 +443,7 @@ main() {
             if download_core "$CORE_CANDIDATES"; then
                 log "已下载匹配内核包: $CHOSEN_CORE_FILE"
                 extract_and_install_core
+                CORE_CHANGED="1"
             else
                 warn "自动下载 Meta 内核失败，请在 OpenClash 页面手动下载"
                 show_summary
@@ -439,7 +452,13 @@ main() {
             ;;
     esac
 
-    restart_related_services
+    if [ "$PLUGIN_CHANGED" = "1" ] || [ "$CORE_CHANGED" = "1" ]; then
+        CHANGED="1"
+    else
+        CHANGED="0"
+    fi
+
+    restart_related_services "$CHANGED"
     show_summary
 }
 

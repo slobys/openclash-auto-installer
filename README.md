@@ -19,6 +19,8 @@
 
 - 一键安装 OpenClash
 - 一键更新 OpenClash
+- 一键卸载 OpenClash
+- 菜单式管理入口
 - 自动识别 `opkg` / `apk`
 - 自动识别 `fw4/nft` 或 `iptables`
 - 自动安装依赖组件
@@ -36,9 +38,11 @@
 .
 ├─ README.md
 ├─ CHANGELOG.md
+├─ LICENSE
 ├─ install.sh
 ├─ update.sh
 ├─ uninstall.sh
+├─ menu.sh
 └─ .gitignore
 ```
 
@@ -52,12 +56,6 @@
 curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/master/install.sh | sh
 ```
 
-或：
-
-```sh
-wget -qO- https://raw.githubusercontent.com/slobys/openclash-auto-installer/master/install.sh | sh
-```
-
 ### 单独更新
 
 ```sh
@@ -68,6 +66,12 @@ curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/mas
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/master/uninstall.sh | sh
+```
+
+### 菜单式管理
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/master/menu.sh | sh
 ```
 
 ---
@@ -125,7 +129,7 @@ curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/mas
 7. 自动下载并安装插件
 8. 自动识别 CPU 架构
 9. 自动下载并安装匹配的 Meta 内核
-10. 可选重启相关服务
+10. 根据版本变化和参数设置决定是否重启相关服务
 
 ---
 
@@ -150,16 +154,41 @@ curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/mas
 
 ---
 
+## 博客引用推荐命令
+
+如果你准备写博客，可以优先贴这几个命令：
+
+### 一键安装 / 更新
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/master/install.sh | sh
+```
+
+### 一键卸载
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/master/uninstall.sh | sh
+```
+
+### 菜单式管理
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/master/menu.sh | sh
+```
+
+---
+
 ## 为什么这个版本更适合公开分享
 
 相比临时拼接版，这个仓库版本做了这些增强：
 
 - 结构更清晰，适合 GitHub 首页展示
-- 安装、更新、卸载职责拆分
+- 安装、更新、卸载、菜单入口职责拆分
 - 安装脚本支持参数模式
 - 日志输出更清楚，便于排障
 - 自动识别当前已安装版本和最新发布标签
 - 出错时更容易定位问题
+- 补充许可证，更适合公开发布
 
 ---
 
@@ -167,10 +196,10 @@ curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/mas
 
 接下来还可以继续增强：
 
-- 增加 `menu.sh` 菜单管理脚本
-- 增加更多平台兼容提示
 - 增加 GitHub Actions 语法检查
 - 增加更完整的回滚与修复逻辑
+- 增加更多固件兼容提示
+- 增加博客长文可直接复用的发布文案
 
 ---
 

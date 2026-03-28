@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.4.0
+
+- 新增 `menu.sh`，提供菜单式管理入口
+- 新增 `LICENSE`，补齐公开仓库基础文件
+- 完善 README，增加菜单式使用与博客引用命令说明
+- 项目结构进一步向可公开分享仓库形态完善
+
 ## v0.3.0
 
 - 为 `install.sh` 增加参数模式：`--plugin-only`、`--core-only`、`--skip-restart`、`--skip-opkg-update`
