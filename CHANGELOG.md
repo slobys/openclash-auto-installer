@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.0.5
+
+- `install.sh` 新增普通 Meta / Smart Meta 核心通道选择能力
+- 默认支持自动判断核心通道，并可通过 `--meta-core` / `--smart-core` 强制指定
+- 下载逻辑改为基于 OpenClash `core` 分支中的 `master/meta` 与 `master/smart` 真实目录结构
+
 ## v1.0.4
 
 - `install.sh` 安装完成后增加实际 Meta 内核版本输出，便于确认真实安装结果

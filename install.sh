@@ -7,11 +7,12 @@ set -eu
 LOCKDIR="/tmp/openclash-auto-install.lock"
 TMP_ROOT="/tmp/openclash-auto-install"
 API_URL="https://api.github.com/repos/vernesong/OpenClash/releases/latest"
-CORE_BASE_URL="https://raw.githubusercontent.com/vernesong/OpenClash/core/master/meta"
+CORE_REPO_BASE_URL="https://raw.githubusercontent.com/vernesong/OpenClash/core/master"
 SCRIPT_NAME="openclash-auto-install"
 MODE="full"
 RESTART_SERVICES="1"
 FORCE_OPKG_UPDATE="1"
+CORE_CHANNEL="auto"
 
 cleanup() {
     rm -rf "$TMP_ROOT"
@@ -43,6 +44,8 @@ usage() {
 选项:
   --plugin-only       只安装/更新 OpenClash 插件，不安装 Meta 内核
   --core-only         只下载并安装 Meta 内核，不安装/更新插件
+  --meta-core         强制使用普通 Meta 内核
+  --smart-core        强制使用 Smart Meta 内核
   --skip-restart      完成后不尝试重启 openclash / uhttpd
   --skip-opkg-update  跳过软件源更新（适合你已手动 opkg update 后再次执行）
   -h, --help          显示帮助
@@ -57,6 +60,12 @@ parse_args() {
                 ;;
             --core-only)
                 MODE="core-only"
+                ;;
+            --meta-core)
+                CORE_CHANNEL="meta"
+                ;;
+            --smart-core)
+                CORE_CHANNEL="smart"
                 ;;
             --skip-restart)
                 RESTART_SERVICES="0"
@@ -304,18 +313,60 @@ install_openclash_package() {
     esac
 }
 
+detect_smart_core_enabled() {
+    if command -v uci >/dev/null 2>&1; then
+        SMART_VALUE="$(uci -q get openclash.config.enable_meta_core 2>/dev/null || true)"
+        case "$SMART_VALUE" in
+            1|true|TRUE|True|on|ON|yes|YES)
+                printf '%s' 'smart'
+                return
+                ;;
+        esac
+
+        SMART_VALUE="$(uci -q get openclash.config.enable_meta_core_fast 2>/dev/null || true)"
+        case "$SMART_VALUE" in
+            1|true|TRUE|True|on|ON|yes|YES)
+                printf '%s' 'smart'
+                return
+                ;;
+        esac
+    fi
+
+    printf '%s' 'meta'
+}
+
+resolve_core_channel() {
+    case "$CORE_CHANNEL" in
+        smart)
+            printf '%s' 'smart'
+            ;;
+        meta)
+            printf '%s' 'meta'
+            ;;
+        auto)
+            detect_smart_core_enabled
+            ;;
+        *)
+            printf '%s' 'meta'
+            ;;
+    esac
+}
+
 download_core() {
-    CANDIDATES="$1"
+    CHANNEL="$1"
+    CANDIDATES="$2"
     TMP_CORE="$TMP_ROOT/openclash-core.tar.gz"
+    CORE_BASE_URL="$CORE_REPO_BASE_URL/$CHANNEL"
 
     rm -f "$TMP_CORE"
 
     for file in $CANDIDATES; do
         URL="$CORE_BASE_URL/$file"
-        log "尝试下载 Meta 内核: $URL"
+        log "尝试下载 ${CHANNEL} 内核: $URL"
         if download_file "$URL" "$TMP_CORE"; then
             CHOSEN_CORE_FILE="$file"
-            export CHOSEN_CORE_FILE
+            CHOSEN_CORE_CHANNEL="$CHANNEL"
+            export CHOSEN_CORE_FILE CHOSEN_CORE_CHANNEL
             return 0
         fi
     done
@@ -372,6 +423,10 @@ restart_related_services() {
 }
 
 show_runtime_versions() {
+    if [ -n "${CHOSEN_CORE_CHANNEL:-}" ]; then
+        log "本次安装核心通道: ${CHOSEN_CORE_CHANNEL}"
+    fi
+
     if [ -x /etc/openclash/core/clash_meta ]; then
         CORE_VER="$(/etc/openclash/core/clash_meta -v 2>/dev/null | head -n1 || true)"
         if [ -n "$CORE_VER" ]; then
@@ -414,6 +469,7 @@ main() {
 
     log "脚本名称: $SCRIPT_NAME"
     log "执行模式: $MODE"
+    log "核心通道策略: $CORE_CHANNEL"
     log "包管理器: $PKG_MGR"
     log "防火墙栈: $FIREWALL_STACK"
     log "uname -m: ${RAW_ARCH:-unknown}"
@@ -452,13 +508,15 @@ main() {
                 exit 0
             fi
 
+            RESOLVED_CORE_CHANNEL="$(resolve_core_channel)"
+            log "本次使用核心通道: $RESOLVED_CORE_CHANNEL"
             log "候选 Meta 内核: $CORE_CANDIDATES"
-            if download_core "$CORE_CANDIDATES"; then
+            if download_core "$RESOLVED_CORE_CHANNEL" "$CORE_CANDIDATES"; then
                 log "已下载匹配内核包: $CHOSEN_CORE_FILE"
                 extract_and_install_core
                 CORE_CHANGED="1"
             else
-                warn "自动下载 Meta 内核失败，请在 OpenClash 页面手动下载"
+                warn "自动下载 ${RESOLVED_CORE_CHANNEL} 内核失败，请在 OpenClash 页面手动下载"
                 show_summary
                 exit 0
             fi
