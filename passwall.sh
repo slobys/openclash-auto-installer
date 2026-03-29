@@ -108,4 +108,5 @@ if opkg status luci-app-passwall2 >/dev/null 2>&1; then
     warn "如菜单未明显显示，可直接访问: /cgi-bin/luci/admin/services/passwall"
 fi
 
+warn "如界面初次显示为英文，请刷新页面，中文语言包会自动生效"
 log "PassWall 处理完成"

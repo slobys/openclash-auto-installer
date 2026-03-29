@@ -89,4 +89,5 @@ fi
 
 /etc/init.d/uhttpd restart >/dev/null 2>&1 || true
 
+warn "如界面初次显示为英文，请刷新页面，中文语言包会自动生效"
 log "Nikki 处理完成"
