@@ -73,18 +73,12 @@ esac
 
 log "安装后版本: ${NEW_VER:-unknown}"
 
-if [ ! -f /etc/config/nikki ]; then
-    DEFAULT_NIKKI_CONFIG="$(find /usr/share /etc /usr/lib -iname '*nikki*' 2>/dev/null | grep -Ei 'default|config|example|sample' | head -n1 || true)"
-    if [ -n "$DEFAULT_NIKKI_CONFIG" ] && [ -f "$DEFAULT_NIKKI_CONFIG" ]; then
-        log "检测到缺少 /etc/config/nikki，使用默认配置补齐: $DEFAULT_NIKKI_CONFIG"
-        cp -f "$DEFAULT_NIKKI_CONFIG" /etc/config/nikki
-    else
-        warn "未发现默认配置文件，自动生成最小 /etc/config/nikki 以确保 LuCI 入口可用"
-        cat >/etc/config/nikki <<'EOF'
+if ! uci -q show nikki >/dev/null 2>&1; then
+    warn "/etc/config/nikki 不存在或不是有效 UCI 配置，自动重建最小配置以确保 LuCI 入口可用"
+    cat >/etc/config/nikki <<'EOF'
 config nikki 'config'
 	option enabled '0'
 EOF
-    fi
 fi
 
 log "轻刷新 LuCI 缓存"
