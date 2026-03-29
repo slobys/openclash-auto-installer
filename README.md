@@ -37,7 +37,7 @@
 
 - `install.sh`：安装或更新 OpenClash，并尝试安装匹配的 Meta/Smart 内核；完成后输出实际插件版本与内核版本
 - `update.sh`：快速更新 OpenClash 入口
-- `full-uninstall.sh`：卸载 PassWall / PassWall2 / Nikki / OpenClash（执行完整清理，重置安装环境，并刷新 LuCI/rpc 缓存）
+- `full-uninstall.sh`：卸载 PassWall / PassWall2 / Nikki / OpenClash（执行完整清理，重置安装环境，并在共享核心仍被其他插件依赖时自动跳过并提示）
 - `repair.sh`：执行 OpenClash 基础修复流程
 - `passwall.sh`：安装或更新 PassWall
 - `passwall2.sh`：安装或更新 PassWall2

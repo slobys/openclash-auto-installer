@@ -46,19 +46,42 @@ pkg_installed() {
 remove_pkg_if_installed() {
     PKG_MGR="$1"
     PKG="$2"
+    KIND="${3:-package}"
 
-    if pkg_installed "$PKG_MGR" "$PKG"; then
-        case "$PKG_MGR" in
-            opkg)
-                opkg remove "$PKG" || warn "移除 $PKG 失败"
-                ;;
-            apk)
-                apk del "$PKG" || warn "移除 $PKG 失败"
-                ;;
-        esac
-    else
+    if ! pkg_installed "$PKG_MGR" "$PKG"; then
         log "未安装 $PKG，跳过"
+        return 0
     fi
+
+    case "$PKG_MGR" in
+        opkg)
+            OUTPUT="$(opkg remove "$PKG" 2>&1)" || STATUS=$?
+            STATUS="${STATUS:-0}"
+            printf '%s\n' "$OUTPUT"
+
+            if [ "$STATUS" -eq 0 ]; then
+                return 0
+            fi
+
+            case "$OUTPUT" in
+                *"is depended upon by packages:"*|*"print_dependents_warning:"*)
+                    warn "$PKG 仍被其他插件依赖，已跳过"
+                    return 0
+                    ;;
+                *"can't open '"*|*"No such file or directory"*)
+                    warn "$PKG 卸载时检测到残缺文件，已继续执行环境清理"
+                    return 0
+                    ;;
+                *)
+                    warn "移除 $PKG 失败"
+                    return 0
+                    ;;
+            esac
+            ;;
+        apk)
+            apk del "$PKG" || warn "移除 $PKG 失败"
+            ;;
+    esac
 }
 
 remove_pkgs() {
