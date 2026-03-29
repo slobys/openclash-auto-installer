@@ -40,6 +40,7 @@
 - `install.sh`
   - 安装或更新 OpenClash
   - 自动尝试安装匹配的 Meta / Smart 内核
+  - 已兼容 `openclash.config.smart_enable` 等字段，提升 Smart Meta 自动识别准确性
   - 安装后会清理 LuCI 菜单缓存并重启 `rpcd`，帮助菜单及时显示
   - 完成后输出实际插件版本与内核版本
 

@@ -346,6 +346,14 @@ install_openclash_package() {
 
 detect_smart_core_enabled() {
     if command -v uci >/dev/null 2>&1; then
+        SMART_VALUE="$(uci -q get openclash.config.smart_enable 2>/dev/null || true)"
+        case "$SMART_VALUE" in
+            1|true|TRUE|True|on|ON|yes|YES)
+                printf '%s' 'smart'
+                return
+                ;;
+        esac
+
         SMART_VALUE="$(uci -q get openclash.config.enable_meta_core 2>/dev/null || true)"
         case "$SMART_VALUE" in
             1|true|TRUE|True|on|ON|yes|YES)
