@@ -83,6 +83,15 @@ opkg update
 OLD_VER="$(opkg status luci-app-passwall 2>/dev/null | sed -n 's/^Version: //p' | head -n1 || true)"
 log "当前已安装版本: ${OLD_VER:-not installed}"
 
+if opkg status luci-app-passwall >/dev/null 2>&1 && [ ! -f /usr/share/passwall/utils.sh ]; then
+    warn "检测到 luci-app-passwall 状态存在但关键文件缺失，自动强制重装 LuCI 包"
+    opkg install --force-reinstall luci-app-passwall >/dev/null 2>&1 || {
+        warn "--force-reinstall 失败，尝试移除后重装 luci-app-passwall"
+        opkg remove luci-app-passwall --force-remove --force-maintainer >/dev/null 2>&1 || true
+        opkg install luci-app-passwall || die "重装 luci-app-passwall 失败"
+    }
+fi
+
 log "安装 / 更新 PassWall"
 opkg install luci-app-passwall luci-i18n-passwall-zh-cn
 
