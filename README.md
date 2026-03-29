@@ -41,7 +41,7 @@
 - `repair.sh`：执行 OpenClash 基础修复流程
 - `passwall.sh`：安装或更新 PassWall；采用轻刷新模式，不强制断开当前 LuCI 会话；若检测到已安装 PassWall2，会提示菜单可能重叠并给出直达路径；若初次显示为英文，刷新页面后中文语言包会自动生效
 - `passwall2.sh`：安装或更新 PassWall2；采用轻刷新模式，不强制断开当前 LuCI 会话；若检测到缺少 `/etc/config/passwall2`，会自动补默认配置或生成最小配置，避免 LuCI 入口不显示；若检测到已安装 PassWall，会提示菜单可能重叠并给出直达路径；若初次显示为英文，刷新页面后中文语言包会自动生效
-- `nikki.sh`：安装或更新 Nikki；采用轻刷新模式，不强制断开当前 LuCI 会话；在 OpenWrt/opkg 环境下改为调用 Nikki 官方 `install.sh` 完成初始化，再补装中文语言包，避免仅装包导致 `/etc/nikki` 运行目录缺失；若初次显示为英文，刷新页面后中文语言包会自动生效
+- `nikki.sh`：安装或更新 Nikki；采用轻刷新模式，不强制断开当前 LuCI 会话；在 OpenWrt/opkg 环境下会先检测 `/etc/nikki/ucode/include.uc` 等关键文件，若主包状态存在但文件缺失则自动强制重装 `nikki` 主包，再调用 Nikki 官方 `install.sh` 完成初始化，并补装中文语言包；若初次显示为英文，刷新页面后中文语言包会自动生效
 - `menu.sh`：菜单式管理入口
 
 ---

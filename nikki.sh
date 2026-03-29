@@ -57,6 +57,16 @@ case "$PKG_MGR" in
     opkg)
         OLD_VER="$(opkg status luci-app-nikki 2>/dev/null | sed -n 's/^Version: //p' | head -n1 || true)"
         log "当前已安装版本: ${OLD_VER:-not installed}"
+
+        if opkg status nikki >/dev/null 2>&1 && [ ! -f /etc/nikki/ucode/include.uc ]; then
+            warn "检测到 Nikki 主包状态存在但关键文件缺失，自动强制重装主包"
+            opkg install --force-reinstall nikki >/dev/null 2>&1 || {
+                warn "--force-reinstall 失败，尝试移除后重装 Nikki 主包"
+                opkg remove nikki --force-remove --force-maintainer >/dev/null 2>&1 || true
+                opkg install nikki || die "重装 Nikki 主包失败"
+            }
+        fi
+
         log "按官方方式安装 / 更新 Nikki"
         wget -qO- "$INSTALL_SCRIPT_URL" | sh || die "执行 Nikki 官方 install.sh 失败"
         opkg install luci-i18n-nikki-zh-cn || warn "安装 Nikki 中文语言包失败"
