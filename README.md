@@ -35,14 +35,59 @@
 
 ## 文件说明
 
-- `install.sh`：安装或更新 OpenClash，并尝试安装匹配的 Meta/Smart 内核；完成后输出实际插件版本与内核版本
-- `update.sh`：快速更新 OpenClash 入口
-- `full-uninstall.sh`：卸载 PassWall / PassWall2 / Nikki / OpenClash（执行完整清理，重置安装环境，并在共享核心仍被其他插件依赖时自动跳过并提示）；卸载后采用轻刷新模式，不强制断开当前 LuCI 会话
-- `repair.sh`：执行 OpenClash 基础修复流程
-- `passwall.sh`：安装或更新 PassWall；会安装 LuCI 包与中文语言包；采用轻刷新模式，不强制断开当前 LuCI 会话；若检测到 `luci-app-passwall` 状态存在但 `/usr/share/passwall/utils.sh` 等关键文件缺失，会自动强制重装 LuCI 包；若检测到 `/etc/config/passwall` 缺失或配置过薄，会优先使用 `/usr/share/passwall/0_default_config` 恢复默认配置，避免 LuCI 入口可见但功能不完整；若检测到已安装 PassWall2，会提示菜单可能重叠并给出直达路径；若初次显示为英文，刷新页面后中文语言包会自动生效
-- `passwall2.sh`：安装或更新 PassWall2；会安装 LuCI 包与中文语言包；采用轻刷新模式，不强制断开当前 LuCI 会话；若检测到 `luci-app-passwall2` 状态存在但 `/usr/share/passwall2/utils.sh` 等关键文件缺失，会自动强制重装 LuCI 包；若检测到 `/etc/config/passwall2` 缺失或配置过薄，会优先使用 `/usr/share/passwall2/0_default_config` 恢复默认配置，避免 LuCI 入口可见但功能不完整；若检测到已安装 PassWall，会提示菜单可能重叠并给出直达路径；若初次显示为英文，刷新页面后中文语言包会自动生效
-- `nikki.sh`：安装或更新 Nikki；整体采用轻刷新模式，不重启 `uhttpd`；在 OpenWrt/opkg 环境下会先检测 `/etc/nikki/ucode/include.uc` 等关键文件，若主包状态存在但文件缺失则自动强制重装 `nikki` 主包，再调用 Nikki 官方 `install.sh` 完成初始化，并补装中文语言包；安装后会自动修正 `/usr/share/rpcd/ucode/luci.nikki` 执行权限并重启 `rpcd`，确保 `luci.nikki` RPC 对象正常注册；若初次显示为英文，刷新页面后中文语言包会自动生效
-- `menu.sh`：菜单式管理入口
+### OpenClash 相关
+
+- `install.sh`
+  - 安装或更新 OpenClash
+  - 自动尝试安装匹配的 Meta / Smart 内核
+  - 完成后输出实际插件版本与内核版本
+
+- `update.sh`
+  - 快速更新 OpenClash 入口
+
+- `repair.sh`
+  - 执行 OpenClash 基础修复流程
+
+### 代理插件安装
+
+- `passwall.sh`
+  - 安装或更新 PassWall
+  - 自动安装 LuCI 包与中文语言包
+  - 采用轻刷新模式，不强制断开当前 LuCI 会话
+  - 若 `luci-app-passwall` 状态存在但 `/usr/share/passwall/utils.sh` 等关键文件缺失，会自动强制重装 LuCI 包
+  - 若 `/etc/config/passwall` 缺失或配置过薄，会优先使用 `/usr/share/passwall/0_default_config` 恢复默认配置
+  - 若已安装 PassWall2，会提示菜单可能重叠并给出直达路径
+  - 若初次显示为英文，刷新页面后中文语言包会自动生效
+
+- `passwall2.sh`
+  - 安装或更新 PassWall2
+  - 自动安装 LuCI 包与中文语言包
+  - 采用轻刷新模式，不强制断开当前 LuCI 会话
+  - 若 `luci-app-passwall2` 状态存在但 `/usr/share/passwall2/utils.sh` 等关键文件缺失，会自动强制重装 LuCI 包
+  - 若 `/etc/config/passwall2` 缺失或配置过薄，会优先使用 `/usr/share/passwall2/0_default_config` 恢复默认配置
+  - 若已安装 PassWall，会提示菜单可能重叠并给出直达路径
+  - 若初次显示为英文，刷新页面后中文语言包会自动生效
+
+- `nikki.sh`
+  - 安装或更新 Nikki
+  - 整体采用轻刷新模式，不重启 `uhttpd`
+  - 在 OpenWrt / opkg 环境下，会先检测 `/etc/nikki/ucode/include.uc` 等关键文件
+  - 若主包状态存在但文件缺失，会自动强制重装 `nikki` 主包
+  - 再调用 Nikki 官方 `install.sh` 完成初始化，并补装中文语言包
+  - 安装后会自动修正 `/usr/share/rpcd/ucode/luci.nikki` 执行权限并重启 `rpcd`
+  - 确保 `luci.nikki` RPC 对象正常注册
+  - 若初次显示为英文，刷新页面后中文语言包会自动生效
+
+### 卸载与菜单
+
+- `full-uninstall.sh`
+  - 卸载 PassWall / PassWall2 / Nikki / OpenClash
+  - 执行完整清理，重置安装环境
+  - 共享核心仍被其他插件依赖时会自动跳过并提示
+  - 卸载后采用轻刷新模式，不强制断开当前 LuCI 会话
+
+- `menu.sh`
+  - 菜单式管理入口
 
 ---
 
