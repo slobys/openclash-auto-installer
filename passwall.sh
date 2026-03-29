@@ -89,9 +89,8 @@ opkg install luci-app-passwall luci-i18n-passwall-zh-cn
 NEW_VER="$(opkg status luci-app-passwall 2>/dev/null | sed -n 's/^Version: //p' | head -n1 || true)"
 log "安装后版本: ${NEW_VER:-unknown}"
 
-log "刷新 LuCI / rpc 缓存"
+log "轻刷新 LuCI 缓存"
 rm -rf /tmp/luci-* /tmp/.luci* /tmp/etc/config/ucitrack /var/run/luci-indexcache 2>/dev/null || true
-/etc/init.d/rpcd restart >/dev/null 2>&1 || true
 
 if [ -n "$NEW_VER" ] && [ "$OLD_VER" != "$NEW_VER" ]; then
     log "版本发生变化，尝试重启相关服务"
@@ -101,7 +100,7 @@ else
     log "版本未变化，跳过防火墙/服务重启"
 fi
 
-/etc/init.d/uhttpd restart >/dev/null 2>&1 || true
+warn "请刷新页面或切换一次左侧菜单，插件入口会自动更新；如仍未生效，再重新登录 LuCI"
 
 if opkg status luci-app-passwall2 >/dev/null 2>&1; then
     warn "检测到已安装 PassWall2；在部分主题下，PassWall 与 PassWall2 菜单可能重叠或显示不明显"

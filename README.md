@@ -37,11 +37,11 @@
 
 - `install.sh`：安装或更新 OpenClash，并尝试安装匹配的 Meta/Smart 内核；完成后输出实际插件版本与内核版本
 - `update.sh`：快速更新 OpenClash 入口
-- `full-uninstall.sh`：卸载 PassWall / PassWall2 / Nikki / OpenClash（执行完整清理，重置安装环境，并在共享核心仍被其他插件依赖时自动跳过并提示）
+- `full-uninstall.sh`：卸载 PassWall / PassWall2 / Nikki / OpenClash（执行完整清理，重置安装环境，并在共享核心仍被其他插件依赖时自动跳过并提示）；卸载后采用轻刷新模式，不强制断开当前 LuCI 会话
 - `repair.sh`：执行 OpenClash 基础修复流程
-- `passwall.sh`：安装或更新 PassWall；若检测到已安装 PassWall2，会提示菜单可能重叠并给出直达路径；若初次显示为英文，刷新页面后中文语言包会自动生效
-- `passwall2.sh`：安装或更新 PassWall2；若检测到缺少 `/etc/config/passwall2`，会自动补默认配置或生成最小配置，避免 LuCI 入口不显示；若检测到已安装 PassWall，会提示菜单可能重叠并给出直达路径；若初次显示为英文，刷新页面后中文语言包会自动生效
-- `nikki.sh`：安装或更新 Nikki；若初次显示为英文，刷新页面后中文语言包会自动生效
+- `passwall.sh`：安装或更新 PassWall；采用轻刷新模式，不强制断开当前 LuCI 会话；若检测到已安装 PassWall2，会提示菜单可能重叠并给出直达路径；若初次显示为英文，刷新页面后中文语言包会自动生效
+- `passwall2.sh`：安装或更新 PassWall2；采用轻刷新模式，不强制断开当前 LuCI 会话；若检测到缺少 `/etc/config/passwall2`，会自动补默认配置或生成最小配置，避免 LuCI 入口不显示；若检测到已安装 PassWall，会提示菜单可能重叠并给出直达路径；若初次显示为英文，刷新页面后中文语言包会自动生效
+- `nikki.sh`：安装或更新 Nikki；采用轻刷新模式，不强制断开当前 LuCI 会话；若初次显示为英文，刷新页面后中文语言包会自动生效
 - `menu.sh`：菜单式管理入口
 
 ---
