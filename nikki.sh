@@ -3,6 +3,7 @@ set -eu
 
 LOCKDIR="/tmp/nikki-install.lock"
 FEED_SCRIPT_URL="https://github.com/nikkinikki-org/OpenWrt-nikki/raw/refs/heads/main/feed.sh"
+INSTALL_SCRIPT_URL="https://github.com/nikkinikki-org/OpenWrt-nikki/raw/refs/heads/main/install.sh"
 
 cleanup() {
     rmdir "$LOCKDIR" 2>/dev/null || true
@@ -56,8 +57,9 @@ case "$PKG_MGR" in
     opkg)
         OLD_VER="$(opkg status luci-app-nikki 2>/dev/null | sed -n 's/^Version: //p' | head -n1 || true)"
         log "当前已安装版本: ${OLD_VER:-not installed}"
-        log "安装 / 更新 Nikki"
-        opkg install nikki luci-app-nikki luci-i18n-nikki-zh-cn
+        log "按官方方式安装 / 更新 Nikki"
+        wget -qO- "$INSTALL_SCRIPT_URL" | sh || die "执行 Nikki 官方 install.sh 失败"
+        opkg install luci-i18n-nikki-zh-cn || warn "安装 Nikki 中文语言包失败"
         NEW_VER="$(opkg status luci-app-nikki 2>/dev/null | sed -n 's/^Version: //p' | head -n1 || true)"
         ;;
     apk)
@@ -72,6 +74,10 @@ case "$PKG_MGR" in
 esac
 
 log "安装后版本: ${NEW_VER:-unknown}"
+
+if [ ! -d /etc/nikki ]; then
+    warn "检测到 /etc/nikki 仍不存在，Nikki 运行时目录可能未正确初始化"
+fi
 
 if ! uci -q show nikki >/dev/null 2>&1; then
     warn "/etc/config/nikki 不存在或不是有效 UCI 配置，自动重建最小配置以确保 LuCI 入口可用"
