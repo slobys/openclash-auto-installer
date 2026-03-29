@@ -54,7 +54,7 @@
 - `passwall.sh`
   - 安装或更新 PassWall
   - 自动安装 LuCI 包与中文语言包
-  - 采用轻刷新模式，不强制断开当前 LuCI 会话
+  - 采用轻刷新模式；安装后会清理 LuCI 菜单缓存并重启 `rpcd`，帮助菜单及时显示
   - 若 `luci-app-passwall` 状态存在但 `/usr/share/passwall/utils.sh` 等关键文件缺失，会自动强制重装 LuCI 包
   - 若 `/etc/config/passwall` 缺失或配置过薄，会优先使用 `/usr/share/passwall/0_default_config` 恢复默认配置
   - 若已安装 PassWall2，会提示菜单可能重叠并给出直达路径
@@ -63,7 +63,7 @@
 - `passwall2.sh`
   - 安装或更新 PassWall2
   - 自动安装 LuCI 包与中文语言包
-  - 采用轻刷新模式，不强制断开当前 LuCI 会话
+  - 采用轻刷新模式；安装后会清理 LuCI 菜单缓存并重启 `rpcd`，帮助菜单及时显示
   - 若 `luci-app-passwall2` 状态存在但 `/usr/share/passwall2/utils.sh` 等关键文件缺失，会自动强制重装 LuCI 包
   - 若 `/etc/config/passwall2` 缺失或配置过薄，会优先使用 `/usr/share/passwall2/0_default_config` 恢复默认配置
   - 若已安装 PassWall，会提示菜单可能重叠并给出直达路径

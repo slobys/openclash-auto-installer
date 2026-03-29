@@ -116,6 +116,9 @@ fi
 
 log "轻刷新 LuCI 缓存"
 rm -rf /tmp/luci-* /tmp/.luci* /tmp/etc/config/ucitrack /var/run/luci-indexcache 2>/dev/null || true
+if [ -x /etc/init.d/rpcd ]; then
+    /etc/init.d/rpcd restart >/dev/null 2>&1 || warn "rpcd 重启失败"
+fi
 
 if [ -n "$NEW_VER" ] && [ "$OLD_VER" != "$NEW_VER" ]; then
     log "版本发生变化，尝试重启相关服务"
