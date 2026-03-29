@@ -97,6 +97,11 @@ config nikki 'config'
 EOF
 fi
 
+if [ -f /usr/share/rpcd/ucode/luci.nikki ]; then
+    chmod 755 /usr/share/rpcd/ucode/luci.nikki || warn "修正 luci.nikki 权限失败"
+    /etc/init.d/rpcd restart >/dev/null 2>&1 || warn "rpcd 重启失败"
+fi
+
 log "轻刷新 LuCI 缓存"
 rm -rf /tmp/luci-* /tmp/.luci* /tmp/etc/config/ucitrack /var/run/luci-indexcache 2>/dev/null || true
 
