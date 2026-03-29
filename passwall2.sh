@@ -84,7 +84,7 @@ OLD_VER="$(opkg status luci-app-passwall2 2>/dev/null | sed -n 's/^Version: //p'
 log "当前已安装版本: ${OLD_VER:-not installed}"
 
 log "安装 / 更新 PassWall2"
-opkg install luci-app-passwall2 luci-i18n-passwall2-zh-cn
+opkg install passwall2 luci-app-passwall2 luci-i18n-passwall2-zh-cn
 
 NEW_VER="$(opkg status luci-app-passwall2 2>/dev/null | sed -n 's/^Version: //p' | head -n1 || true)"
 log "安装后版本: ${NEW_VER:-unknown}"
