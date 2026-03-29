@@ -89,13 +89,18 @@ opkg install luci-app-passwall2 luci-i18n-passwall2-zh-cn
 NEW_VER="$(opkg status luci-app-passwall2 2>/dev/null | sed -n 's/^Version: //p' | head -n1 || true)"
 log "安装后版本: ${NEW_VER:-unknown}"
 
+log "刷新 LuCI / rpc 缓存"
+rm -rf /tmp/luci-* /tmp/.luci* /tmp/etc/config/ucitrack /var/run/luci-indexcache 2>/dev/null || true
+/etc/init.d/rpcd restart >/dev/null 2>&1 || true
+
 if [ -n "$NEW_VER" ] && [ "$OLD_VER" != "$NEW_VER" ]; then
     log "版本发生变化，尝试重启相关服务"
     /etc/init.d/firewall restart >/dev/null 2>&1 || true
     /etc/init.d/passwall2 restart >/dev/null 2>&1 || true
-    /etc/init.d/uhttpd restart >/dev/null 2>&1 || true
 else
-    log "版本未变化，跳过服务重启"
+    log "版本未变化，跳过防火墙/服务重启"
 fi
+
+/etc/init.d/uhttpd restart >/dev/null 2>&1 || true
 
 log "PassWall2 处理完成"
