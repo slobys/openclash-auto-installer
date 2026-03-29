@@ -103,4 +103,9 @@ fi
 
 /etc/init.d/uhttpd restart >/dev/null 2>&1 || true
 
+if opkg status luci-app-passwall2 >/dev/null 2>&1; then
+    warn "检测到已安装 PassWall2；在部分主题下，PassWall 与 PassWall2 菜单可能重叠或显示不明显"
+    warn "如菜单未明显显示，可直接访问: /cgi-bin/luci/admin/services/passwall"
+fi
+
 log "PassWall 处理完成"

@@ -39,8 +39,8 @@
 - `update.sh`：快速更新 OpenClash 入口
 - `full-uninstall.sh`：卸载 PassWall / PassWall2 / Nikki / OpenClash（执行完整清理，重置安装环境，并在共享核心仍被其他插件依赖时自动跳过并提示）
 - `repair.sh`：执行 OpenClash 基础修复流程
-- `passwall.sh`：安装或更新 PassWall
-- `passwall2.sh`：安装或更新 PassWall2
+- `passwall.sh`：安装或更新 PassWall；若检测到已安装 PassWall2，会提示菜单可能重叠并给出直达路径
+- `passwall2.sh`：安装或更新 PassWall2；若检测到已安装 PassWall，会提示菜单可能重叠并给出直达路径
 - `nikki.sh`：安装或更新 Nikki
 - `menu.sh`：菜单式管理入口
 
