@@ -447,9 +447,12 @@ restart_related_services() {
         /etc/init.d/openclash restart >/dev/null 2>&1 || warn "OpenClash 服务重启失败，可稍后手动重启"
     fi
 
-    if [ -x /etc/init.d/uhttpd ]; then
-        log "尝试重启 uhttpd"
-        /etc/init.d/uhttpd restart >/dev/null 2>&1 || warn "uhttpd 重启失败，可稍后手动重启"
+    log "清理 LuCI 菜单缓存"
+    rm -rf /tmp/luci-* /tmp/.luci* /tmp/etc/config/ucitrack /var/run/luci-indexcache 2>/dev/null || true
+
+    if [ -x /etc/init.d/rpcd ]; then
+        log "尝试重启 rpcd"
+        /etc/init.d/rpcd restart >/dev/null 2>&1 || warn "rpcd 重启失败，可稍后手动重启"
     fi
 }
 
