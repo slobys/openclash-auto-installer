@@ -88,6 +88,16 @@ remove_paths() {
 }
 
 refresh_web() {
+    remove_paths \
+        /tmp/luci-* \
+        /tmp/.luci* \
+        /tmp/etc/config/ucitrack \
+        /var/run/luci-indexcache
+
+    if [ -x /etc/init.d/rpcd ]; then
+        /etc/init.d/rpcd restart >/dev/null 2>&1 || warn "rpcd 重启失败"
+    fi
+
     if [ -x /etc/init.d/uhttpd ]; then
         /etc/init.d/uhttpd restart >/dev/null 2>&1 || warn "uhttpd 重启失败"
     fi
