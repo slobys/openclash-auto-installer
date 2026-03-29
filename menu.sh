@@ -30,7 +30,10 @@ usage() {
   sh menu.sh --passwall
   sh menu.sh --passwall2
   sh menu.sh --nikki
-  sh menu.sh --uninstall-openclash
+  sh menu.sh --full-uninstall-passwall
+  sh menu.sh --full-uninstall-passwall2
+  sh menu.sh --full-uninstall-nikki
+  sh menu.sh --full-uninstall-openclash
 
 说明:
   不带参数时进入交互菜单
@@ -65,8 +68,17 @@ parse_args() {
             --nikki)
                 NONINTERACTIVE_ACTION="nikki"
                 ;;
-            --uninstall-openclash)
-                NONINTERACTIVE_ACTION="uninstall-openclash"
+            --full-uninstall-passwall)
+                NONINTERACTIVE_ACTION="full-uninstall-passwall"
+                ;;
+            --full-uninstall-passwall2)
+                NONINTERACTIVE_ACTION="full-uninstall-passwall2"
+                ;;
+            --full-uninstall-nikki)
+                NONINTERACTIVE_ACTION="full-uninstall-nikki"
+                ;;
+            --full-uninstall-openclash)
+                NONINTERACTIVE_ACTION="full-uninstall-openclash"
                 ;;
             -h|--help)
                 usage
@@ -102,7 +114,10 @@ show_menu() {
 6. 安装 / 更新 PassWall
 7. 安装 / 更新 PassWall2
 8. 安装 / 更新 Nikki
-9. 卸载 OpenClash
+9. 完整卸载 PassWall
+10. 完整卸载 PassWall2
+11. 完整卸载 Nikki
+12. 完整卸载 OpenClash
 0. 退出
 ==================================================
 EOF_MENU
@@ -143,8 +158,17 @@ run_action() {
         8|nikki)
             download_and_run nikki.sh
             ;;
-        9|uninstall-openclash)
-            download_and_run uninstall.sh
+        9|full-uninstall-passwall)
+            download_and_run full-uninstall.sh passwall
+            ;;
+        10|full-uninstall-passwall2)
+            download_and_run full-uninstall.sh passwall2
+            ;;
+        11|full-uninstall-nikki)
+            download_and_run full-uninstall.sh nikki
+            ;;
+        12|full-uninstall-openclash)
+            download_and_run full-uninstall.sh openclash
             ;;
         0)
             log "已退出"
@@ -167,7 +191,7 @@ main() {
 
     while true; do
         show_menu
-        printf '请输入选项 [0-9]: ' >/dev/tty
+        printf '请输入选项 [0-12]: ' >/dev/tty
         read_from_tty choice
         run_action "$choice"
         printf '\n按回车键返回菜单...' >/dev/tty

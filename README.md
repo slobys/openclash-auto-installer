@@ -18,7 +18,10 @@
 ## 功能
 
 - 安装或更新 OpenClash
-- 卸载 OpenClash
+- 完整卸载 PassWall
+- 完整卸载 PassWall2
+- 完整卸载 Nikki
+- 完整卸载 OpenClash
 - 修复 OpenClash 基础运行环境
 - 菜单式管理入口
 - 安装或更新 PassWall
@@ -34,7 +37,7 @@
 
 - `install.sh`：安装或更新 OpenClash，并尝试安装匹配的 Meta/Smart 内核；完成后输出实际插件版本与内核版本
 - `update.sh`：快速更新 OpenClash 入口
-- `uninstall.sh`：卸载 OpenClash 插件与 Meta 内核
+- `full-uninstall.sh`：完整卸载 PassWall / PassWall2 / Nikki / OpenClash，重置安装环境
 - `repair.sh`：执行 OpenClash 基础修复流程
 - `passwall.sh`：安装或更新 PassWall
 - `passwall2.sh`：安装或更新 PassWall2
@@ -104,7 +107,10 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-inst
 --passwall                 安装 / 更新 PassWall
 --passwall2                安装 / 更新 PassWall2
 --nikki                    安装 / 更新 Nikki
---uninstall-openclash      卸载 OpenClash
+--full-uninstall-passwall  完整卸载 PassWall
+--full-uninstall-passwall2 完整卸载 PassWall2
+--full-uninstall-nikki     完整卸载 Nikki
+--full-uninstall-openclash 完整卸载 OpenClash
 -h, --help                 显示帮助
 ```
 
