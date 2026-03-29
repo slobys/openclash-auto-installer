@@ -117,6 +117,10 @@ refresh_web() {
         /tmp/etc/config/ucitrack \
         /var/run/luci-indexcache
 
+    if [ -x /etc/init.d/rpcd ]; then
+        /etc/init.d/rpcd restart >/dev/null 2>&1 || warn "rpcd 重启失败"
+    fi
+
     warn "请刷新页面或切换一次左侧菜单，插件入口会自动更新；如仍未生效，再重新登录 LuCI"
 }
 

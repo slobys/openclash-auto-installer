@@ -84,7 +84,8 @@
   - 卸载 PassWall / PassWall2 / Nikki / OpenClash
   - 执行完整清理，重置安装环境
   - 共享核心仍被其他插件依赖时会自动跳过并提示
-  - 卸载后采用轻刷新模式，不强制断开当前 LuCI 会话
+  - 卸载后会自动清理 LuCI 菜单缓存并重启 `rpcd`
+  - 不重启 `uhttpd`，尽量避免中断当前 LuCI 会话
 
 - `menu.sh`
   - 菜单式管理入口
