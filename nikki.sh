@@ -54,8 +54,6 @@ wget -qO- "$FEED_SCRIPT_URL" | sh || die "执行 Nikki feed.sh 失败"
 
 case "$PKG_MGR" in
     opkg)
-        log "刷新软件源"
-        opkg update
         OLD_VER="$(opkg status luci-app-nikki 2>/dev/null | sed -n 's/^Version: //p' | head -n1 || true)"
         log "当前已安装版本: ${OLD_VER:-not installed}"
         log "安装 / 更新 Nikki"
@@ -74,6 +72,20 @@ case "$PKG_MGR" in
 esac
 
 log "安装后版本: ${NEW_VER:-unknown}"
+
+if [ ! -f /etc/config/nikki ]; then
+    DEFAULT_NIKKI_CONFIG="$(find /usr/share /etc /usr/lib -iname '*nikki*' 2>/dev/null | grep -Ei 'default|config|example|sample' | head -n1 || true)"
+    if [ -n "$DEFAULT_NIKKI_CONFIG" ] && [ -f "$DEFAULT_NIKKI_CONFIG" ]; then
+        log "检测到缺少 /etc/config/nikki，使用默认配置补齐: $DEFAULT_NIKKI_CONFIG"
+        cp -f "$DEFAULT_NIKKI_CONFIG" /etc/config/nikki
+    else
+        warn "未发现默认配置文件，自动生成最小 /etc/config/nikki 以确保 LuCI 入口可用"
+        cat >/etc/config/nikki <<'EOF'
+config nikki 'config'
+	option enabled '0'
+EOF
+    fi
+fi
 
 log "轻刷新 LuCI 缓存"
 rm -rf /tmp/luci-* /tmp/.luci* /tmp/etc/config/ucitrack /var/run/luci-indexcache 2>/dev/null || true
