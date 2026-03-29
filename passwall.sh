@@ -84,16 +84,19 @@ OLD_VER="$(opkg status luci-app-passwall 2>/dev/null | sed -n 's/^Version: //p' 
 log "当前已安装版本: ${OLD_VER:-not installed}"
 
 log "安装 / 更新 PassWall"
-opkg install passwall luci-app-passwall luci-i18n-passwall-zh-cn
+opkg install luci-app-passwall luci-i18n-passwall-zh-cn
 
 NEW_VER="$(opkg status luci-app-passwall 2>/dev/null | sed -n 's/^Version: //p' | head -n1 || true)"
 log "安装后版本: ${NEW_VER:-unknown}"
 
-if [ ! -f /etc/config/passwall ]; then
-    if [ -f /usr/share/passwall/0_default_config ]; then
-        log "检测到缺少 /etc/config/passwall，使用默认配置补齐"
-        cp -f /usr/share/passwall/0_default_config /etc/config/passwall
-    else
+PASSWALL_DEFAULT_CONFIG="/usr/share/passwall/0_default_config"
+if [ -f "$PASSWALL_DEFAULT_CONFIG" ]; then
+    if [ ! -f /etc/config/passwall ] || ! grep -q "config global" /etc/config/passwall 2>/dev/null || [ "$(grep -c '^config ' /etc/config/passwall 2>/dev/null || true)" -lt 2 ]; then
+        log "检测到 /etc/config/passwall 缺失或配置过薄，使用默认配置恢复"
+        cp -f "$PASSWALL_DEFAULT_CONFIG" /etc/config/passwall
+    fi
+else
+    if [ ! -f /etc/config/passwall ]; then
         warn "未发现默认配置文件，自动生成最小 /etc/config/passwall 以确保 LuCI 入口可用"
         cat >/etc/config/passwall <<'EOF'
 config global
