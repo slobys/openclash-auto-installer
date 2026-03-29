@@ -114,10 +114,10 @@ show_menu() {
 6. 安装 / 更新 PassWall
 7. 安装 / 更新 PassWall2
 8. 安装 / 更新 Nikki
-9. 完整卸载 PassWall
-10. 完整卸载 PassWall2
-11. 完整卸载 Nikki
-12. 完整卸载 OpenClash
+9. 卸载 PassWall
+10. 卸载 PassWall2
+11. 卸载 Nikki
+12. 卸载 OpenClash
 0. 退出
 ==================================================
 EOF_MENU
