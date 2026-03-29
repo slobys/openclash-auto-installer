@@ -89,6 +89,19 @@ opkg install luci-app-passwall luci-i18n-passwall-zh-cn
 NEW_VER="$(opkg status luci-app-passwall 2>/dev/null | sed -n 's/^Version: //p' | head -n1 || true)"
 log "安装后版本: ${NEW_VER:-unknown}"
 
+if [ ! -f /etc/config/passwall ]; then
+    if [ -f /usr/share/passwall/0_default_config ]; then
+        log "检测到缺少 /etc/config/passwall，使用默认配置补齐"
+        cp -f /usr/share/passwall/0_default_config /etc/config/passwall
+    else
+        warn "未发现默认配置文件，自动生成最小 /etc/config/passwall 以确保 LuCI 入口可用"
+        cat >/etc/config/passwall <<'EOF'
+config global
+	option enabled '0'
+EOF
+    fi
+fi
+
 log "轻刷新 LuCI 缓存"
 rm -rf /tmp/luci-* /tmp/.luci* /tmp/etc/config/ucitrack /var/run/luci-indexcache 2>/dev/null || true
 
