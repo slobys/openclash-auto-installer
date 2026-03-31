@@ -248,24 +248,7 @@ full_uninstall_openclash() {
         luci-app-openclash \
         mihomo \
         clash \
-        clash-meta \
-        sing-box \
-        hysteria \
-        tuic-client \
-        naiveproxy \
-        shadowsocks-libev-ss-local \
-        shadowsocks-libev-ss-redir \
-        shadowsocks-libev-ss-server \
-        shadowsocks-rust-sslocal \
-        shadowsocks-rust-ssserver \
-        shadowsocksr-libev-ssr-local \
-        shadowsocksr-libev-ssr-redir \
-        shadowsocksr-libev-ssr-server \
-        xray-core \
-        v2ray-plugin \
-        xray-plugin \
-        v2ray-geoip \
-        v2ray-geosite
+        clash-meta
 
     remove_paths \
         /etc/config/openclash \
