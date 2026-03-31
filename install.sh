@@ -14,6 +14,7 @@ RESTART_SERVICES="1"
 FORCE_OPKG_UPDATE="1"
 CORE_CHANNEL="auto"
 OPKG_RETRY_SECONDS="10"
+CHECK_ONLY="0"
 
 cleanup() {
     rm -rf "$TMP_ROOT"
@@ -45,6 +46,7 @@ usage() {
 选项:
   --plugin-only       只安装/更新 OpenClash 插件，不安装 Meta 内核
   --core-only         只下载并安装 Meta 内核，不安装/更新插件
+  --check-update      只检查是否有新版本，不执行安装/更新
   --meta-core         强制使用普通 Meta 内核
   --smart-core        强制使用 Smart Meta 内核
   --skip-restart      完成后不尝试重启 openclash / uhttpd
@@ -67,6 +69,9 @@ parse_args() {
                 ;;
             --smart-core)
                 CORE_CHANNEL="smart"
+                ;;
+            --check-update)
+                CHECK_ONLY="1"
                 ;;
             --skip-restart)
                 RESTART_SERVICES="0"
@@ -301,6 +306,45 @@ get_latest_tag() {
     jsonfilter -i "$VERSION_JSON" -e '@.tag_name' 2>/dev/null || true
 }
 
+normalize_version() {
+    VER="$1"
+    VER="${VER#v}"
+    VER="${VER%%-*}"
+    printf '%s' "$VER"
+}
+
+check_update_only() {
+    PKG_MGR="$1"
+    OLD_VER="$(get_installed_openclash_version "$PKG_MGR" || true)"
+
+    need_cmd jsonfilter
+    fetch_openclash_release_meta
+    LATEST_TAG="$(get_latest_tag)"
+
+    log "当前已安装版本: ${OLD_VER:-not installed}"
+    log "OpenClash 最新发布标签: ${LATEST_TAG:-unknown}"
+
+    if [ -z "${LATEST_TAG:-}" ]; then
+        die "获取最新版本失败"
+    fi
+
+    if [ -z "${OLD_VER:-}" ]; then
+        log "当前未安装 OpenClash，可直接执行安装"
+        return 0
+    fi
+
+    OLD_NORM="$(normalize_version "$OLD_VER")"
+    LATEST_NORM="$(normalize_version "$LATEST_TAG")"
+
+    if [ "$OLD_NORM" = "$LATEST_NORM" ]; then
+        log "当前已经是最新版本，无需更新"
+    else
+        log "检测到新版本可更新"
+        log "如需更新，可执行: sh install.sh --skip-opkg-update"
+        log "如需仅更新插件，可执行: sh install.sh --plugin-only --skip-opkg-update"
+    fi
+}
+
 fetch_openclash_package_url() {
     PKG_MGR="$1"
     VERSION_JSON="$TMP_ROOT/openclash_version.json"
@@ -524,6 +568,11 @@ main() {
     log "DISTRIB_ARCH: ${DIST_ARCH:-unknown}"
     [ -n "$DIST_RELEASE" ] && log "DISTRIB_RELEASE: $DIST_RELEASE"
     log "当前已安装版本: ${OLD_VER:-not installed}"
+
+    if [ "$CHECK_ONLY" = "1" ]; then
+        check_update_only "$PKG_MGR"
+        exit 0
+    fi
 
     case "$MODE" in
         full|plugin-only)

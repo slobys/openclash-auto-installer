@@ -22,7 +22,14 @@ usage() {
     cat <<'EOF_USAGE'
 用法:
   sh menu.sh
+  sh menu.sh --check-all-updates
+  sh menu.sh --check-updates
+  sh menu.sh --check-update-openclash
+  sh menu.sh --check-update-passwall
+  sh menu.sh --check-update-passwall2
+  sh menu.sh --check-update-nikki
   sh menu.sh --openclash
+  sh menu.sh --openclash-check-update
   sh menu.sh --openclash-plugin-only
   sh menu.sh --openclash-core-only
   sh menu.sh --openclash-meta-core
@@ -46,6 +53,27 @@ parse_args() {
         case "$1" in
             --openclash)
                 NONINTERACTIVE_ACTION="openclash"
+                ;;
+            --check-all-updates)
+                NONINTERACTIVE_ACTION="check-all-updates"
+                ;;
+            --check-updates)
+                NONINTERACTIVE_ACTION="check-updates"
+                ;;
+            --check-update-openclash)
+                NONINTERACTIVE_ACTION="check-update-openclash"
+                ;;
+            --check-update-passwall)
+                NONINTERACTIVE_ACTION="check-update-passwall"
+                ;;
+            --check-update-passwall2)
+                NONINTERACTIVE_ACTION="check-update-passwall2"
+                ;;
+            --check-update-nikki)
+                NONINTERACTIVE_ACTION="check-update-nikki"
+                ;;
+            --openclash-check-update)
+                NONINTERACTIVE_ACTION="openclash-check-update"
                 ;;
             --openclash-plugin-only)
                 NONINTERACTIVE_ACTION="openclash-plugin-only"
@@ -106,21 +134,36 @@ download_and_run() {
 show_menu() {
     cat <<'EOF_MENU'
 ================ 代理插件管理菜单 ================
-1. 安装 / 更新 OpenClash（自动识别 Meta / Smart）
-2. 只更新 OpenClash 插件
-3. 只安装 OpenClash 核心（自动识别 Meta / Smart）
-4. 只安装 OpenClash 普通 Meta 内核
-5. 只安装 OpenClash Smart Meta 内核
-6. 安装 / 更新 PassWall
-7. 安装 / 更新 PassWall2
-8. 安装 / 更新 Nikki
-9. 卸载 PassWall
-10. 卸载 PassWall2
-11. 卸载 Nikki
-12. 卸载 OpenClash
+1. 检查插件更新
+2. 安装 / 更新 OpenClash（自动识别 Meta / Smart）
+3. 检查 OpenClash 是否有新版本
+4. 只更新 OpenClash 插件
+5. 只安装 OpenClash 核心（自动识别 Meta / Smart）
+6. 只安装 OpenClash 普通 Meta 内核
+7. 只安装 OpenClash Smart Meta 内核
+8. 安装 / 更新 PassWall
+9. 安装 / 更新 PassWall2
+10. 安装 / 更新 Nikki
+11. 卸载 PassWall
+12. 卸载 PassWall2
+13. 卸载 Nikki
+14. 卸载 OpenClash
 0. 退出
 ==================================================
 EOF_MENU
+}
+
+show_check_update_menu() {
+    cat <<'EOF_CHECK_MENU'
+================ 检查插件更新 ================
+1. 检查所有插件
+2. 检查 OpenClash
+3. 检查 PassWall
+4. 检查 PassWall2
+5. 检查 Nikki
+0. 返回上一级
+==============================================
+EOF_CHECK_MENU
 }
 
 read_from_tty() {
@@ -134,40 +177,61 @@ read_from_tty() {
 run_action() {
     action="$1"
     case "$action" in
-        1|openclash)
+        1|check-updates)
+            run_check_update_menu
+            ;;
+        check-all-updates)
+            download_and_run check-updates.sh
+            ;;
+        check-update-openclash)
+            download_and_run check-updates.sh --openclash
+            ;;
+        check-update-passwall)
+            download_and_run check-updates.sh --passwall
+            ;;
+        check-update-passwall2)
+            download_and_run check-updates.sh --passwall2
+            ;;
+        check-update-nikki)
+            download_and_run check-updates.sh --nikki
+            ;;
+        2|openclash)
             download_and_run install.sh
             ;;
-        2|openclash-plugin-only)
+        3|openclash-check-update)
+            download_and_run install.sh --check-update --skip-opkg-update
+            ;;
+        4|openclash-plugin-only)
             download_and_run install.sh --plugin-only
             ;;
-        3|openclash-core-only)
+        5|openclash-core-only)
             download_and_run install.sh --core-only
             ;;
-        4|openclash-meta-core)
+        6|openclash-meta-core)
             download_and_run install.sh --core-only --meta-core --skip-opkg-update
             ;;
-        5|openclash-smart-core)
+        7|openclash-smart-core)
             download_and_run install.sh --core-only --smart-core --skip-opkg-update
             ;;
-        6|passwall)
+        8|passwall)
             download_and_run passwall.sh
             ;;
-        7|passwall2)
+        9|passwall2)
             download_and_run passwall2.sh
             ;;
-        8|nikki)
+        10|nikki)
             download_and_run nikki.sh
             ;;
-        9|full-uninstall-passwall)
+        11|full-uninstall-passwall)
             download_and_run full-uninstall.sh passwall
             ;;
-        10|full-uninstall-passwall2)
+        12|full-uninstall-passwall2)
             download_and_run full-uninstall.sh passwall2
             ;;
-        11|full-uninstall-nikki)
+        13|full-uninstall-nikki)
             download_and_run full-uninstall.sh nikki
             ;;
-        12|full-uninstall-openclash)
+        14|full-uninstall-openclash)
             download_and_run full-uninstall.sh openclash
             ;;
         0)
@@ -178,6 +242,40 @@ run_action() {
             printf '%s\n' '[WARN] 无效选项，请重新输入'
             ;;
     esac
+}
+
+run_check_update_menu() {
+    while true; do
+        show_check_update_menu
+        printf '请输入选项 [0-5]: ' >/dev/tty
+        read_from_tty subchoice
+        case "$subchoice" in
+            1)
+                download_and_run check-updates.sh
+                ;;
+            2)
+                download_and_run check-updates.sh --openclash
+                ;;
+            3)
+                download_and_run check-updates.sh --passwall
+                ;;
+            4)
+                download_and_run check-updates.sh --passwall2
+                ;;
+            5)
+                download_and_run check-updates.sh --nikki
+                ;;
+            0)
+                return 0
+                ;;
+            *)
+                printf '%s\n' '[WARN] 无效选项，请重新输入'
+                ;;
+        esac
+        printf '\n按回车键返回检查插件更新菜单...' >/dev/tty
+        read_from_tty _subdummy
+        printf '\n'
+    done
 }
 
 main() {
@@ -191,7 +289,7 @@ main() {
 
     while true; do
         show_menu
-        printf '请输入选项 [0-12]: ' >/dev/tty
+        printf '请输入选项 [0-14]: ' >/dev/tty
         read_from_tty choice
         run_action "$choice"
         printf '\n按回车键返回菜单...' >/dev/tty

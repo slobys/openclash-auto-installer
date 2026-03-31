@@ -19,5 +19,10 @@ log "下载最新安装/更新脚本"
 curl -fsSL --retry 3 "$SCRIPT_URL" -o "$TMP_FILE" || die "下载远程脚本失败"
 chmod +x "$TMP_FILE"
 
-log "开始执行更新"
-sh "$TMP_FILE" --skip-opkg-update "$@"
+if [ "${1:-}" = "--check" ] || [ "${1:-}" = "--check-update" ]; then
+    log "开始检查是否有新版本"
+    sh "$TMP_FILE" --check-update --skip-opkg-update
+else
+    log "开始执行更新"
+    sh "$TMP_FILE" --skip-opkg-update "$@"
+fi

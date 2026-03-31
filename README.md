@@ -46,6 +46,7 @@
 
 - `update.sh`
   - 快速更新 OpenClash 入口
+  - 支持仅检查是否有新版本，不自动更新
 
 - `repair.sh`
   - 执行 OpenClash 基础修复流程
@@ -92,6 +93,11 @@
 - `menu.sh`
   - 菜单式管理入口
 
+- `check-updates.sh`
+  - 独立的更新检测脚本
+  - 检查 OpenClash / PassWall / PassWall2 / Nikki 是否有新版本
+  - 只检测，不自动更新
+
 ---
 
 ## 使用命令
@@ -100,6 +106,33 @@
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/main/install.sh | sh
+```
+
+### 仅检查 OpenClash 是否有新版本
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/main/install.sh | sh -s -- --check-update
+```
+
+或：
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/main/update.sh | sh -s -- --check
+```
+
+### 检查所有插件是否有新版本
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/main/check-updates.sh | sh
+```
+
+也支持单独检查：
+
+```sh
+sh check-updates.sh --openclash
+sh check-updates.sh --passwall
+sh check-updates.sh --passwall2
+sh check-updates.sh --nikki
 ```
 
 ### PassWall 安装 / 更新
@@ -135,6 +168,7 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-inst
 ```text
 --plugin-only       只安装/更新 OpenClash 插件，不安装 Meta 内核
 --core-only         只下载并安装 Meta 内核，不安装/更新插件
+--check-update      只检查是否有新版本，不执行安装/更新
 --meta-core         强制使用普通 Meta 内核
 --smart-core        强制使用 Smart Meta 内核
 --skip-restart      完成后不尝试重启 openclash / uhttpd
@@ -147,7 +181,14 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-inst
 ## menu.sh 参数
 
 ```text
+--check-all-updates        检查所有插件是否有新版本
+--check-updates            打开“检查插件更新”二级菜单
+--check-update-openclash   仅检查 OpenClash
+--check-update-passwall    仅检查 PassWall
+--check-update-passwall2   仅检查 PassWall2
+--check-update-nikki       仅检查 Nikki
 --openclash                安装 / 更新 OpenClash
+--openclash-check-update   检查 OpenClash 是否有新版本
 --openclash-plugin-only    只更新 OpenClash 插件
 --openclash-core-only      只安装 OpenClash 核心（自动识别 Meta / Smart）
 --openclash-meta-core      只安装 OpenClash 普通 Meta 内核

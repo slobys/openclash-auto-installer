@@ -1,5 +1,14 @@
 # Changelog
 
+## v1.1.1
+
+- 新增独立脚本 `check-updates.sh`，用于检测 OpenClash / PassWall / PassWall2 / Nikki 是否有新版本
+- `check-updates.sh` 仅做检测，不执行更新，便于继续使用原有更新方式
+- `install.sh` 新增 `--check-update`，可仅检测 OpenClash 是否有新版本，不自动执行更新
+- `update.sh` 新增 `--check` / `--check-update` 入口，便于快速检查更新
+- `menu.sh` 新增“检查所有插件是否有新版本”和“检查 OpenClash 是否有新版本”菜单项
+- README 补充更新检测用法说明
+
 ## v1.1.0
 
 - 新增 `passwall.sh`，支持安装 / 更新 PassWall
