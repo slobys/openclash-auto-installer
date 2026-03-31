@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.1.3
+
+- 修复 `full-uninstall.sh` 中卸载 OpenClash 时误删共享核心包（如 `xray-core`）的问题
+- 现在 `full_uninstall_openclash` 仅移除 OpenClash 特有包（`luci-app-openclash`、`mihomo`、`clash`、`clash-meta`），避免影响其他插件
+
 ## v1.1.2
 
 - 增强 OpenWrt 25.12+ 兼容性检测与提示
