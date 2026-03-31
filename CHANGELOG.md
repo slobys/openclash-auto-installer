@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.1.2
+
+- 增强 OpenWrt 25.12+ 兼容性检测与提示
+- `nikki.sh` 增加防火墙栈检测，若系统为 iptables（非 firewall4）则提前报错，避免 Nikki feed.sh 失败
+- `nikki.sh` 增加 apk 包管理器警告，提示 OpenWrt 25.12 下可能尚未完全适配
+- `passwall.sh` / `passwall2.sh` 增加 apk 包管理器检测，若为 apk 则报错（脚本尚未适配）
+- `install.sh` 增加 OpenWrt 25.12 版本检测与提示，帮助用户识别潜在兼容问题
+
 ## v1.1.1
 
 - 新增独立脚本 `check-updates.sh`，用于检测 OpenClash / PassWall / PassWall2 / Nikki 是否有新版本

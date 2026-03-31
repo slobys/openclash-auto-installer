@@ -28,6 +28,14 @@ need_cmd() {
     command -v "$1" >/dev/null 2>&1 || die "缺少命令: $1"
 }
 
+detect_firewall_stack() {
+    if command -v fw4 >/dev/null 2>&1 || [ -x /sbin/fw4 ] || [ -x /usr/sbin/fw4 ]; then
+        printf 'nft'
+    else
+        printf 'iptables'
+    fi
+}
+
 if ! mkdir "$LOCKDIR" 2>/dev/null; then
     die "已有另一个 Nikki 任务正在运行"
 fi
@@ -50,6 +58,14 @@ else
 fi
 
 log "检测到包管理器: $PKG_MGR"
+FIREWALL_STACK="$(detect_firewall_stack)"
+log "检测到防火墙栈: $FIREWALL_STACK"
+if [ "$FIREWALL_STACK" = "iptables" ]; then
+    die "Nikki 仅支持基于 firewall4（nftables）的 OpenWrt 构建。\n  当前系统防火墙栈为 iptables，请使用支持 firewall4 的 OpenWrt 固件。\n  如需继续，可尝试手动安装，但 Nikki 可能无法正常运行。"
+fi
+if [ "$PKG_MGR" = "apk" ]; then
+    warn "当前包管理器为 apk（OpenWrt 25.12+），Nikki 可能尚未完全适配。\n  如遇安装失败，请参考 Nikki 官方文档或使用 opkg 环境。"
+fi
 log "导入 Nikki feed"
 wget -qO- "$FEED_SCRIPT_URL" | sh || die "执行 Nikki feed.sh 失败"
 

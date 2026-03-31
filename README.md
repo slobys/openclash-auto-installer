@@ -220,6 +220,11 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-inst
 - 遇到 `opkg.lock` 时，脚本会提示并自动重试一次；如你刚刷新过软件源，也可使用 `--skip-opkg-update`
 - 部分精简固件的软件包名称或软件源配置可能和标准环境不同，必要时需自行微调
 - 卸载脚本默认不删除 `/etc/openclash` 配置目录，避免误删订阅和配置
+- **OpenWrt 25.12+**：系统已改用 `apk` 包管理器，本脚本集合已增加兼容性检测
+  - OpenClash 安装脚本已初步适配 `apk`，但依赖包名可能仍需调整
+  - PassWall / PassWall2 脚本暂未适配 `apk`，若检测到 `apk` 会报错退出
+  - Nikki 需要 `firewall4`（nftables）支持，若系统为 `iptables` 会提前报错
+  - 若你使用 OpenWrt 25.12+ 遇到问题，请参考项目 issue 或使用 25.11 及更早版本
 
 ---
 

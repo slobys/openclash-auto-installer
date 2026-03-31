@@ -32,6 +32,14 @@ if ! mkdir "$LOCKDIR" 2>/dev/null; then
     die "已有另一个 PassWall2 任务正在运行"
 fi
 
+if command -v opkg >/dev/null 2>&1; then
+    PKG_MGR="opkg"
+elif command -v apk >/dev/null 2>&1; then
+    die "当前环境包管理器为 apk（OpenWrt 25.12+），PassWall2 安装脚本尚未适配。\n  请使用 OpenWrt 25.11 或更早版本，或等待脚本更新。"
+else
+    die "未检测到 opkg 或 apk，当前系统暂不支持"
+fi
+
 need_cmd opkg
 need_cmd wget
 need_cmd sed

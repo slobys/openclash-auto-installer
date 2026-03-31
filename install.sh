@@ -567,6 +567,14 @@ main() {
     log "uname -m: ${RAW_ARCH:-unknown}"
     log "DISTRIB_ARCH: ${DIST_ARCH:-unknown}"
     [ -n "$DIST_RELEASE" ] && log "DISTRIB_RELEASE: $DIST_RELEASE"
+    if [ -n "$DIST_RELEASE" ] && printf '%s\n' "$DIST_RELEASE" | grep -q '^25\.12'; then
+        if [ "$PKG_MGR" = "apk" ]; then
+            warn "检测到 OpenWrt 25.12+ 与 apk 包管理器，OpenClash 兼容性可能有限。"
+            warn "如遇安装失败，请参考 OpenClash 官方文档或使用 OpenWrt 25.11 及更早版本。"
+        else
+            warn "检测到 OpenWrt 25.12+，但包管理器为 $PKG_MGR，请确认当前环境是否正常。"
+        fi
+    fi
     log "当前已安装版本: ${OLD_VER:-not installed}"
 
     if [ "$CHECK_ONLY" = "1" ]; then
