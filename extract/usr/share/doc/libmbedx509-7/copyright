@@ -1,0 +1,50 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: Mbed TLS
+Source: https://github.com/Mbed-TLS/mbedtls/releases/
+Upstream-Contact: mbed-tls <mbed-tls@lists.trustedfirmware.org>
+
+Files: *
+Copyright: The Mbed TLS Contributors
+License: Apache-2.0 or GPL-2+
+Comment: Not available under GPL-2+ between the 2.26 and 2.28.5 releases
+
+Files: 3rdparty/everest/include/*
+       3rdparty/everest/library/*
+Copyright: 2016-2018 INRIA and Microsoft Corporation
+License: Apache-2.0
+
+Files: debian/*
+Copyright: 2015-2021 James Cowgill <jcowgill@debian.org>
+           2022-2025 Andrea Pappacoda <tachi@debian.org>
+           2023      Philippe Coval <rzr@users.sf.net>
+License: Apache-2.0 or GPL-2+
+
+License: Apache-2.0
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ .
+ http://www.apache.org/licenses/LICENSE-2.0
+ .
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ .
+ On Debian systems, the complete text of the Apache version 2.0 license
+ can be found in "/usr/share/common-licenses/Apache-2.0".
+
+License: GPL-2+
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2 of the License, or
+ (at your option) any later version.
+ .
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ .
+ On Debian systems, the complete text of the GNU General Public License
+ version 2 can be found in "/usr/share/common-licenses/GPL-2".
