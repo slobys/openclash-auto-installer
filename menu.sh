@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eu
 
-BASE_URL="https://raw.githubusercontent.com/slobys/openclash-auto-installer/main"
+BASE_URL="https://cdn.jsdelivr.net/gh/slobys/openclash-auto-installer@main"
 TMP_SCRIPT="/tmp/openclash-menu-action.sh"
 NONINTERACTIVE_ACTION=""
 
@@ -123,6 +123,18 @@ parse_args() {
 download_and_run() {
     SCRIPT_NAME="$1"
     shift || true
+    
+    # 优先使用本地智能版本
+    if [ -f "scripts/$SCRIPT_NAME" ]; then
+        log "使用本地智能版本: scripts/$SCRIPT_NAME"
+        sh "scripts/$SCRIPT_NAME" "$@"
+        return
+    elif [ -f "$SCRIPT_NAME-smart.sh" ]; then
+        log "使用本地智能版本: $SCRIPT_NAME-smart.sh"
+        sh "$SCRIPT_NAME-smart.sh" "$@"
+        return
+    fi
+    
     URL="$BASE_URL/$SCRIPT_NAME"
 
     log "下载脚本: $URL"
