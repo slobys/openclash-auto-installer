@@ -210,6 +210,25 @@ if [ -n "$GH_LATEST" ] && [ -n "$AVAILABLE_VERSIONS" ]; then
         warn "⚠️  注意: GitHub 版本 ($GH_LATEST) 与源版本 ($AVAILABLE_VERSIONS) 不一致"
         warn "    这可能是因为源还未同步最新编译版本"
         warn "    将安装源中可用版本: $AVAILABLE_VERSIONS"
+        
+        # 提供手动下载指南
+        echo ""
+        log "📥 如果你想立即安装 $GH_LATEST，可以:"
+        log "1. 访问: https://sourceforge.net/projects/openwrt-passwall-build/files/"
+        log "2. 找到目录: releases/packages-${RELEASE:-24.10}/${ARCH:-aarch64_generic}/"
+        log "3. 下载最新版 luci-app-passwall_${GH_LATEST}_*.ipk"
+        log "4. 运行: opkg install /path/to/downloaded.ipk"
+        echo ""
+        
+        # 如果用户确认，尝试自动查找
+        if [ -t 0 ] && [ -t 1 ]; then
+            printf "[INFO] 是否让脚本尝试查找最新版？ [y/N]: "
+            read -r response
+            if [ "$response" = "y" ] || [ "$response" = "Y" ]; then
+                log "正在开发自动查找功能，稍后更新..."
+                # 后续可以添加自动查找逻辑
+            fi
+        fi
     else
         log "✅ 源版本与 GitHub 版本一致，安装最新版"
     fi
