@@ -121,16 +121,6 @@ parse_args() {
 }
 
 download_and_run() {
-    # 智能网络层：优先使用本地版本
-    if [ -f "scripts/$SCRIPT_NAME" ]; then
-        log "使用本地智能版本: scripts/$SCRIPT_NAME"
-        sh "scripts/$SCRIPT_NAME" "$@"
-        return
-    elif [ -f "$SCRIPT_NAME-smart.sh" ]; then
-        log "使用本地智能版本: $SCRIPT_NAME-smart.sh"
-        sh "$SCRIPT_NAME-smart.sh" "$@"
-        return
-    fi
     SCRIPT_NAME="$1"
     shift || true
     URL="$BASE_URL/$SCRIPT_NAME"

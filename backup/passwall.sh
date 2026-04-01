@@ -1,67 +1,9 @@
 #!/bin/sh
 set -eu
 
-# 智能网络层增强版 - 解决公钥下载失败问题
-# 原脚本功能完全保留，增加智能下载支持
-
 LOCKDIR="/tmp/passwall-install.lock"
 KEY_URL="https://master.dl.sourceforge.net/project/openwrt-passwall-build/passwall.pub"
 GH_API="https://api.github.com/repos/Openwrt-Passwall/openwrt-passwall/releases/latest"
-
-# 尝试导入智能网络层库（如果可用）
-try_load_smart_libs() {
-    # 查找lib目录（相对于脚本位置）
-    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE:-$0}")" && pwd)"
-    LIB_DIR="$SCRIPT_DIR/lib"
-    
-    # 如果lib目录不存在，尝试上级目录
-    if [ ! -d "$LIB_DIR" ]; then
-        LIB_DIR="$SCRIPT_DIR/../lib"
-    fi
-    
-    # 检查智能下载库
-    if [ -f "$LIB_DIR/download.sh" ]; then
-        # 临时使用bash导入（如果可用）
-        if command -v bash >/dev/null 2>&1; then
-            # 使用bash导入智能库
-            bash -c "
-                source '$LIB_DIR/download.sh' 2>/dev/null || true
-                if command -v download_pubkey >/dev/null 2>&1; then
-                    echo 'smart'
-                else
-                    echo 'fallback'
-                fi
-            " 2>/dev/null || echo 'fallback'
-        else
-            echo 'fallback'
-        fi
-    else
-        echo 'fallback'
-    fi
-}
-
-# 智能下载公钥
-smart_download_pubkey() {
-    local output="$1"
-    
-    # 尝试使用智能下载
-    if command -v bash >/dev/null 2>&1; then
-        SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE:-$0}")" && pwd)"
-        LIB_DIR="$SCRIPT_DIR/lib"
-        [ ! -d "$LIB_DIR" ] && LIB_DIR="$SCRIPT_DIR/../lib"
-        
-        if [ -f "$LIB_DIR/download.sh" ]; then
-            # 使用bash执行智能下载
-            bash -c "
-                source '$LIB_DIR/download.sh' 2>/dev/null || exit 1
-                download_pubkey 'passwall' '$output' || exit 1
-            " 2>/dev/null && return 0
-        fi
-    fi
-    
-    # 智能下载失败，回退到原逻辑
-    return 1
-}
 
 cleanup() {
     rmdir "$LOCKDIR" 2>/dev/null || true
@@ -136,46 +78,7 @@ sed -i '/^src\/gz passwall2 /d' /etc/opkg/customfeeds.conf
 
 cd /tmp
 rm -f passwall.pub
-
-# ========== 智能公钥下载（解决 SourceForge 失败问题）==========
-log "下载 PassWall 公钥..."
-
-# 先尝试智能下载
-if smart_download_pubkey "/tmp/passwall.pub"; then
-    log "✅ 使用智能网络层下载公钥成功"
-else
-    # 智能下载失败，回退到原逻辑
-    log "使用传统方式下载公钥..."
-    wget -qO passwall.pub "$KEY_URL" || {
-        warn "公钥下载失败，尝试备用方案..."
-        
-        # 尝试其他源
-        BACKUP_URLS="
-            https://raw.githubusercontent.com/Openwrt-Passwall/openwrt-passwall/main/passwall.pub
-            https://cdn.jsdelivr.net/gh/Openwrt-Passwall/openwrt-passwall@main/passwall.pub
-            https://ghproxy.com/https://raw.githubusercontent.com/Openwrt-Passwall/openwrt-passwall/main/passwall.pub
-        "
-        
-        for url in $BACKUP_URLS; do
-            log "尝试备用源: $(echo "$url" | sed 's|https://||')"
-            if wget -qO passwall.pub "$url"; then
-                log "✅ 使用备用源下载成功"
-                break
-            fi
-        done
-        
-        # 如果所有源都失败，生成临时公钥
-        if [ ! -f passwall.pub ] || [ ! -s passwall.pub ]; then
-            warn "所有公钥源均失败，生成临时公钥"
-            cat > passwall.pub <<'EOF'
-untrusted comment: Temporary PassWall key (auto-generated)
-RWQ1MHRhdzN3MnlmYVl6NEJDbzVScnpFNE44azhSTHdtZTRBY25PZG1JZXJpZktRZUNaRzBY
-EOF
-            warn "使用临时公钥，安装可能无法验证包签名"
-        fi
-    }
-fi
-
+wget -qO passwall.pub "$KEY_URL" || die "下载 PassWall 公钥失败"
 opkg-key add /tmp/passwall.pub >/dev/null 2>&1 || true
 
 for feed in passwall_luci passwall_packages passwall2; do
@@ -242,7 +145,3 @@ fi
 
 warn "如界面初次显示为英文，请刷新页面，中文语言包会自动生效"
 log "PassWall 处理完成"
-
-# 智能网络层备注
-log "💡 提示: 此脚本已集成智能网络层，自动解决公钥下载失败问题"
-log "📚 更多功能: 运行 ./tools/network-diagnose.sh 进行网络诊断"
