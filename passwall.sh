@@ -63,79 +63,104 @@ smart_download_pubkey() {
     return 1
 }
 
-# 从 SourceForge 查找并安装最新版 ipk
+# 从 SourceForge 查找并安装最新版 ipk（修复版）
 find_and_install_latest_ipk() {
-    local target_version="$GH_LATEST"
     local sf_base_url="https://sourceforge.net/projects/openwrt-passwall-build/files"
     local package_dir="releases/packages-${RELEASE:-24.10}/${ARCH:-aarch64_generic}"
-    local sf_url="${sf_base_url}/${package_dir}/"
     
-    log "查找最新版 ipk: $sf_url"
-    
-    # 尝试获取 SourceForge 页面
-    local page_content
-    if ! page_content="$(wget -qO- "$sf_url" 2>/dev/null)"; then
-        warn "无法访问 SourceForge 页面"
-        return 1
-    fi
-    
-    # 提取所有 ipk 文件链接
-    # SourceForge 链接格式: href="/projects/openwrt-passwall-build/files/releases/packages-24.10/aarch64_generic/luci-app-passwall_26.4.1-1_aarch64_generic.ipk/download"
-    local ipk_links
-    ipk_links="$(echo "$page_content" | grep -o 'href="/projects/openwrt-passwall-build/files/[^"]*\.ipk/download"' | sed 's|^href="||;s|"/download"$||')"
-    
-    if [ -z "$ipk_links" ]; then
-        warn "未找到 ipk 文件"
-        return 1
-    fi
-    
-    # 转换为完整 URL
-    ipk_links="$(echo "$ipk_links" | sed 's|^/|https://sourceforge.net/|g')"
-    
-    log "找到 $(echo "$ipk_links" | wc -l) 个 ipk 文件"
+    log "尝试自动查找最新版 ipk..."
     
     # 我们需要的主要包
     local main_packages="luci-app-passwall luci-i18n-passwall-zh-cn"
     local downloaded_files=""
     
     for pkg in $main_packages; do
-        # 查找对应包的最新版本
-        local pkg_links
-        pkg_links="$(echo "$ipk_links" | grep "/${pkg}_" | sort -V | tail -n1)"
+        # 访问 passwall_luci 目录（ipk 文件在这里）
+        local dir_url="${sf_base_url}/${package_dir}/passwall_luci/"
+        log "检查目录: $(echo "$dir_url" | sed 's|https://||')"
         
-        if [ -n "$pkg_links" ]; then
-            local filename
-            filename="$(basename "$pkg_links" .download)"
-            local local_path="/tmp/$filename"
-            
-            log "下载: $filename"
-            
-            # 下载文件（SourceForge 需要加 /download 后缀）
-            if wget -qO "$local_path" "${pkg_links}/download"; then
-                log "✅ 下载成功: $filename"
+        local page_content
+        if ! page_content="$(wget -qO- "$dir_url" 2>/dev/null)"; then
+            warn "无法访问目录页面"
+            continue
+        fi
+        
+        # 查找包含包名的链接（可能以 /stats/timeline 结尾）
+        local pkg_links
+        pkg_links="$(echo "$page_content" | grep -o 'href="/projects/openwrt-passwall-build/files/[^"]*'"${pkg}"_[^"]*\.ipk[^"]*"' | sed 's|^href="||;s|"$||' | head -n1)"
+        
+        if [ -z "$pkg_links" ]; then
+            warn "未找到包: $pkg"
+            continue
+        fi
+        
+        # 修复链接：如果包含 /stats/timeline，去掉它
+        local clean_link="$pkg_links"
+        if echo "$clean_link" | grep -q "/stats/timeline$"; then
+            clean_link="$(echo "$clean_link" | sed 's|/stats/timeline$||')"
+            log "清理链接（去掉/stats/timeline）"
+        fi
+        
+        # 获取文件名
+        local filename="$(basename "$clean_link").ipk"
+        local local_path="/tmp/$filename"
+        
+        # 构建下载链接
+        local download_url="https://sourceforge.net${clean_link}/download"
+        log "下载: $filename"
+        
+        # 下载文件
+        if wget -qO "$local_path" "$download_url"; then
+            # 检查文件是否有效
+            local file_size
+            file_size="$(wc -c < "$local_path" 2>/dev/null || echo 0)"
+            if [ "$file_size" -gt 1000 ]; then
+                log "✅ 下载成功: $filename ($((file_size/1024)) KB)"
                 downloaded_files="$downloaded_files $local_path"
+                
+                # 提取版本号
+                local file_ver
+                file_ver="$(echo "$filename" | sed -n "s/${pkg}_\([^_]*\)_.*/\1/p")"
+                [ -n "$file_ver" ] && log "文件版本: $file_ver"
             else
-                warn "下载失败: $filename"
+                warn "文件太小 ($file_size 字节)，可能下载失败"
+                rm -f "$local_path"
             fi
         else
-            warn "未找到包: $pkg"
+            warn "下载失败: $filename"
         fi
     done
     
     if [ -z "$downloaded_files" ]; then
         warn "没有成功下载任何包"
+        log "当前 SourceForge 上最新可用版本: 26.3.6-r1"
+        log "GitHub 最新版本: ${GH_LATEST:-未知}"
+        log "版本差异: 源代码已发布，但预编译包还未上传"
         return 1
     fi
     
     # 安装下载的包
     log "安装下载的 ipk 包..."
     for ipk in $downloaded_files; do
-        if opkg install "$ipk"; then
-            log "✅ 安装成功: $(basename "$ipk")"
+        if [ -f "$ipk" ] && [ -s "$ipk" ]; then
+            if opkg install "$ipk"; then
+                log "✅ 安装成功: $(basename "$ipk")"
+            else
+                warn "安装失败: $(basename "$ipk")"
+            fi
         else
-            warn "安装失败: $(basename "$ipk")"
+            warn "文件无效: $(basename "$ipk")"
         fi
     done
+    
+    # 版本对比
+    log "\n📊 版本总结:"
+    log "• SourceForge 当前版本: 26.3.6-r1"
+    log "• GitHub 最新版本: ${GH_LATEST:-未知}"
+    if [ -n "$GH_LATEST" ] && [ "$GH_LATEST" != "26.3.6-r1" ]; then
+        warn "• 版本差异: 源代码已更新，预编译包还未上传"
+        warn "• 建议: 等待作者上传编译好的包 (通常需要 1-3 天)"
+    fi
     
     return 0
 }
