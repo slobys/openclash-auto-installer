@@ -63,6 +63,83 @@ smart_download_pubkey() {
     return 1
 }
 
+# 从 SourceForge 查找并安装最新版 ipk
+find_and_install_latest_ipk() {
+    local target_version="$GH_LATEST"
+    local sf_base_url="https://sourceforge.net/projects/openwrt-passwall-build/files"
+    local package_dir="releases/packages-${RELEASE:-24.10}/${ARCH:-aarch64_generic}"
+    local sf_url="${sf_base_url}/${package_dir}/"
+    
+    log "查找最新版 ipk: $sf_url"
+    
+    # 尝试获取 SourceForge 页面
+    local page_content
+    if ! page_content="$(wget -qO- "$sf_url" 2>/dev/null)"; then
+        warn "无法访问 SourceForge 页面"
+        return 1
+    fi
+    
+    # 提取所有 ipk 文件链接
+    # SourceForge 链接格式: href="/projects/openwrt-passwall-build/files/releases/packages-24.10/aarch64_generic/luci-app-passwall_26.4.1-1_aarch64_generic.ipk/download"
+    local ipk_links
+    ipk_links="$(echo "$page_content" | grep -o 'href="/projects/openwrt-passwall-build/files/[^"]*\.ipk/download"' | sed 's|^href="||;s|"/download"$||')"
+    
+    if [ -z "$ipk_links" ]; then
+        warn "未找到 ipk 文件"
+        return 1
+    fi
+    
+    # 转换为完整 URL
+    ipk_links="$(echo "$ipk_links" | sed 's|^/|https://sourceforge.net/|g')"
+    
+    log "找到 $(echo "$ipk_links" | wc -l) 个 ipk 文件"
+    
+    # 我们需要的主要包
+    local main_packages="luci-app-passwall luci-i18n-passwall-zh-cn"
+    local downloaded_files=""
+    
+    for pkg in $main_packages; do
+        # 查找对应包的最新版本
+        local pkg_links
+        pkg_links="$(echo "$ipk_links" | grep "/${pkg}_" | sort -V | tail -n1)"
+        
+        if [ -n "$pkg_links" ]; then
+            local filename
+            filename="$(basename "$pkg_links" .download)"
+            local local_path="/tmp/$filename"
+            
+            log "下载: $filename"
+            
+            # 下载文件（SourceForge 需要加 /download 后缀）
+            if wget -qO "$local_path" "${pkg_links}/download"; then
+                log "✅ 下载成功: $filename"
+                downloaded_files="$downloaded_files $local_path"
+            else
+                warn "下载失败: $filename"
+            fi
+        else
+            warn "未找到包: $pkg"
+        fi
+    done
+    
+    if [ -z "$downloaded_files" ]; then
+        warn "没有成功下载任何包"
+        return 1
+    fi
+    
+    # 安装下载的包
+    log "安装下载的 ipk 包..."
+    for ipk in $downloaded_files; do
+        if opkg install "$ipk"; then
+            log "✅ 安装成功: $(basename "$ipk")"
+        else
+            warn "安装失败: $(basename "$ipk")"
+        fi
+    done
+    
+    return 0
+}
+
 cleanup() {
     rmdir "$LOCKDIR" 2>/dev/null || true
 }
@@ -225,8 +302,13 @@ if [ -n "$GH_LATEST" ] && [ -n "$AVAILABLE_VERSIONS" ]; then
             printf "[INFO] 是否让脚本尝试查找最新版？ [y/N]: "
             read -r response
             if [ "$response" = "y" ] || [ "$response" = "Y" ]; then
-                log "正在开发自动查找功能，稍后更新..."
-                # 后续可以添加自动查找逻辑
+                log "正在尝试自动查找最新版 ipk..."
+                if find_and_install_latest_ipk; then
+                    log "✅ 已成功安装最新版 ipk"
+                    exit 0
+                else
+                    warn "自动查找失败，将使用源版本"
+                fi
             fi
         fi
     else
