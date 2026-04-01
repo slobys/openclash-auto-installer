@@ -197,7 +197,24 @@ if opkg status luci-app-passwall >/dev/null 2>&1 && [ ! -f /usr/share/passwall/u
     }
 fi
 
+# 检查源中可用版本
+AVAILABLE_VERSIONS="$(opkg list luci-app-passwall 2>/dev/null | sed -n 's/^luci-app-passwall - //p' | head -n1 || true)"
+
 log "安装 / 更新 PassWall"
+log "当前源版本: ${AVAILABLE_VERSIONS:-未知}"
+log "GitHub最新版: ${GH_LATEST:-未知}"
+
+# 如果检测到 GitHub 版本但源里没有，提示用户
+if [ -n "$GH_LATEST" ] && [ -n "$AVAILABLE_VERSIONS" ]; then
+    if [ "$GH_LATEST" != "$AVAILABLE_VERSIONS" ]; then
+        warn "⚠️  注意: GitHub 版本 ($GH_LATEST) 与源版本 ($AVAILABLE_VERSIONS) 不一致"
+        warn "    这可能是因为源还未同步最新编译版本"
+        warn "    将安装源中可用版本: $AVAILABLE_VERSIONS"
+    else
+        log "✅ 源版本与 GitHub 版本一致，安装最新版"
+    fi
+fi
+
 opkg install luci-app-passwall luci-i18n-passwall-zh-cn
 
 NEW_VER="$(opkg status luci-app-passwall 2>/dev/null | sed -n 's/^Version: //p' | head -n1 || true)"
