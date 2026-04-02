@@ -27,20 +27,37 @@ need_cmd() {
     command -v "$1" >/dev/null 2>&1 || die "缺少命令: $1"
 }
 
+download_file() {
+    url="$1"
+    output="$2"
+
+    if command -v curl >/dev/null 2>&1; then
+        curl -fsSL "$url" -o "$output" 2>/dev/null && return 0
+        curl -kfsSL "$url" -o "$output" 2>/dev/null && return 0
+    fi
+
+    if command -v wget >/dev/null 2>&1; then
+        wget -qO "$output" "$url" 2>/dev/null && return 0
+        wget --no-check-certificate -qO "$output" "$url" 2>/dev/null && return 0
+    fi
+
+    return 1
+}
+
 download_passwall_key() {
     output="$1"
     urls="
         https://raw.githubusercontent.com/Openwrt-Passwall/openwrt-passwall/main/passwall.pub
         https://master.dl.sourceforge.net/project/openwrt-passwall-build/passwall.pub
         https://ghproxy.com/https://raw.githubusercontent.com/Openwrt-Passwall/openwrt-passwall/main/passwall.pub
+        https://cdn.jsdelivr.net/gh/Openwrt-Passwall/openwrt-passwall@main/passwall.pub
     "
 
     for url in $urls; do
         log "尝试下载公钥: $(echo "$url" | sed 's|https://||')"
-        if wget -qO "$output" "$url"; then
-            if [ -s "$output" ]; then
-                return 0
-            fi
+        rm -f "$output"
+        if download_file "$url" "$output" && [ -s "$output" ]; then
+            return 0
         fi
     done
 
