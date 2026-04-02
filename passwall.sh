@@ -87,7 +87,7 @@ find_and_install_latest_ipk() {
         
         # 查找包含包名的链接（可能以 /stats/timeline 结尾）
         local pkg_links
-        pkg_links="$(echo "$page_content" | grep -o 'href="/projects/openwrt-passwall-build/files/[^"]*'"${pkg}"_[^"]*\.ipk[^"]*"' | sed 's|^href="||;s|"$||' | head -n1)"
+        pkg_links="$(echo "$page_content" | grep -o 'href="/projects/openwrt-passwall-build/files/[^"]*'"${pkg}"'_[^"]*\.ipk[^"]*"' | sed 's|^href="||;s|"$||' | head -n1)"
         
         if [ -z "$pkg_links" ]; then
             warn "未找到包: $pkg"
