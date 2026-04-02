@@ -359,6 +359,7 @@ check_update_only() {
 fetch_openclash_package_url() {
     PKG_MGR="$1"
     VERSION_JSON="$TMP_ROOT/openclash_version.json"
+    OPENCLASH_PKG_URL=""
 
     if [ ! -f "$VERSION_JSON" ]; then
         fetch_openclash_release_meta || true
@@ -366,29 +367,29 @@ fetch_openclash_package_url() {
 
     if [ -f "$VERSION_JSON" ]; then
         if [ "$PKG_MGR" = "opkg" ]; then
-            URL="$(jsonfilter -i "$VERSION_JSON" -e '@.assets[*].browser_download_url' | grep -E '/luci-app-openclash_.*_all\.ipk$' | head -n1 || true)"
-            [ -n "$URL" ] || URL="$(jsonfilter -i "$VERSION_JSON" -e '@.assets[*].browser_download_url' | grep '\.ipk$' | head -n1 || true)"
+            OPENCLASH_PKG_URL="$(jsonfilter -i "$VERSION_JSON" -e '@.assets[*].browser_download_url' | grep -E '/luci-app-openclash_.*_all\.ipk$' | head -n1 || true)"
+            [ -n "$OPENCLASH_PKG_URL" ] || OPENCLASH_PKG_URL="$(jsonfilter -i "$VERSION_JSON" -e '@.assets[*].browser_download_url' | grep '\.ipk$' | head -n1 || true)"
         else
-            URL="$(jsonfilter -i "$VERSION_JSON" -e '@.assets[*].browser_download_url' | grep -E '/luci-app-openclash-.*\.apk$' | head -n1 || true)"
-            [ -n "$URL" ] || URL="$(jsonfilter -i "$VERSION_JSON" -e '@.assets[*].browser_download_url' | grep '\.apk$' | head -n1 || true)"
+            OPENCLASH_PKG_URL="$(jsonfilter -i "$VERSION_JSON" -e '@.assets[*].browser_download_url' | grep -E '/luci-app-openclash-.*\.apk$' | head -n1 || true)"
+            [ -n "$OPENCLASH_PKG_URL" ] || OPENCLASH_PKG_URL="$(jsonfilter -i "$VERSION_JSON" -e '@.assets[*].browser_download_url' | grep '\.apk$' | head -n1 || true)"
         fi
     fi
 
-    if [ -z "${URL:-}" ]; then
+    if [ -z "$OPENCLASH_PKG_URL" ]; then
         TAG="$(get_latest_tag)"
         [ -n "$TAG" ] || die "未找到 OpenClash 最新版本标签"
         ASSETS_HTML="$TMP_ROOT/openclash_assets.html"
         download_file "https://github.com/vernesong/OpenClash/releases/expanded_assets/$TAG" "$ASSETS_HTML" || die "获取 OpenClash 资源列表失败"
         if [ "$PKG_MGR" = "opkg" ]; then
-            URL="$(grep -o '/vernesong/OpenClash/releases/download/[^"'"'"']*luci-app-openclash[^"'"'"']*\.ipk' "$ASSETS_HTML" | head -n1 || true)"
+            OPENCLASH_PKG_URL="$(grep -o '/vernesong/OpenClash/releases/download/[^"'"'"']*luci-app-openclash[^"'"'"']*\.ipk' "$ASSETS_HTML" | head -n1 || true)"
         else
-            URL="$(grep -o '/vernesong/OpenClash/releases/download/[^"'"'"']*luci-app-openclash[^"'"'"']*\.apk' "$ASSETS_HTML" | head -n1 || true)"
+            OPENCLASH_PKG_URL="$(grep -o '/vernesong/OpenClash/releases/download/[^"'"'"']*luci-app-openclash[^"'"'"']*\.apk' "$ASSETS_HTML" | head -n1 || true)"
         fi
-        [ -n "$URL" ] && URL="https://github.com$URL"
+        [ -n "$OPENCLASH_PKG_URL" ] && OPENCLASH_PKG_URL="https://github.com$OPENCLASH_PKG_URL"
     fi
 
-    [ -n "${URL:-}" ] || die "未找到匹配当前包管理器的 OpenClash 安装包"
-    printf '%s' "$URL"
+    [ -n "$OPENCLASH_PKG_URL" ] || die "未找到匹配当前包管理器的 OpenClash 安装包"
+    printf '%s' "$OPENCLASH_PKG_URL"
 }
 
 install_openclash_package() {
