@@ -156,10 +156,10 @@ show_menu() {
 8. 安装 / 更新 PassWall
 9. 安装 / 更新 PassWall2
 10. 安装 / 更新 Nikki
-11. 卸载 PassWall
-12. 卸载 PassWall2
-13. 卸载 Nikki
-14. 卸载 OpenClash
+11. 安全卸载 PassWall（仅主包 + 删除配置）
+12. 安全卸载 PassWall2（仅主包 + 删除配置）
+13. 安全卸载 Nikki（仅主包 + 删除配置）
+14. 安全卸载 OpenClash（仅主包 + 删除配置）
 0. 退出
 ==================================================
 EOF_MENU
@@ -235,16 +235,16 @@ run_action() {
             download_and_run nikki.sh
             ;;
         11|full-uninstall-passwall)
-            download_and_run full-uninstall.sh passwall
+            download_and_run uninstall.sh passwall --delete-config
             ;;
         12|full-uninstall-passwall2)
-            download_and_run full-uninstall.sh passwall2
+            download_and_run uninstall.sh passwall2 --delete-config
             ;;
         13|full-uninstall-nikki)
-            download_and_run full-uninstall.sh nikki
+            download_and_run uninstall.sh nikki --delete-config
             ;;
         14|full-uninstall-openclash)
-            download_and_run full-uninstall.sh openclash
+            download_and_run uninstall.sh openclash --delete-config
             ;;
         0)
             log "已退出"
