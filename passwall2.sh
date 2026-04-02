@@ -27,6 +27,13 @@ need_cmd() {
     command -v "$1" >/dev/null 2>&1 || die "缺少命令: $1"
 }
 
+refresh_luci() {
+    rm -rf /tmp/luci-* /tmp/.luci* /tmp/etc/config/ucitrack /var/run/luci-indexcache 2>/dev/null || true
+    if [ -x /etc/init.d/rpcd ]; then
+        /etc/init.d/rpcd restart >/dev/null 2>&1 || warn "rpcd 重启失败"
+    fi
+}
+
 download_file() {
     url="$1"
     output="$2"
@@ -44,31 +51,43 @@ download_file() {
     return 1
 }
 
-download_passwall_key() {
-    output="$1"
-    urls="
-        https://raw.githubusercontent.com/Openwrt-Passwall/openwrt-passwall/main/passwall.pub
-        https://master.dl.sourceforge.net/project/openwrt-passwall-build/passwall.pub
-        https://ghproxy.com/https://raw.githubusercontent.com/Openwrt-Passwall/openwrt-passwall/main/passwall.pub
-        https://cdn.jsdelivr.net/gh/Openwrt-Passwall/openwrt-passwall@main/passwall.pub
-    "
-
-    for url in $urls; do
-        log "尝试下载公钥: $(echo "$url" | sed 's|https://||')"
-        rm -f "$output"
-        if download_file "$url" "$output" && [ -s "$output" ]; then
-            return 0
-        fi
-    done
-
-    return 1
+fetch_text() {
+    url="$1"
+    tmp="/tmp/passwall2-page.$$"
+    rm -f "$tmp"
+    download_file "$url" "$tmp" || return 1
+    cat "$tmp"
+    rm -f "$tmp"
 }
 
-refresh_luci() {
-    rm -rf /tmp/luci-* /tmp/.luci* /tmp/etc/config/ucitrack /var/run/luci-indexcache 2>/dev/null || true
-    if [ -x /etc/init.d/rpcd ]; then
-        /etc/init.d/rpcd restart >/dev/null 2>&1 || warn "rpcd 重启失败"
-    fi
+find_pkg_link() {
+    page="$1"
+    pkg="$2"
+    printf '%s' "$page" | grep -o 'href="/projects/openwrt-passwall-build/files/[^"]*'"${pkg}"'_[^"]*\.ipk[^"]*"' | sed 's|^href="||;s|"$||' | head -n1
+}
+
+download_pkg_from_dir() {
+    pkg="$1"
+    dir="$2"
+    sf_dir_url="https://sourceforge.net/projects/openwrt-passwall-build/files/${PACKAGE_DIR}/${dir}/"
+    page="$(fetch_text "$sf_dir_url")" || return 1
+    link="$(find_pkg_link "$page" "$pkg")"
+    [ -n "$link" ] || return 1
+
+    case "$link" in
+        */stats/timeline)
+            link="${link%/stats/timeline}"
+            ;;
+    esac
+
+    filename="$(basename "$link").ipk"
+    output="/tmp/$filename"
+    download_url="https://sourceforge.net${link}/download"
+
+    log "下载: $filename"
+    download_file "$download_url" "$output" || return 1
+    [ -s "$output" ] || return 1
+    printf '%s\n' "$output"
 }
 
 if ! mkdir "$LOCKDIR" 2>/dev/null; then
@@ -84,8 +103,9 @@ else
 fi
 
 need_cmd opkg
-need_cmd wget
 need_cmd sed
+need_cmd grep
+need_cmd basename
 
 [ -f /etc/openwrt_release ] || die "未检测到 /etc/openwrt_release"
 # shellcheck disable=SC1091
@@ -98,45 +118,29 @@ REL_RAW="${DISTRIB_RELEASE:-}"
 
 case "$REL_RAW" in
     *SNAPSHOT*)
-        FEED_BASE="https://master.dl.sourceforge.net/project/openwrt-passwall-build/snapshots/packages/$ARCH"
+        PACKAGE_DIR="snapshots/packages/$ARCH"
         ;;
     *)
         RELEASE="${REL_RAW%.*}"
-        FEED_BASE="https://master.dl.sourceforge.net/project/openwrt-passwall-build/releases/packages-$RELEASE/$ARCH"
+        PACKAGE_DIR="releases/packages-$RELEASE/$ARCH"
         ;;
 esac
 
 log "System release: $REL_RAW"
 log "Arch: $ARCH"
-log "Feed base: $FEED_BASE"
+log "Package dir: $PACKAGE_DIR"
 
-GH_LATEST="$(wget -qO- "$GH_API" 2>/dev/null | sed -n 's/.*"tag_name":[[:space:]]*"\([^"]*\)".*/\1/p' | head -n1)"
+GH_LATEST="$(fetch_text "$GH_API" 2>/dev/null | sed -n 's/.*"tag_name":[[:space:]]*"\([^"]*\)".*/\1/p' | head -n1 || true)"
 [ -n "$GH_LATEST" ] && log "GitHub latest release: $GH_LATEST"
-
-touch /etc/opkg/customfeeds.conf
-sed -i '\|openwrt-passwall-build|d' /etc/opkg/customfeeds.conf
-sed -i '/^src\/gz passwall_luci /d' /etc/opkg/customfeeds.conf
-sed -i '/^src\/gz passwall_packages /d' /etc/opkg/customfeeds.conf
-sed -i '/^src\/gz passwall2 /d' /etc/opkg/customfeeds.conf
-
-cd /tmp
-rm -f passwall.pub
-log "下载 PassWall 公钥..."
-download_passwall_key passwall.pub || die "下载 PassWall 公钥失败"
-opkg-key add /tmp/passwall.pub >/dev/null 2>&1 || true
-
-for feed in passwall_luci passwall_packages passwall2; do
-    echo "src/gz $feed $FEED_BASE/$feed" >> /etc/opkg/customfeeds.conf
-done
-
-log "刷新软件源"
-opkg update
 
 OLD_VER="$(opkg status luci-app-passwall2 2>/dev/null | sed -n 's/^Version: //p' | head -n1 || true)"
 log "当前已安装版本: ${OLD_VER:-not installed}"
+log "按接近手动 IPK 的方式安装 / 更新 PassWall2"
 
-log "按官方 IPK 方式安装 / 更新 PassWall2"
-opkg install luci-app-passwall2 luci-i18n-passwall2-zh-cn
+MAIN_IPK="$(download_pkg_from_dir luci-app-passwall2 passwall2)" || die "下载 luci-app-passwall2 失败"
+LANG_IPK="$(download_pkg_from_dir luci-i18n-passwall2-zh-cn passwall2)" || die "下载 luci-i18n-passwall2-zh-cn 失败"
+
+opkg install "$MAIN_IPK" "$LANG_IPK"
 
 NEW_VER="$(opkg status luci-app-passwall2 2>/dev/null | sed -n 's/^Version: //p' | head -n1 || true)"
 log "安装后版本: ${NEW_VER:-unknown}"
