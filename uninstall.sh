@@ -55,33 +55,21 @@ remove_pkg_if_installed() {
 
     case "$PKG_MGR" in
         opkg)
-            OUTPUT="$(opkg remove "$PKG" 2>&1)" || STATUS=$?
-            STATUS="${STATUS:-0}"
-            printf '%s\n' "$OUTPUT"
-
-            if [ "$STATUS" -eq 0 ]; then
-                return 0
+            if ! OUTPUT="$(opkg remove "$PKG" 2>&1)"; then
+                printf '%s\n' "$OUTPUT"
+                warn "移除 $PKG 失败"
+            else
+                printf '%s\n' "$OUTPUT"
             fi
-
-            case "$OUTPUT" in
-                *"is depended upon by packages:"*|*"print_dependents_warning:"*)
-                    warn "$PKG 仍被其他包依赖，已跳过"
-                    return 0
-                    ;;
-                *"can't open '"*|*"No such file or directory"*)
-                    warn "$PKG 卸载时检测到残缺文件，已继续执行后续流程"
-                    return 0
-                    ;;
-                *)
-                    warn "移除 $PKG 失败"
-                    return 0
-                    ;;
-            esac
             ;;
         apk)
             apk del "$PKG" || warn "移除 $PKG 失败"
             ;;
     esac
+
+    if pkg_installed "$PKG_MGR" "$PKG"; then
+        die "$PKG 仍未卸载成功，请检查依赖关系或手动执行 opkg remove $PKG"
+    fi
 }
 
 remove_paths() {
@@ -130,8 +118,8 @@ safe_uninstall_passwall() {
     log "开始安全卸载 PassWall（仅卸载主包）"
 
     stop_disable_service passwall
-    remove_pkg_if_installed "$PKG_MGR" luci-app-passwall
     remove_pkg_if_installed "$PKG_MGR" luci-i18n-passwall-zh-cn
+    remove_pkg_if_installed "$PKG_MGR" luci-app-passwall
 
     if [ "$DELETE_CONFIG" -eq 1 ]; then
         log "删除 PassWall 配置文件"
@@ -148,8 +136,8 @@ safe_uninstall_passwall2() {
     log "开始安全卸载 PassWall2（仅卸载主包）"
 
     stop_disable_service passwall2
-    remove_pkg_if_installed "$PKG_MGR" luci-app-passwall2
     remove_pkg_if_installed "$PKG_MGR" luci-i18n-passwall2-zh-cn
+    remove_pkg_if_installed "$PKG_MGR" luci-app-passwall2
 
     if [ "$DELETE_CONFIG" -eq 1 ]; then
         log "删除 PassWall2 配置文件"
@@ -166,8 +154,8 @@ safe_uninstall_nikki() {
     log "开始安全卸载 Nikki（仅卸载主包）"
 
     stop_disable_service nikki
-    remove_pkg_if_installed "$PKG_MGR" luci-app-nikki
     remove_pkg_if_installed "$PKG_MGR" luci-i18n-nikki-zh-cn
+    remove_pkg_if_installed "$PKG_MGR" luci-app-nikki
 
     if [ "$DELETE_CONFIG" -eq 1 ]; then
         log "删除 Nikki 配置文件"
