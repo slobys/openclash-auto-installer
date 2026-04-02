@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eu
 
-BASE_URL="https://cdn.jsdelivr.net/gh/slobys/openclash-auto-installer@main"
+BASE_URL="https://raw.githubusercontent.com/slobys/openclash-auto-installer/main"
 TMP_SCRIPT="/tmp/openclash-menu-action.sh"
 NONINTERACTIVE_ACTION=""
 
