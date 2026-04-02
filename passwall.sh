@@ -2,7 +2,6 @@
 set -eu
 
 LOCKDIR="/tmp/passwall-install.lock"
-KEY_URL="https://raw.githubusercontent.com/Openwrt-Passwall/openwrt-passwall/main/passwall.pub"
 GH_API="https://api.github.com/repos/Openwrt-Passwall/openwrt-passwall/releases/latest"
 
 cleanup() {
@@ -26,6 +25,26 @@ die() {
 
 need_cmd() {
     command -v "$1" >/dev/null 2>&1 || die "缺少命令: $1"
+}
+
+download_passwall_key() {
+    output="$1"
+    urls="
+        https://raw.githubusercontent.com/Openwrt-Passwall/openwrt-passwall/main/passwall.pub
+        https://master.dl.sourceforge.net/project/openwrt-passwall-build/passwall.pub
+        https://ghproxy.com/https://raw.githubusercontent.com/Openwrt-Passwall/openwrt-passwall/main/passwall.pub
+    "
+
+    for url in $urls; do
+        log "尝试下载公钥: $(echo "$url" | sed 's|https://||')"
+        if wget -qO "$output" "$url"; then
+            if [ -s "$output" ]; then
+                return 0
+            fi
+        fi
+    done
+
+    return 1
 }
 
 refresh_luci() {
@@ -86,7 +105,7 @@ sed -i '/^src\/gz passwall2 /d' /etc/opkg/customfeeds.conf
 cd /tmp
 rm -f passwall.pub
 log "下载 PassWall 公钥..."
-wget -qO passwall.pub "$KEY_URL" || die "下载 PassWall 公钥失败"
+download_passwall_key passwall.pub || die "下载 PassWall 公钥失败"
 opkg-key add /tmp/passwall.pub >/dev/null 2>&1 || true
 
 for feed in passwall_luci passwall_packages passwall2; do
