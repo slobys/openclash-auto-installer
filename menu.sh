@@ -136,9 +136,10 @@ download_and_run() {
     fi
     
     URL="$BASE_URL/$SCRIPT_NAME"
+    FETCH_URL="$URL?ts=$(date +%s)"
 
     log "下载脚本: $URL"
-    curl -fsSL --retry 3 "$URL" -o "$TMP_SCRIPT" || die "下载脚本失败: $SCRIPT_NAME"
+    curl -fsSL --retry 3 "$FETCH_URL" -o "$TMP_SCRIPT" || die "下载脚本失败: $SCRIPT_NAME"
     chmod +x "$TMP_SCRIPT"
     sh "$TMP_SCRIPT" "$@"
 }
