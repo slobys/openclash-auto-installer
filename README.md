@@ -83,10 +83,10 @@
 
 ### 卸载与菜单
 
-- `full-uninstall.sh`
-  - 卸载 PassWall / PassWall2 / Nikki / OpenClash
-  - 执行完整清理，重置安装环境
-  - 共享核心仍被其他插件依赖时会自动跳过并提示
+- `uninstall.sh`
+  - 安全卸载 PassWall / PassWall2 / Nikki / OpenClash
+  - 仅移除主包，不碰共享依赖
+  - 可按需删除对应配置文件
   - 卸载后会自动清理 LuCI 菜单缓存并重启 `rpcd`
   - 不重启 `uhttpd`，尽量避免中断当前 LuCI 会话
 
@@ -196,10 +196,10 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-inst
 --passwall                 安装 / 更新 PassWall
 --passwall2                安装 / 更新 PassWall2
 --nikki                    安装 / 更新 Nikki
---full-uninstall-passwall  卸载 PassWall
---full-uninstall-passwall2 卸载 PassWall2
---full-uninstall-nikki     卸载 Nikki
---full-uninstall-openclash 卸载 OpenClash
+--uninstall-passwall       安全卸载 PassWall（仅主包 + 删除配置）
+--uninstall-passwall2      安全卸载 PassWall2（仅主包 + 删除配置）
+--uninstall-nikki          安全卸载 Nikki（仅主包 + 删除配置）
+--uninstall-openclash      安全卸载 OpenClash（仅主包 + 删除配置）
 -h, --help                 显示帮助
 ```
 

@@ -37,10 +37,10 @@ usage() {
   sh menu.sh --passwall
   sh menu.sh --passwall2
   sh menu.sh --nikki
-  sh menu.sh --full-uninstall-passwall
-  sh menu.sh --full-uninstall-passwall2
-  sh menu.sh --full-uninstall-nikki
-  sh menu.sh --full-uninstall-openclash
+  sh menu.sh --uninstall-passwall
+  sh menu.sh --uninstall-passwall2
+  sh menu.sh --uninstall-nikki
+  sh menu.sh --uninstall-openclash
 
 说明:
   不带参数时进入交互菜单
@@ -96,17 +96,17 @@ parse_args() {
             --nikki)
                 NONINTERACTIVE_ACTION="nikki"
                 ;;
-            --full-uninstall-passwall)
-                NONINTERACTIVE_ACTION="full-uninstall-passwall"
+            --uninstall-passwall)
+                NONINTERACTIVE_ACTION="uninstall-passwall"
                 ;;
-            --full-uninstall-passwall2)
-                NONINTERACTIVE_ACTION="full-uninstall-passwall2"
+            --uninstall-passwall2)
+                NONINTERACTIVE_ACTION="uninstall-passwall2"
                 ;;
-            --full-uninstall-nikki)
-                NONINTERACTIVE_ACTION="full-uninstall-nikki"
+            --uninstall-nikki)
+                NONINTERACTIVE_ACTION="uninstall-nikki"
                 ;;
-            --full-uninstall-openclash)
-                NONINTERACTIVE_ACTION="full-uninstall-openclash"
+            --uninstall-openclash)
+                NONINTERACTIVE_ACTION="uninstall-openclash"
                 ;;
             -h|--help)
                 usage
@@ -234,16 +234,16 @@ run_action() {
         10|nikki)
             download_and_run nikki.sh
             ;;
-        11|full-uninstall-passwall)
+        11|uninstall-passwall)
             download_and_run uninstall.sh passwall --delete-config
             ;;
-        12|full-uninstall-passwall2)
+        12|uninstall-passwall2)
             download_and_run uninstall.sh passwall2 --delete-config
             ;;
-        13|full-uninstall-nikki)
+        13|uninstall-nikki)
             download_and_run uninstall.sh nikki --delete-config
             ;;
-        14|full-uninstall-openclash)
+        14|uninstall-openclash)
             download_and_run uninstall.sh openclash --delete-config
             ;;
         0)

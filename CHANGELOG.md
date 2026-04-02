@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.1.4
+
+- 菜单卸载入口统一改为“安全卸载”，仅移除主包并删除对应配置
+- 新增 `uninstall.sh` 通用安全卸载流程，覆盖 PassWall / PassWall2 / Nikki / OpenClash
+- 移除“完整卸载 / 彻底清理”方向的默认设计，避免误删共享依赖导致重装异常
+- `menu.sh` 非交互参数统一改为 `--uninstall-*`
+
 ## v1.1.3
 
 - 修复 `full-uninstall.sh` 中卸载 OpenClash 时误删共享核心包（如 `xray-core`）的问题
