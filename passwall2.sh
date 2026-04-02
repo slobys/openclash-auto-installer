@@ -80,11 +80,11 @@ download_pkg_from_dir() {
             ;;
     esac
 
-    filename="$(basename "$link").ipk"
+    filename="$(basename "$link")"
     output="/tmp/$filename"
     download_url="https://sourceforge.net${link}/download"
 
-    log "下载: $filename"
+    printf '%s\n' "==> 下载: $filename" >&2
     download_file "$download_url" "$output" || return 1
     [ -s "$output" ] || return 1
     printf '%s\n' "$output"
