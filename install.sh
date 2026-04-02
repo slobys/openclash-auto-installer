@@ -272,12 +272,12 @@ install_dependencies_opkg() {
     maybe_update_index_opkg
 
     if [ "$FIREWALL_STACK" = "nft" ]; then
-        PKGS="bash dnsmasq-full curl ca-bundle ip-full ruby ruby-yaml kmod-tun kmod-inet-diag unzip kmod-nft-tproxy luci-compat luci luci-base jsonfilter"
+        PKGS="bash dnsmasq-full curl ca-bundle ip-full kmod-tun kmod-inet-diag unzip kmod-nft-tproxy jsonfilter"
     else
-        PKGS="bash iptables dnsmasq-full curl ca-bundle ipset ip-full iptables-mod-tproxy iptables-mod-extra ruby ruby-yaml kmod-tun kmod-inet-diag unzip luci-compat luci luci-base jsonfilter"
+        PKGS="bash iptables dnsmasq-full curl ca-bundle ipset ip-full iptables-mod-tproxy iptables-mod-extra kmod-tun kmod-inet-diag unzip jsonfilter"
     fi
 
-    log "安装依赖包"
+    log "安装最小依赖包"
     opkg install $PKGS
 }
 
@@ -286,24 +286,35 @@ install_dependencies_apk() {
     maybe_update_index_apk
 
     if [ "$FIREWALL_STACK" = "nft" ]; then
-        PKGS="bash dnsmasq-full curl ca-bundle ip-full ruby ruby-yaml kmod-tun kmod-inet-diag unzip kmod-nft-tproxy luci-compat luci luci-base jsonfilter"
+        PKGS="bash dnsmasq-full curl ca-bundle ip-full kmod-tun kmod-inet-diag unzip kmod-nft-tproxy jsonfilter"
     else
-        PKGS="bash iptables dnsmasq-full curl ca-bundle ipset ip-full iptables-mod-tproxy iptables-mod-extra ruby ruby-yaml kmod-tun kmod-inet-diag unzip luci-compat luci luci-base jsonfilter"
+        PKGS="bash iptables dnsmasq-full curl ca-bundle ipset ip-full iptables-mod-tproxy iptables-mod-extra kmod-tun kmod-inet-diag unzip jsonfilter"
     fi
 
-    log "安装依赖包"
+    log "安装最小依赖包"
     apk add $PKGS
 }
 
 fetch_openclash_release_meta() {
     VERSION_JSON="$TMP_ROOT/openclash_version.json"
     printf '%s\n' "==> 获取 OpenClash 最新发布信息" >&2
-    download_file "$API_URL" "$VERSION_JSON" || die "获取 OpenClash 发布信息失败"
+    if download_file "$API_URL" "$VERSION_JSON"; then
+        return 0
+    fi
+
+    warn "GitHub API 获取失败，尝试回退到 releases 页面解析"
+    return 1
 }
 
 get_latest_tag() {
     VERSION_JSON="$TMP_ROOT/openclash_version.json"
-    jsonfilter -i "$VERSION_JSON" -e '@.tag_name' 2>/dev/null || true
+
+    if [ -f "$VERSION_JSON" ]; then
+        jsonfilter -i "$VERSION_JSON" -e '@.tag_name' 2>/dev/null || true
+        return 0
+    fi
+
+    curl -fsSI --retry 3 https://github.com/vernesong/OpenClash/releases/latest 2>/dev/null | sed -n 's#^location: .*releases/tag/\([^\r]*\)\r$#\1#Ip' | head -n1
 }
 
 normalize_version() {
@@ -318,7 +329,7 @@ check_update_only() {
     OLD_VER="$(get_installed_openclash_version "$PKG_MGR" || true)"
 
     need_cmd jsonfilter
-    fetch_openclash_release_meta
+    fetch_openclash_release_meta || true
     LATEST_TAG="$(get_latest_tag)"
 
     log "当前已安装版本: ${OLD_VER:-not installed}"
@@ -350,18 +361,33 @@ fetch_openclash_package_url() {
     VERSION_JSON="$TMP_ROOT/openclash_version.json"
 
     if [ ! -f "$VERSION_JSON" ]; then
-        fetch_openclash_release_meta
+        fetch_openclash_release_meta || true
     fi
 
-    if [ "$PKG_MGR" = "opkg" ]; then
-        URL="$(jsonfilter -i "$VERSION_JSON" -e '@.assets[*].browser_download_url' | grep -E '/luci-app-openclash_.*_all\.ipk$' | head -n1 || true)"
-        [ -n "$URL" ] || URL="$(jsonfilter -i "$VERSION_JSON" -e '@.assets[*].browser_download_url' | grep '\.ipk$' | head -n1 || true)"
-    else
-        URL="$(jsonfilter -i "$VERSION_JSON" -e '@.assets[*].browser_download_url' | grep -E '/luci-app-openclash-.*\.apk$' | head -n1 || true)"
-        [ -n "$URL" ] || URL="$(jsonfilter -i "$VERSION_JSON" -e '@.assets[*].browser_download_url' | grep '\.apk$' | head -n1 || true)"
+    if [ -f "$VERSION_JSON" ]; then
+        if [ "$PKG_MGR" = "opkg" ]; then
+            URL="$(jsonfilter -i "$VERSION_JSON" -e '@.assets[*].browser_download_url' | grep -E '/luci-app-openclash_.*_all\.ipk$' | head -n1 || true)"
+            [ -n "$URL" ] || URL="$(jsonfilter -i "$VERSION_JSON" -e '@.assets[*].browser_download_url' | grep '\.ipk$' | head -n1 || true)"
+        else
+            URL="$(jsonfilter -i "$VERSION_JSON" -e '@.assets[*].browser_download_url' | grep -E '/luci-app-openclash-.*\.apk$' | head -n1 || true)"
+            [ -n "$URL" ] || URL="$(jsonfilter -i "$VERSION_JSON" -e '@.assets[*].browser_download_url' | grep '\.apk$' | head -n1 || true)"
+        fi
     fi
 
-    [ -n "$URL" ] || die "未找到匹配当前包管理器的 OpenClash 安装包"
+    if [ -z "${URL:-}" ]; then
+        TAG="$(get_latest_tag)"
+        [ -n "$TAG" ] || die "未找到 OpenClash 最新版本标签"
+        ASSETS_HTML="$TMP_ROOT/openclash_assets.html"
+        download_file "https://github.com/vernesong/OpenClash/releases/expanded_assets/$TAG" "$ASSETS_HTML" || die "获取 OpenClash 资源列表失败"
+        if [ "$PKG_MGR" = "opkg" ]; then
+            URL="$(grep -o '/vernesong/OpenClash/releases/download/[^"'"'"']*luci-app-openclash[^"'"'"']*\.ipk' "$ASSETS_HTML" | head -n1 || true)"
+        else
+            URL="$(grep -o '/vernesong/OpenClash/releases/download/[^"'"'"']*luci-app-openclash[^"'"'"']*\.apk' "$ASSETS_HTML" | head -n1 || true)"
+        fi
+        [ -n "$URL" ] && URL="https://github.com$URL"
+    fi
+
+    [ -n "${URL:-}" ] || die "未找到匹配当前包管理器的 OpenClash 安装包"
     printf '%s' "$URL"
 }
 
@@ -589,7 +615,7 @@ main() {
                 apk) install_dependencies_apk "$FIREWALL_STACK" ;;
             esac
             need_cmd jsonfilter
-            fetch_openclash_release_meta
+            fetch_openclash_release_meta || true
             LATEST_TAG="$(get_latest_tag)"
             [ -n "$LATEST_TAG" ] && log "OpenClash 最新发布标签: $LATEST_TAG"
             PACKAGE_URL="$(fetch_openclash_package_url "$PKG_MGR")"
