@@ -33,7 +33,7 @@ pkg_installed() {
 
     case "$PKG_MGR" in
         opkg)
-            opkg status "$PKG" >/dev/null 2>&1
+            opkg list-installed 2>/dev/null | grep -q "^$PKG - "
             ;;
         apk)
             apk info -e "$PKG" >/dev/null 2>&1
