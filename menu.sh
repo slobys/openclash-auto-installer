@@ -156,10 +156,10 @@ show_menu() {
 8. 安装 / 更新 PassWall
 9. 安装 / 更新 PassWall2
 10. 安装 / 更新 Nikki
-11. 安全卸载 PassWall（仅主包 + 删除配置）
-12. 安全卸载 PassWall2（仅主包 + 删除配置）
-13. 安全卸载 Nikki（仅主包 + 删除配置）
-14. 安全卸载 OpenClash（仅主包 + 删除配置）
+11. 卸载 PassWall
+12. 卸载 PassWall2
+13. 卸载 Nikki
+14. 卸载 OpenClash
 0. 退出
 ==================================================
 EOF_MENU
