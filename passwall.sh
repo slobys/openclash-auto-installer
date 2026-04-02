@@ -1,169 +1,9 @@
 #!/bin/sh
 set -eu
 
-# 智能网络层增强版 - 解决公钥下载失败问题
-# 原脚本功能完全保留，增加智能下载支持
-
 LOCKDIR="/tmp/passwall-install.lock"
-KEY_URL="https://master.dl.sourceforge.net/project/openwrt-passwall-build/passwall.pub"
+KEY_URL="https://raw.githubusercontent.com/Openwrt-Passwall/openwrt-passwall/main/passwall.pub"
 GH_API="https://api.github.com/repos/Openwrt-Passwall/openwrt-passwall/releases/latest"
-
-# 尝试导入智能网络层库（如果可用）
-try_load_smart_libs() {
-    # 查找lib目录（相对于脚本位置）
-    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE:-$0}")" && pwd)"
-    LIB_DIR="$SCRIPT_DIR/lib"
-    
-    # 如果lib目录不存在，尝试上级目录
-    if [ ! -d "$LIB_DIR" ]; then
-        LIB_DIR="$SCRIPT_DIR/../lib"
-    fi
-    
-    # 检查智能下载库
-    if [ -f "$LIB_DIR/download.sh" ]; then
-        # 临时使用bash导入（如果可用）
-        if command -v bash >/dev/null 2>&1; then
-            # 使用bash导入智能库
-            bash -c "
-                source '$LIB_DIR/download.sh' 2>/dev/null || true
-                if command -v download_pubkey >/dev/null 2>&1; then
-                    echo 'smart'
-                else
-                    echo 'fallback'
-                fi
-            " 2>/dev/null || echo 'fallback'
-        else
-            echo 'fallback'
-        fi
-    else
-        echo 'fallback'
-    fi
-}
-
-# 智能下载公钥
-smart_download_pubkey() {
-    local output="$1"
-    
-    # 尝试使用智能下载
-    if command -v bash >/dev/null 2>&1; then
-        SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE:-$0}")" && pwd)"
-        LIB_DIR="$SCRIPT_DIR/lib"
-        [ ! -d "$LIB_DIR" ] && LIB_DIR="$SCRIPT_DIR/../lib"
-        
-        if [ -f "$LIB_DIR/download.sh" ]; then
-            # 使用bash执行智能下载
-            bash -c "
-                source '$LIB_DIR/download.sh' 2>/dev/null || exit 1
-                download_pubkey 'passwall' '$output' || exit 1
-            " 2>/dev/null && return 0
-        fi
-    fi
-    
-    # 智能下载失败，回退到原逻辑
-    return 1
-}
-
-# 从 SourceForge 查找并安装最新版 ipk（修复版）
-find_and_install_latest_ipk() {
-    local sf_base_url="https://sourceforge.net/projects/openwrt-passwall-build/files"
-    local package_dir="releases/packages-${RELEASE:-24.10}/${ARCH:-aarch64_generic}"
-    
-    log "尝试自动查找最新版 ipk..."
-    
-    # 我们需要的主要包
-    local main_packages="luci-app-passwall luci-i18n-passwall-zh-cn"
-    local downloaded_files=""
-    
-    for pkg in $main_packages; do
-        # 访问 passwall_luci 目录（ipk 文件在这里）
-        local dir_url="${sf_base_url}/${package_dir}/passwall_luci/"
-        log "检查目录: $(echo "$dir_url" | sed 's|https://||')"
-        
-        local page_content
-        if ! page_content="$(wget -qO- "$dir_url" 2>/dev/null)"; then
-            warn "无法访问目录页面"
-            continue
-        fi
-        
-        # 查找包含包名的链接（可能以 /stats/timeline 结尾）
-        local pkg_links
-        pkg_links="$(echo "$page_content" | grep -o 'href="/projects/openwrt-passwall-build/files/[^"]*'"${pkg}"'_[^"]*\.ipk[^"]*"' | sed 's|^href="||;s|"$||' | head -n1)"
-        
-        if [ -z "$pkg_links" ]; then
-            warn "未找到包: $pkg"
-            continue
-        fi
-        
-        # 修复链接：如果包含 /stats/timeline，去掉它
-        local clean_link="$pkg_links"
-        if echo "$clean_link" | grep -q "/stats/timeline$"; then
-            clean_link="$(echo "$clean_link" | sed 's|/stats/timeline$||')"
-            log "清理链接（去掉/stats/timeline）"
-        fi
-        
-        # 获取文件名
-        local filename="$(basename "$clean_link").ipk"
-        local local_path="/tmp/$filename"
-        
-        # 构建下载链接
-        local download_url="https://sourceforge.net${clean_link}/download"
-        log "下载: $filename"
-        
-        # 下载文件
-        if wget -qO "$local_path" "$download_url"; then
-            # 检查文件是否有效
-            local file_size
-            file_size="$(wc -c < "$local_path" 2>/dev/null || echo 0)"
-            if [ "$file_size" -gt 1000 ]; then
-                log "✅ 下载成功: $filename ($((file_size/1024)) KB)"
-                downloaded_files="$downloaded_files $local_path"
-                
-                # 提取版本号
-                local file_ver
-                file_ver="$(echo "$filename" | sed -n "s/${pkg}_\([^_]*\)_.*/\1/p")"
-                [ -n "$file_ver" ] && log "文件版本: $file_ver"
-            else
-                warn "文件太小 ($file_size 字节)，可能下载失败"
-                rm -f "$local_path"
-            fi
-        else
-            warn "下载失败: $filename"
-        fi
-    done
-    
-    if [ -z "$downloaded_files" ]; then
-        warn "没有成功下载任何包"
-        log "当前 SourceForge 上最新可用版本: 26.3.6-r1"
-        log "GitHub 最新版本: ${GH_LATEST:-未知}"
-        log "版本差异: 源代码已发布，但预编译包还未上传"
-        return 1
-    fi
-    
-    # 安装下载的包
-    log "安装下载的 ipk 包..."
-    for ipk in $downloaded_files; do
-        if [ -f "$ipk" ] && [ -s "$ipk" ]; then
-            if opkg install "$ipk"; then
-                log "✅ 安装成功: $(basename "$ipk")"
-            else
-                warn "安装失败: $(basename "$ipk")"
-            fi
-        else
-            warn "文件无效: $(basename "$ipk")"
-        fi
-    done
-    
-    # 版本对比
-    log "\n📊 版本总结:"
-    log "• SourceForge 当前版本: 26.3.6-r1"
-    log "• GitHub 最新版本: ${GH_LATEST:-未知}"
-    if [ -n "$GH_LATEST" ] && [ "$GH_LATEST" != "26.3.6-r1" ]; then
-        warn "• 版本差异: 源代码已更新，预编译包还未上传"
-        warn "• 建议: 等待作者上传编译好的包 (通常需要 1-3 天)"
-    fi
-    
-    return 0
-}
 
 cleanup() {
     rmdir "$LOCKDIR" 2>/dev/null || true
@@ -186,6 +26,13 @@ die() {
 
 need_cmd() {
     command -v "$1" >/dev/null 2>&1 || die "缺少命令: $1"
+}
+
+refresh_luci() {
+    rm -rf /tmp/luci-* /tmp/.luci* /tmp/etc/config/ucitrack /var/run/luci-indexcache 2>/dev/null || true
+    if [ -x /etc/init.d/rpcd ]; then
+        /etc/init.d/rpcd restart >/dev/null 2>&1 || warn "rpcd 重启失败"
+    fi
 }
 
 if ! mkdir "$LOCKDIR" 2>/dev/null; then
@@ -238,46 +85,8 @@ sed -i '/^src\/gz passwall2 /d' /etc/opkg/customfeeds.conf
 
 cd /tmp
 rm -f passwall.pub
-
-# ========== 智能公钥下载（解决 SourceForge 失败问题）==========
 log "下载 PassWall 公钥..."
-
-# 先尝试智能下载
-if smart_download_pubkey "/tmp/passwall.pub"; then
-    log "✅ 使用智能网络层下载公钥成功"
-else
-    # 智能下载失败，回退到原逻辑
-    log "使用传统方式下载公钥..."
-    wget -qO passwall.pub "$KEY_URL" || {
-        warn "公钥下载失败，尝试备用方案..."
-        
-        # 尝试其他源
-        BACKUP_URLS="
-            https://raw.githubusercontent.com/Openwrt-Passwall/openwrt-passwall/main/passwall.pub
-            https://cdn.jsdelivr.net/gh/Openwrt-Passwall/openwrt-passwall@main/passwall.pub
-            https://ghproxy.com/https://raw.githubusercontent.com/Openwrt-Passwall/openwrt-passwall/main/passwall.pub
-        "
-        
-        for url in $BACKUP_URLS; do
-            log "尝试备用源: $(echo "$url" | sed 's|https://||')"
-            if wget -qO passwall.pub "$url"; then
-                log "✅ 使用备用源下载成功"
-                break
-            fi
-        done
-        
-        # 如果所有源都失败，生成临时公钥
-        if [ ! -f passwall.pub ] || [ ! -s passwall.pub ]; then
-            warn "所有公钥源均失败，生成临时公钥"
-            cat > passwall.pub <<'EOF'
-untrusted comment: Temporary PassWall key (auto-generated)
-RWQ1MHRhdzN3MnlmYVl6NEJDbzVScnpFNE44azhSTHdtZTRBY25PZG1JZXJpZktRZUNaRzBY
-EOF
-            warn "使用临时公钥，安装可能无法验证包签名"
-        fi
-    }
-fi
-
+wget -qO passwall.pub "$KEY_URL" || die "下载 PassWall 公钥失败"
 opkg-key add /tmp/passwall.pub >/dev/null 2>&1 || true
 
 for feed in passwall_luci passwall_packages passwall2; do
@@ -290,102 +99,13 @@ opkg update
 OLD_VER="$(opkg status luci-app-passwall 2>/dev/null | sed -n 's/^Version: //p' | head -n1 || true)"
 log "当前已安装版本: ${OLD_VER:-not installed}"
 
-if opkg status luci-app-passwall >/dev/null 2>&1 && [ ! -f /usr/share/passwall/utils.sh ]; then
-    warn "检测到 luci-app-passwall 状态存在但关键文件缺失，自动强制重装 LuCI 包"
-    opkg install --force-reinstall luci-app-passwall >/dev/null 2>&1 || {
-        warn "--force-reinstall 失败，尝试移除后重装 luci-app-passwall"
-        opkg remove luci-app-passwall --force-remove --force-maintainer >/dev/null 2>&1 || true
-        opkg install luci-app-passwall || die "重装 luci-app-passwall 失败"
-    }
-fi
-
-# 检查源中可用版本
-AVAILABLE_VERSIONS="$(opkg list luci-app-passwall 2>/dev/null | sed -n 's/^luci-app-passwall - //p' | head -n1 || true)"
-
-log "安装 / 更新 PassWall"
-log "当前源版本: ${AVAILABLE_VERSIONS:-未知}"
-log "GitHub最新版: ${GH_LATEST:-未知}"
-
-# 如果检测到 GitHub 版本但源里没有，提示用户
-if [ -n "$GH_LATEST" ] && [ -n "$AVAILABLE_VERSIONS" ]; then
-    if [ "$GH_LATEST" != "$AVAILABLE_VERSIONS" ]; then
-        warn "⚠️  注意: GitHub 版本 ($GH_LATEST) 与源版本 ($AVAILABLE_VERSIONS) 不一致"
-        warn "    这可能是因为源还未同步最新编译版本"
-        warn "    将安装源中可用版本: $AVAILABLE_VERSIONS"
-        
-        # 提供手动下载指南
-        echo ""
-        log "📥 如果你想立即安装 $GH_LATEST，可以:"
-        log "1. 访问: https://sourceforge.net/projects/openwrt-passwall-build/files/"
-        log "2. 找到目录: releases/packages-${RELEASE:-24.10}/${ARCH:-aarch64_generic}/"
-        log "3. 下载最新版 luci-app-passwall_${GH_LATEST}_*.ipk"
-        log "4. 运行: opkg install /path/to/downloaded.ipk"
-        echo ""
-        
-        # 如果用户确认，尝试自动查找
-        if [ -t 0 ] && [ -t 1 ]; then
-            printf "[INFO] 是否让脚本尝试查找最新版？ [y/N]: "
-            read -r response
-            if [ "$response" = "y" ] || [ "$response" = "Y" ]; then
-                log "正在尝试自动查找最新版 ipk..."
-                if find_and_install_latest_ipk; then
-                    log "✅ 已成功安装最新版 ipk"
-                    exit 0
-                else
-                    warn "自动查找失败，将使用源版本"
-                fi
-            fi
-        fi
-    else
-        log "✅ 源版本与 GitHub 版本一致，安装最新版"
-    fi
-fi
-
+log "按官方 IPK 方式安装 / 更新 PassWall"
 opkg install luci-app-passwall luci-i18n-passwall-zh-cn
 
 NEW_VER="$(opkg status luci-app-passwall 2>/dev/null | sed -n 's/^Version: //p' | head -n1 || true)"
 log "安装后版本: ${NEW_VER:-unknown}"
 
-PASSWALL_DEFAULT_CONFIG="/usr/share/passwall/0_default_config"
-if [ -f "$PASSWALL_DEFAULT_CONFIG" ]; then
-    if [ ! -f /etc/config/passwall ] || ! grep -q "config global" /etc/config/passwall 2>/dev/null || [ "$(grep -c '^config ' /etc/config/passwall 2>/dev/null || true)" -lt 2 ]; then
-        log "检测到 /etc/config/passwall 缺失或配置过薄，使用默认配置恢复"
-        cp -f "$PASSWALL_DEFAULT_CONFIG" /etc/config/passwall
-    fi
-else
-    if [ ! -f /etc/config/passwall ]; then
-        warn "未发现默认配置文件，自动生成最小 /etc/config/passwall 以确保 LuCI 入口可用"
-        cat >/etc/config/passwall <<'EOF'
-config global
-	option enabled '0'
-EOF
-    fi
-fi
-
-log "轻刷新 LuCI 缓存"
-rm -rf /tmp/luci-* /tmp/.luci* /tmp/etc/config/ucitrack /var/run/luci-indexcache 2>/dev/null || true
-if [ -x /etc/init.d/rpcd ]; then
-    /etc/init.d/rpcd restart >/dev/null 2>&1 || warn "rpcd 重启失败"
-fi
-
-if [ -n "$NEW_VER" ] && [ "$OLD_VER" != "$NEW_VER" ]; then
-    log "版本发生变化，尝试重启相关服务"
-    /etc/init.d/firewall restart >/dev/null 2>&1 || true
-    /etc/init.d/passwall restart >/dev/null 2>&1 || true
-else
-    log "版本未变化，跳过防火墙/服务重启"
-fi
-
-warn "请刷新页面或切换一次左侧菜单，插件入口会自动更新；如仍未生效，再重新登录 LuCI"
-
-if opkg status luci-app-passwall2 >/dev/null 2>&1; then
-    warn "检测到已安装 PassWall2；在部分主题下，PassWall 与 PassWall2 菜单可能重叠或显示不明显"
-    warn "如菜单未明显显示，可直接访问: /cgi-bin/luci/admin/services/passwall"
-fi
-
+refresh_luci
+warn "默认不主动修改 /etc/config/passwall；如界面初次显示异常，可手动刷新页面或重新登录 LuCI"
 warn "如界面初次显示为英文，请刷新页面，中文语言包会自动生效"
 log "PassWall 处理完成"
-
-# 智能网络层备注
-log "💡 提示: 此脚本已集成智能网络层，自动解决公钥下载失败问题"
-log "📚 更多功能: 运行 ./tools/network-diagnose.sh 进行网络诊断"

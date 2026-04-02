@@ -54,31 +54,27 @@
 ### 代理插件安装
 
 - `passwall.sh`
-  - 安装或更新 PassWall
-  - 自动安装 LuCI 包与中文语言包
-  - 采用轻刷新模式；安装后会清理 LuCI 菜单缓存并重启 `rpcd`，帮助菜单及时显示
-  - 若 `luci-app-passwall` 状态存在但 `/usr/share/passwall/utils.sh` 等关键文件缺失，会自动强制重装 LuCI 包
-  - 若 `/etc/config/passwall` 缺失或配置过薄，会优先使用 `/usr/share/passwall/0_default_config` 恢复默认配置
-  - 若已安装 PassWall2，会提示菜单可能重叠并给出直达路径
+  - 按接近官方 IPK 的方式安装或更新 PassWall
+  - 自动安装 LuCI 主包与中文语言包
+  - 自动添加 PassWall feed / key 并刷新软件源
+  - 默认不改写现有 `/etc/config/passwall`
+  - 安装后会清理 LuCI 菜单缓存并重启 `rpcd`
   - 若初次显示为英文，刷新页面后中文语言包会自动生效
 
 - `passwall2.sh`
-  - 安装或更新 PassWall2
-  - 自动安装 LuCI 包与中文语言包
-  - 采用轻刷新模式；安装后会清理 LuCI 菜单缓存并重启 `rpcd`，帮助菜单及时显示
-  - 若 `luci-app-passwall2` 状态存在但 `/usr/share/passwall2/utils.sh` 等关键文件缺失，会自动强制重装 LuCI 包
-  - 若 `/etc/config/passwall2` 缺失或配置过薄，会优先使用 `/usr/share/passwall2/0_default_config` 恢复默认配置
-  - 若已安装 PassWall，会提示菜单可能重叠并给出直达路径
+  - 按接近官方 IPK 的方式安装或更新 PassWall2
+  - 自动安装 LuCI 主包与中文语言包
+  - 自动添加 PassWall feed / key 并刷新软件源
+  - 默认不改写现有 `/etc/config/passwall2`
+  - 安装后会清理 LuCI 菜单缓存并重启 `rpcd`
   - 若初次显示为英文，刷新页面后中文语言包会自动生效
 
 - `nikki.sh`
-  - 安装或更新 Nikki
+  - 按 Nikki 官方 feed.sh / install.sh 流程安装或更新 Nikki
   - 整体采用轻刷新模式，不重启 `uhttpd`
-  - 在 OpenWrt / opkg 环境下，会先检测 `/etc/nikki/ucode/include.uc` 等关键文件
-  - 若主包状态存在但文件缺失，会自动强制重装 `nikki` 主包
-  - 再调用 Nikki 官方 `install.sh` 完成初始化，并补装中文语言包
-  - 安装后会自动修正 `/usr/share/rpcd/ucode/luci.nikki` 执行权限并重启 `rpcd`
-  - 确保 `luci.nikki` RPC 对象正常注册
+  - 保留防火墙栈检测与官方安装流程
+  - 仅补装中文语言包，不主动做额外配置修复
+  - 默认不改写现有 Nikki 配置
   - 若初次显示为英文，刷新页面后中文语言包会自动生效
 
 ### 卸载与菜单
