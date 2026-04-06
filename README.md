@@ -5,7 +5,7 @@
 ![Workflow](https://img.shields.io/github/actions/workflow/status/slobys/openclash-auto-installer/shell-check.yml?branch=main&style=flat-square)
 
 适用于 **OpenWrt / iStoreOS / ImmortalWrt** 的代理插件安装、更新、卸载与修复脚本集合。  
-当前项目以 **OpenClash** 为核心入口，同时集成 **PassWall / PassWall2 / Nikki** 的常用管理脚本。
+以 **OpenClash** 为核心入口，统一提供 **PassWall / PassWall2 / Nikki** 的常用安装、更新、卸载与检查脚本。
 
 > **推荐环境：OpenWrt / iStoreOS / ImmortalWrt 24.x 及以上**
 >

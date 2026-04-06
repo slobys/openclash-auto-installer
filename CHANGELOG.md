@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.1.6
+
+- 优化 README 首页结构，补充“适合谁 / 不适合谁”“推荐使用方式”“支持矩阵”“已知限制”等导航信息
+- 强化项目首页对 OpenClash 主入口定位的表达，同时明确 PassWall / PassWall2 / Nikki 的脚本集合属性
+- 补充项目文件列表，完善对 `check-updates.sh`、`auto-download-pro.sh`、`test-auto-download.sh` 的说明可见性
+- 文档层面进一步提升 GitHub 首页可读性，方便新用户快速判断适用环境与使用入口
+
 ## v1.1.5
 
 - `passwall.sh` / `passwall2.sh` 安装逻辑瘦身，改为更接近官方 IPK 的安装方式
