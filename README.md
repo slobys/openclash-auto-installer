@@ -4,7 +4,8 @@
 ![License](https://img.shields.io/github/license/slobys/openclash-auto-installer?style=flat-square)
 ![Workflow](https://img.shields.io/github/actions/workflow/status/slobys/openclash-auto-installer/shell-check.yml?branch=main&style=flat-square)
 
-适用于 **OpenWrt / iStoreOS / ImmortalWrt** 的代理插件安装、更新、卸载与修复脚本集合。
+适用于 **OpenWrt / iStoreOS / ImmortalWrt** 的代理插件安装、更新、卸载与修复脚本集合。  
+当前项目以 **OpenClash** 为核心入口，同时集成 **PassWall / PassWall2 / Nikki** 的常用管理脚本。
 
 > **推荐环境：OpenWrt / iStoreOS / ImmortalWrt 24.x 及以上**
 >
@@ -22,6 +23,32 @@
 - PassWall
 - PassWall2
 - Nikki
+
+---
+
+## 适合谁 / 不适合谁
+
+### 适合
+- 想快速安装或更新 OpenClash 的 OpenWrt / iStoreOS / ImmortalWrt 用户
+- 希望集中管理 PassWall / PassWall2 / Nikki / OpenClash 的用户
+- 想用尽量接近官方安装逻辑、同时减少手工操作的人
+
+### 不适合
+- 需要兼容大量非标准固件、魔改软件源、特殊架构环境的场景
+- 希望脚本自动处理所有第三方源异常、依赖冲突、旧版系统兼容问题的场景
+- 不愿意自行确认高风险环境（低版本 / apk 初期适配 / 特殊防火墙栈）的用户
+
+---
+
+## 推荐使用方式
+
+如果你只是想：
+
+- **安装 / 更新 OpenClash** → 用 `install.sh`
+- **交互式统一管理多个插件** → 用 `menu.sh`
+- **只检查是否有新版本** → 用 `check-updates.sh`
+- **修复 OpenClash 基础运行环境** → 用 `repair.sh`
+- **安全卸载插件** → 用 `uninstall.sh`
 
 ---
 
@@ -44,18 +71,32 @@
 
 ---
 
+## 支持矩阵
+
+| 功能 | OpenWrt / iStoreOS / ImmortalWrt 24.x+ | 23.05 / 22.03 及更早 | OpenWrt 25.12+ / `apk` |
+|------|----------------------------------------|----------------------|-------------------------|
+| OpenClash 安装 / 更新 | ✅ 推荐 | ⚠️ 谨慎使用 | ⚠️ 初步适配 |
+| PassWall 安装 / 更新 | ✅ 推荐 | ⚠️ 谨慎使用 | ❌ 暂未适配 |
+| PassWall2 安装 / 更新 | ✅ 推荐 | ⚠️ 谨慎使用 | ❌ 暂未适配 |
+| Nikki 安装 / 更新 | ✅ 推荐 | ⚠️ 谨慎使用 | ⚠️ 受 `firewall4` / nftables 限制 |
+| 安全卸载 | ✅ 推荐 | ⚠️ 谨慎使用 | ⚠️ 取决于当前插件支持情况 |
+| 更新检测 | ✅ 推荐 | ⚠️ 谨慎使用 | ⚠️ 部分场景仍需继续验证 |
+
+---
+
 ## 功能
 
 - 安装或更新 OpenClash
+- 安装或更新 PassWall
+- 安装或更新 PassWall2
+- 安装或更新 Nikki
 - 卸载 PassWall
 - 卸载 PassWall2
 - 卸载 Nikki
 - 卸载 OpenClash
 - 修复 OpenClash 基础运行环境
 - 菜单式管理入口
-- 安装或更新 PassWall
-- 安装或更新 PassWall2
-- 安装或更新 Nikki
+- 检查 OpenClash / PassWall / PassWall2 / Nikki 是否有新版本
 - 自动识别 OpenClash 的 `Meta / Smart Meta` 内核通道
 - 自动识别 `opkg` / `apk`
 - 自动识别 `fw4/nft` 或 `iptables`
@@ -99,7 +140,7 @@
   - 若初次显示为英文，刷新页面后中文语言包会自动生效
 
 - `nikki.sh`
-  - 按 Nikki 官方 feed.sh / install.sh 流程安装或更新 Nikki
+  - 按 Nikki 官方 `feed.sh` / `install.sh` 流程安装或更新 Nikki
   - 整体采用轻刷新模式，不重启 `uhttpd`
   - 保留防火墙栈检测与官方安装流程
   - 仅补装中文语言包，不主动做额外配置修复
@@ -230,6 +271,16 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-inst
 
 ---
 
+## 已知限制
+
+- `apk` 环境目前仍处于逐步适配阶段，不应视为“所有插件已完全支持”
+- PassWall / PassWall2 在 `apk` 环境下暂未适配，检测到相关环境会报错退出
+- Nikki 依赖 `firewall4`（nftables），若系统为 `iptables` 会提前报错
+- 部分精简固件的软件包名称、软件源配置、架构命名可能与标准环境不同，必要时需自行微调
+- 卸载脚本默认不删除 `/etc/openclash` 配置目录，避免误删订阅和已有配置
+
+---
+
 ## 兼容性与说明
 
 支持范围：
@@ -270,6 +321,9 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-inst
 ├─ passwall2.sh
 ├─ nikki.sh
 ├─ menu.sh
+├─ check-updates.sh
+├─ auto-download-pro.sh
+├─ test-auto-download.sh
 └─ .gitignore
 ```
 
