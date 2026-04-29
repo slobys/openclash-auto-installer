@@ -111,6 +111,16 @@
 
 ---
 
+## 使用命令
+
+推荐统一使用菜单模式，安装、更新、检查版本和卸载入口都已集成在菜单中：
+
+```sh
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/main/menu.sh)"
+```
+
+---
+
 ## 文件说明
 
 ### OpenClash 相关
@@ -179,16 +189,6 @@
   - 独立的更新检测脚本
   - 检查 OpenClash / PassWall / PassWall2 / Nikki / SmartDNS 是否有新版本
   - 只检测，不自动更新
-
----
-
-## 使用命令
-
-推荐统一使用菜单模式，安装、更新、检查版本和卸载入口都已集成在菜单中：
-
-```sh
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/main/menu.sh)"
-```
 
 ---
 
