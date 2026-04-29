@@ -1,7 +1,10 @@
 #!/bin/sh
 set -eu
 
-BASE_URL="https://raw.githubusercontent.com/slobys/openclash-auto-installer/main"
+REPO="slobys/openclash-auto-installer"
+BRANCH="main"
+BASE_URL="https://raw.githubusercontent.com/$REPO/$BRANCH"
+RESOLVED_BASE_URL=""
 TMP_SCRIPT="/tmp/openclash-menu-action.sh"
 NONINTERACTIVE_ACTION=""
 
@@ -132,6 +135,22 @@ parse_args() {
     done
 }
 
+resolve_base_url() {
+    if [ -n "$RESOLVED_BASE_URL" ]; then
+        printf '%s' "$RESOLVED_BASE_URL"
+        return 0
+    fi
+
+    LATEST_SHA="$(curl -fsSL --retry 3 "https://api.github.com/repos/$REPO/commits/$BRANCH" 2>/dev/null | sed -n 's/.*"sha":[[:space:]]*"\([0-9a-f]\{40\}\)".*/\1/p' | head -n1 || true)"
+    if [ -n "$LATEST_SHA" ]; then
+        RESOLVED_BASE_URL="https://raw.githubusercontent.com/$REPO/$LATEST_SHA"
+    else
+        RESOLVED_BASE_URL="$BASE_URL"
+    fi
+
+    printf '%s' "$RESOLVED_BASE_URL"
+}
+
 download_and_run() {
     SCRIPT_NAME="$1"
     shift || true
@@ -147,11 +166,10 @@ download_and_run() {
         return
     fi
     
-    URL="$BASE_URL/$SCRIPT_NAME"
-    FETCH_URL="$URL?ts=$(date +%s)"
+    URL="$(resolve_base_url)/$SCRIPT_NAME"
 
     log "下载脚本: $URL"
-    curl -fsSL --retry 3 "$FETCH_URL" -o "$TMP_SCRIPT" || die "下载脚本失败: $SCRIPT_NAME"
+    curl -fsSL --retry 3 "$URL" -o "$TMP_SCRIPT" || die "下载脚本失败: $SCRIPT_NAME"
     chmod +x "$TMP_SCRIPT"
     sh "$TMP_SCRIPT" "$@"
 }

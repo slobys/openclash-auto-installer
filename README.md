@@ -21,7 +21,7 @@
 推荐直接使用菜单模式，安装、更新、检查版本和卸载都在菜单里：
 
 ```sh
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/main/menu.sh)"
+sh -c "$(curl -fsSL https://cdn.jsdelivr.net/gh/slobys/openclash-auto-installer@main/menu.sh)"
 ```
 
 菜单结构：

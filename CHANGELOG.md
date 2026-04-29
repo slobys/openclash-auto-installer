@@ -3,6 +3,8 @@
 ## v1.1.9
 
 - 修复 SmartDNS 卸载时未先移除 `app-meta-smartdns`，导致 `luci-app-smartdns` 被依赖阻止卸载的问题
+- 优化菜单脚本下载逻辑：先解析最新 commit SHA，再用固定提交地址下载子脚本，避免 GitHub raw 分支缓存返回旧文件
+- README 一键命令改用 jsDelivr 地址，降低 raw 缓存影响
 - 优化菜单交互：从二级菜单返回主菜单时不再额外要求按一次回车
 
 ## v1.1.8
