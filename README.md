@@ -184,67 +184,7 @@
 
 ## 使用命令
 
-### OpenClash 安装 / 更新
-
-```sh
-curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/main/install.sh | sh
-```
-
-### 仅检查 OpenClash 是否有新版本
-
-```sh
-curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/main/install.sh | sh -s -- --check-update
-```
-
-或：
-
-```sh
-curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/main/update.sh | sh -s -- --check
-```
-
-### 检查所有插件是否有新版本
-
-```sh
-curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/main/check-updates.sh | sh
-```
-
-也支持单独检查：
-
-```sh
-sh check-updates.sh --openclash
-sh check-updates.sh --passwall
-sh check-updates.sh --passwall2
-sh check-updates.sh --nikki
-sh check-updates.sh --smartdns
-```
-
-### PassWall 安装 / 更新
-
-```sh
-curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/main/passwall.sh | sh
-```
-
-### PassWall2 安装 / 更新
-
-```sh
-curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/main/passwall2.sh | sh
-```
-
-### Nikki 安装 / 更新
-
-```sh
-curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/main/nikki.sh | sh
-```
-
-### SmartDNS 安装 / 更新
-
-```sh
-curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/main/smartdns.sh | sh
-```
-
-### 菜单模式
-
-推荐：
+推荐统一使用菜单模式，安装、更新、检查版本和卸载入口都已集成在菜单中：
 
 ```sh
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/main/menu.sh)"
