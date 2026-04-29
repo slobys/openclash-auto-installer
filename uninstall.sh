@@ -172,6 +172,8 @@ safe_uninstall_smartdns() {
     log "开始安全卸载 SmartDNS（仅卸载主包）"
 
     stop_disable_service smartdns
+    remove_pkg_if_installed "$PKG_MGR" app-meta-smartdns
+    remove_pkg_if_installed "$PKG_MGR" luci-i18n-smartdns-zh-cn
     remove_pkg_if_installed "$PKG_MGR" luci-app-smartdns
     remove_pkg_if_installed "$PKG_MGR" smartdns
 

@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.1.9
+
+- 修复 SmartDNS 卸载时未先移除 `app-meta-smartdns`，导致 `luci-app-smartdns` 被依赖阻止卸载的问题
+- 优化菜单交互：从二级菜单返回主菜单时不再额外要求按一次回车
+
 ## v1.1.8
 
 - 新增 `smartdns.sh`，支持从 SmartDNS 官方 GitHub Release 安装 / 更新 `smartdns` 与 `luci-app-smartdns`

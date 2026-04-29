@@ -224,6 +224,7 @@ run_action() {
     case "$action" in
         1|check-updates)
             run_check_update_menu
+            SKIP_MAIN_PAUSE="1"
             ;;
         check-all-updates)
             download_and_run check-updates.sh
@@ -245,9 +246,11 @@ run_action() {
             ;;
         2|install-plugins)
             run_install_menu
+            SKIP_MAIN_PAUSE="1"
             ;;
         3|uninstall-plugins)
             run_uninstall_menu
+            SKIP_MAIN_PAUSE="1"
             ;;
         openclash)
             download_and_run install.sh
@@ -434,10 +437,13 @@ main() {
         show_menu
         printf '请输入选项 [0-3]: ' >/dev/tty
         read_from_tty choice
+        SKIP_MAIN_PAUSE="0"
         run_action "$choice"
-        printf '\n按回车键返回菜单...' >/dev/tty
-        read_from_tty _dummy
-        printf '\n'
+        if [ "$SKIP_MAIN_PAUSE" != "1" ]; then
+            printf '\n按回车键返回菜单...' >/dev/tty
+            read_from_tty _dummy
+            printf '\n'
+        fi
     done
 }
 
