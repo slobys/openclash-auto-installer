@@ -167,6 +167,24 @@ safe_uninstall_nikki() {
     log "Nikki 安全卸载完成"
 }
 
+safe_uninstall_smartdns() {
+    PKG_MGR="$1"
+    log "开始安全卸载 SmartDNS（仅卸载主包）"
+
+    stop_disable_service smartdns
+    remove_pkg_if_installed "$PKG_MGR" luci-app-smartdns
+    remove_pkg_if_installed "$PKG_MGR" smartdns
+
+    if [ "$DELETE_CONFIG" -eq 1 ]; then
+        log "删除 SmartDNS 配置文件"
+        remove_paths /etc/config/smartdns
+    else
+        warn "默认保留 /etc/config/smartdns 配置文件"
+    fi
+
+    log "SmartDNS 安全卸载完成"
+}
+
 safe_uninstall_openclash() {
     PKG_MGR="$1"
     log "开始安全卸载 OpenClash（仅卸载主包）"
@@ -191,6 +209,7 @@ usage() {
   sh uninstall.sh passwall [--delete-config]
   sh uninstall.sh passwall2 [--delete-config]
   sh uninstall.sh nikki [--delete-config]
+  sh uninstall.sh smartdns [--delete-config]
   sh uninstall.sh openclash [--delete-config]
 
 说明:
@@ -237,6 +256,9 @@ main() {
             ;;
         nikki)
             safe_uninstall_nikki "$PKG_MGR"
+            ;;
+        smartdns)
+            safe_uninstall_smartdns "$PKG_MGR"
             ;;
         openclash)
             safe_uninstall_openclash "$PKG_MGR"

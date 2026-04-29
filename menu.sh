@@ -28,6 +28,7 @@ usage() {
   sh menu.sh --check-update-passwall
   sh menu.sh --check-update-passwall2
   sh menu.sh --check-update-nikki
+  sh menu.sh --check-update-smartdns
   sh menu.sh --openclash
   sh menu.sh --openclash-check-update
   sh menu.sh --openclash-plugin-only
@@ -37,9 +38,11 @@ usage() {
   sh menu.sh --passwall
   sh menu.sh --passwall2
   sh menu.sh --nikki
+  sh menu.sh --smartdns
   sh menu.sh --uninstall-passwall
   sh menu.sh --uninstall-passwall2
   sh menu.sh --uninstall-nikki
+  sh menu.sh --uninstall-smartdns
   sh menu.sh --uninstall-openclash
 
 说明:
@@ -72,6 +75,9 @@ parse_args() {
             --check-update-nikki)
                 NONINTERACTIVE_ACTION="check-update-nikki"
                 ;;
+            --check-update-smartdns)
+                NONINTERACTIVE_ACTION="check-update-smartdns"
+                ;;
             --openclash-check-update)
                 NONINTERACTIVE_ACTION="openclash-check-update"
                 ;;
@@ -96,6 +102,9 @@ parse_args() {
             --nikki)
                 NONINTERACTIVE_ACTION="nikki"
                 ;;
+            --smartdns)
+                NONINTERACTIVE_ACTION="smartdns"
+                ;;
             --uninstall-passwall)
                 NONINTERACTIVE_ACTION="uninstall-passwall"
                 ;;
@@ -104,6 +113,9 @@ parse_args() {
                 ;;
             --uninstall-nikki)
                 NONINTERACTIVE_ACTION="uninstall-nikki"
+                ;;
+            --uninstall-smartdns)
+                NONINTERACTIVE_ACTION="uninstall-smartdns"
                 ;;
             --uninstall-openclash)
                 NONINTERACTIVE_ACTION="uninstall-openclash"
@@ -157,10 +169,12 @@ show_menu() {
 8. 安装 / 更新 PassWall
 9. 安装 / 更新 PassWall2
 10. 安装 / 更新 Nikki
-11. 卸载 PassWall
-12. 卸载 PassWall2
-13. 卸载 Nikki
-14. 卸载 OpenClash
+11. 安装 / 更新 SmartDNS
+12. 卸载 PassWall
+13. 卸载 PassWall2
+14. 卸载 Nikki
+15. 卸载 SmartDNS
+16. 卸载 OpenClash
 0. 退出
 ==================================================
 EOF_MENU
@@ -174,6 +188,7 @@ show_check_update_menu() {
 3. 检查 PassWall
 4. 检查 PassWall2
 5. 检查 Nikki
+6. 检查 SmartDNS
 0. 返回上一级
 ==============================================
 EOF_CHECK_MENU
@@ -208,6 +223,9 @@ run_action() {
         check-update-nikki)
             download_and_run check-updates.sh --nikki
             ;;
+        check-update-smartdns)
+            download_and_run check-updates.sh --smartdns
+            ;;
         2|openclash)
             download_and_run install.sh
             ;;
@@ -235,16 +253,22 @@ run_action() {
         10|nikki)
             download_and_run nikki.sh
             ;;
-        11|uninstall-passwall)
+        11|smartdns)
+            download_and_run smartdns.sh
+            ;;
+        12|uninstall-passwall)
             download_and_run uninstall.sh passwall --delete-config
             ;;
-        12|uninstall-passwall2)
+        13|uninstall-passwall2)
             download_and_run uninstall.sh passwall2 --delete-config
             ;;
-        13|uninstall-nikki)
+        14|uninstall-nikki)
             download_and_run uninstall.sh nikki --delete-config
             ;;
-        14|uninstall-openclash)
+        15|uninstall-smartdns)
+            download_and_run uninstall.sh smartdns --delete-config
+            ;;
+        16|uninstall-openclash)
             download_and_run uninstall.sh openclash --delete-config
             ;;
         0)
@@ -260,7 +284,7 @@ run_action() {
 run_check_update_menu() {
     while true; do
         show_check_update_menu
-        printf '请输入选项 [0-5]: ' >/dev/tty
+        printf '请输入选项 [0-6]: ' >/dev/tty
         read_from_tty subchoice
         case "$subchoice" in
             1)
@@ -277,6 +301,9 @@ run_check_update_menu() {
                 ;;
             5)
                 download_and_run check-updates.sh --nikki
+                ;;
+            6)
+                download_and_run check-updates.sh --smartdns
                 ;;
             0)
                 return 0
@@ -302,7 +329,7 @@ main() {
 
     while true; do
         show_menu
-        printf '请输入选项 [0-14]: ' >/dev/tty
+        printf '请输入选项 [0-16]: ' >/dev/tty
         read_from_tty choice
         run_action "$choice"
         printf '\n按回车键返回菜单...' >/dev/tty

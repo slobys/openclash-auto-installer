@@ -68,7 +68,15 @@ log "检测到包管理器: $PKG_MGR"
 FIREWALL_STACK="$(detect_firewall_stack)"
 log "检测到防火墙栈: $FIREWALL_STACK"
 if [ "$FIREWALL_STACK" = "iptables" ]; then
-    die "Nikki 仅支持基于 firewall4（nftables）的 OpenWrt 构建。\n  当前系统防火墙栈为 iptables，请使用支持 firewall4 的 OpenWrt 固件。"
+    cat >&2 <<EOF
+[ERROR] Nikki 仅支持 firewall4（nftables）环境。
+当前系统防火墙栈为 iptables，因此无法直接安装 Nikki。
+
+建议处理方式：
+- 切换到使用 firewall4 的 OpenWrt / ImmortalWrt / iStoreOS 固件
+- 或改用 OpenClash / PassWall / PassWall2
+EOF
+    exit 1
 fi
 if [ "$PKG_MGR" = "apk" ]; then
     warn "当前包管理器为 apk（OpenWrt 25.12+），Nikki 可能尚未完全适配。"

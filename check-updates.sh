@@ -6,6 +6,7 @@ OPENCLASH_API="https://api.github.com/repos/vernesong/OpenClash/releases/latest"
 PASSWALL_API="https://api.github.com/repos/Openwrt-Passwall/openwrt-passwall/releases/latest"
 PASSWALL2_API="https://api.github.com/repos/Openwrt-Passwall/openwrt-passwall2/releases/latest"
 NIKKI_REPO_API="https://api.github.com/repos/nikkinikki-org/OpenWrt-nikki/releases/latest"
+SMARTDNS_API="https://api.github.com/repos/pymumu/smartdns/releases/latest"
 TARGET="all"
 
 cleanup() {
@@ -39,6 +40,7 @@ usage() {
   sh check-updates.sh --passwall
   sh check-updates.sh --passwall2
   sh check-updates.sh --nikki
+  sh check-updates.sh --smartdns
 
 说明:
   默认检查全部插件
@@ -62,6 +64,9 @@ parse_args() {
                 ;;
             --nikki)
                 TARGET="nikki"
+                ;;
+            --smartdns)
+                TARGET="smartdns"
                 ;;
             -h|--help)
                 usage
@@ -171,6 +176,17 @@ check_passwall2() {
     print_result "PassWall2" "$INSTALLED" "$LATEST"
 }
 
+check_smartdns() {
+    if [ "$PKG_MGR" = "opkg" ]; then
+        INSTALLED="$(get_installed_opkg_version smartdns)"
+    else
+        INSTALLED="$(get_installed_apk_version smartdns)"
+    fi
+
+    LATEST="$(fetch_latest_tag_jsonfilter smartdns "$SMARTDNS_API" || true)"
+    print_result "SmartDNS" "$INSTALLED" "$LATEST"
+}
+
 check_nikki() {
     if [ "$PKG_MGR" = "opkg" ]; then
         INSTALLED="$(get_installed_opkg_version luci-app-nikki)"
@@ -195,7 +211,7 @@ main() {
     if command -v jsonfilter >/dev/null 2>&1; then
         :
     else
-        warn "未检测到 jsonfilter，OpenClash / Nikki 的最新版本检测可能失败"
+        warn "未检测到 jsonfilter，OpenClash / Nikki / SmartDNS 的最新版本检测可能失败"
     fi
 
     if command -v opkg >/dev/null 2>&1; then
@@ -216,6 +232,7 @@ main() {
             check_passwall
             check_passwall2
             check_nikki
+            check_smartdns
             ;;
         openclash)
             check_openclash
@@ -228,6 +245,9 @@ main() {
             ;;
         nikki)
             check_nikki
+            ;;
+        smartdns)
+            check_smartdns
             ;;
     esac
 

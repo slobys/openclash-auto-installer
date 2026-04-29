@@ -113,22 +113,39 @@ need_cmd basename
 
 ARCH="${DISTRIB_ARCH:-}"
 REL_RAW="${DISTRIB_RELEASE:-}"
+TARGET_NAME="${DISTRIB_TARGET:-}"
 [ -n "$ARCH" ] || die "无法识别系统架构"
 [ -n "$REL_RAW" ] || die "无法识别系统版本"
 
-case "$REL_RAW" in
-    *SNAPSHOT*)
+normalize_release_for_passwall2() {
+    case "$1" in
+        25.*|24.*) printf '24.10' ;;
+        23.05*|23.0*) printf '23.05' ;;
+        22.03*|22.0*) printf '22.03' ;;
+        *SNAPSHOT*) printf 'snapshots' ;;
+        *) printf '' ;;
+    esac
+}
+
+SUPPORTED_RELEASE="$(normalize_release_for_passwall2 "$REL_RAW")"
+[ -n "$SUPPORTED_RELEASE" ] || die "当前系统版本 ${REL_RAW} 暂未适配 PassWall2 安装脚本。建议使用 OpenWrt/iStoreOS/ImmortalWrt 22.03、23.05、24.10 系，或反馈 issue 补充适配。"
+
+case "$SUPPORTED_RELEASE" in
+    snapshots)
         PACKAGE_DIR="snapshots/packages/$ARCH"
         ;;
     *)
-        RELEASE="${REL_RAW%.*}"
-        PACKAGE_DIR="releases/packages-$RELEASE/$ARCH"
+        PACKAGE_DIR="releases/packages-$SUPPORTED_RELEASE/$ARCH"
         ;;
 esac
 
 log "System release: $REL_RAW"
 log "Arch: $ARCH"
+[ -n "$TARGET_NAME" ] && log "Target: $TARGET_NAME"
 log "Package dir: $PACKAGE_DIR"
+if [ "$SUPPORTED_RELEASE" != "$REL_RAW" ]; then
+    warn "当前系统版本 ${REL_RAW} 将按兼容目录 ${SUPPORTED_RELEASE} 匹配 PassWall2 软件源。"
+fi
 
 GH_LATEST="$(fetch_text "$GH_API" 2>/dev/null | sed -n 's/.*"tag_name":[[:space:]]*"\([^"]*\)".*/\1/p' | head -n1 || true)"
 [ -n "$GH_LATEST" ] && log "GitHub latest release: $GH_LATEST"
@@ -137,10 +154,25 @@ OLD_VER="$(opkg status luci-app-passwall2 2>/dev/null | sed -n 's/^Version: //p'
 log "当前已安装版本: ${OLD_VER:-not installed}"
 log "按接近手动 IPK 的方式安装 / 更新 PassWall2"
 
-MAIN_IPK="$(download_pkg_from_dir luci-app-passwall2 passwall2)" || die "下载 luci-app-passwall2 失败"
-LANG_IPK="$(download_pkg_from_dir luci-i18n-passwall2-zh-cn passwall2)" || die "下载 luci-i18n-passwall2-zh-cn 失败"
+MAIN_IPK="$(download_pkg_from_dir luci-app-passwall2 passwall2)" || die "下载 luci-app-passwall2 失败，请检查当前系统版本/架构是否存在对应构建，或稍后重试。"
+LANG_IPK="$(download_pkg_from_dir luci-i18n-passwall2-zh-cn passwall2)" || die "下载 luci-i18n-passwall2-zh-cn 失败，请稍后重试。"
 
-opkg install "$MAIN_IPK" "$LANG_IPK"
+if ! opkg install "$MAIN_IPK" "$LANG_IPK"; then
+    cat >&2 <<EOF
+[ERROR] PassWall2 安装失败。
+可能原因：
+1. 当前固件版本与 PassWall2 预编译包不匹配
+2. 当前架构缺少对应依赖包，或软件源中没有兼容构建
+3. 第三方固件重写了软件源，导致依赖解析异常
+
+建议排查：
+- 确认系统版本优先使用 22.03 / 23.05 / 24.10 系
+- 执行 opkg update 后重试
+- 检查 /etc/opkg/customfeeds.conf 是否存在异常或重复源
+- 如为非标准固件（如 QWRT / GDQ 等），兼容性取决于上游是否提供对应构建
+EOF
+    exit 1
+fi
 
 NEW_VER="$(opkg status luci-app-passwall2 2>/dev/null | sed -n 's/^Version: //p' | head -n1 || true)"
 log "安装后版本: ${NEW_VER:-unknown}"

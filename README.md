@@ -5,7 +5,7 @@
 ![Workflow](https://img.shields.io/github/actions/workflow/status/slobys/openclash-auto-installer/shell-check.yml?branch=main&style=flat-square)
 
 适用于 **OpenWrt / iStoreOS / ImmortalWrt** 的代理插件安装、更新、卸载与修复脚本集合。  
-以 **OpenClash** 为核心入口，统一提供 **PassWall / PassWall2 / Nikki** 的常用安装、更新、卸载与检查脚本。
+以 **OpenClash** 为核心入口，统一提供 **PassWall / PassWall2 / Nikki / SmartDNS** 的常用安装、更新、卸载与检查脚本。
 
 > **推荐环境：OpenWrt / iStoreOS / ImmortalWrt 24.x 及以上**
 >
@@ -23,6 +23,7 @@
 - PassWall
 - PassWall2
 - Nikki
+- SmartDNS
 
 ---
 
@@ -30,7 +31,7 @@
 
 ### 适合
 - 想快速安装或更新 OpenClash 的 OpenWrt / iStoreOS / ImmortalWrt 用户
-- 希望集中管理 PassWall / PassWall2 / Nikki / OpenClash 的用户
+- 希望集中管理 PassWall / PassWall2 / Nikki / SmartDNS / OpenClash 的用户
 - 想用尽量接近官方安装逻辑、同时减少手工操作的人
 
 ### 不适合
@@ -55,14 +56,18 @@
 ## 支持范围说明
 
 ### 推荐
-- OpenWrt 24.x+
-- iStoreOS 24.x+
-- ImmortalWrt 24.x+
+- OpenWrt 24.10.x
+- iStoreOS 24.10.x
+- ImmortalWrt 24.10.x
 
-### 谨慎使用
-- 23.05 / 22.03 及更早版本
+### 可兼容但建议先验证
+- 23.05.x
+- 22.03.x
+
+### 高风险环境
 - 版本号、架构名、软件源路径与官方规范差异较大的第三方固件
 - OpenWrt 25.12+ / `apk` 环境（部分插件仍在适配中）
+- 使用 `iptables` 而非 `firewall4/nftables` 的环境（Nikki 不支持）
 
 ### 当前原则
 - 安装优先走接近官方 / 手动 IPK 的方式
@@ -79,6 +84,7 @@
 | PassWall 安装 / 更新 | ✅ 推荐 | ⚠️ 谨慎使用 | ❌ 暂未适配 |
 | PassWall2 安装 / 更新 | ✅ 推荐 | ⚠️ 谨慎使用 | ❌ 暂未适配 |
 | Nikki 安装 / 更新 | ✅ 推荐 | ⚠️ 谨慎使用 | ⚠️ 受 `firewall4` / nftables 限制 |
+| SmartDNS 安装 / 更新 | ✅ 推荐 | ⚠️ 谨慎使用 | ⚠️ 初步适配 |
 | 安全卸载 | ✅ 推荐 | ⚠️ 谨慎使用 | ⚠️ 取决于当前插件支持情况 |
 | 更新检测 | ✅ 推荐 | ⚠️ 谨慎使用 | ⚠️ 部分场景仍需继续验证 |
 
@@ -90,13 +96,15 @@
 - 安装或更新 PassWall
 - 安装或更新 PassWall2
 - 安装或更新 Nikki
+- 安装或更新 SmartDNS
 - 卸载 PassWall
 - 卸载 PassWall2
 - 卸载 Nikki
+- 卸载 SmartDNS
 - 卸载 OpenClash
 - 修复 OpenClash 基础运行环境
 - 菜单式管理入口
-- 检查 OpenClash / PassWall / PassWall2 / Nikki 是否有新版本
+- 检查 OpenClash / PassWall / PassWall2 / Nikki / SmartDNS 是否有新版本
 - 自动识别 OpenClash 的 `Meta / Smart Meta` 内核通道
 - 自动识别 `opkg` / `apk`
 - 自动识别 `fw4/nft` 或 `iptables`
@@ -126,31 +134,39 @@
 - `passwall.sh`
   - 按接近官方 IPK 的方式安装或更新 PassWall
   - 自动安装 LuCI 主包与中文语言包
-  - 自动添加 PassWall feed / key 并刷新软件源
+  - 会根据系统版本优先映射到兼容的 22.03 / 23.05 / 24.10 构建目录
   - 默认不改写现有 `/etc/config/passwall`
   - 安装后会清理 LuCI 菜单缓存并重启 `rpcd`
-  - 若初次显示为英文，刷新页面后中文语言包会自动生效
+  - 若当前固件为非标准版本号或依赖不兼容，会直接给出更明确的排障提示
 
 - `passwall2.sh`
   - 按接近官方 IPK 的方式安装或更新 PassWall2
   - 自动安装 LuCI 主包与中文语言包
-  - 自动添加 PassWall feed / key 并刷新软件源
+  - 会根据系统版本优先映射到兼容的 22.03 / 23.05 / 24.10 构建目录
   - 默认不改写现有 `/etc/config/passwall2`
   - 安装后会清理 LuCI 菜单缓存并重启 `rpcd`
-  - 若初次显示为英文，刷新页面后中文语言包会自动生效
+  - 若当前固件为非标准版本号或依赖不兼容，会直接给出更明确的排障提示
 
 - `nikki.sh`
   - 按 Nikki 官方 `feed.sh` / `install.sh` 流程安装或更新 Nikki
   - 整体采用轻刷新模式，不重启 `uhttpd`
   - 保留防火墙栈检测与官方安装流程
+  - 若检测到 `iptables` 环境，会明确提示 Nikki 仅支持 `firewall4/nftables`
   - 仅补装中文语言包，不主动做额外配置修复
   - 默认不改写现有 Nikki 配置
   - 若初次显示为英文，刷新页面后中文语言包会自动生效
 
+- `smartdns.sh`
+  - 从 SmartDNS 官方 GitHub Release 下载匹配架构的 OpenWrt 包
+  - 自动安装 / 更新 `smartdns` 与 `luci-app-smartdns`
+  - 支持 `opkg` / `apk`，并自动识别 x86_64 / x86 / aarch64 / arm / mips / mipsel
+  - 默认只启用并重启 SmartDNS 服务，不主动改写 `/etc/config/smartdns`
+  - 安装后会清理 LuCI 菜单缓存并重启 `rpcd`
+
 ### 卸载与菜单
 
 - `uninstall.sh`
-  - 安全卸载 PassWall / PassWall2 / Nikki / OpenClash
+  - 安全卸载 PassWall / PassWall2 / Nikki / SmartDNS / OpenClash
   - 仅移除主包，不碰共享依赖
   - 可按需删除对应配置文件
   - 卸载后会自动清理 LuCI 菜单缓存并重启 `rpcd`
@@ -161,7 +177,7 @@
 
 - `check-updates.sh`
   - 独立的更新检测脚本
-  - 检查 OpenClash / PassWall / PassWall2 / Nikki 是否有新版本
+  - 检查 OpenClash / PassWall / PassWall2 / Nikki / SmartDNS 是否有新版本
   - 只检测，不自动更新
 
 ---
@@ -199,6 +215,7 @@ sh check-updates.sh --openclash
 sh check-updates.sh --passwall
 sh check-updates.sh --passwall2
 sh check-updates.sh --nikki
+sh check-updates.sh --smartdns
 ```
 
 ### PassWall 安装 / 更新
@@ -217,6 +234,12 @@ curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/mai
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/main/nikki.sh | sh
+```
+
+### SmartDNS 安装 / 更新
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-installer/main/smartdns.sh | sh
 ```
 
 ### 菜单模式
@@ -253,6 +276,7 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-inst
 --check-update-passwall    仅检查 PassWall
 --check-update-passwall2   仅检查 PassWall2
 --check-update-nikki       仅检查 Nikki
+--check-update-smartdns    仅检查 SmartDNS
 --openclash                安装 / 更新 OpenClash
 --openclash-check-update   检查 OpenClash 是否有新版本
 --openclash-plugin-only    只更新 OpenClash 插件
@@ -262,9 +286,11 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-inst
 --passwall                 安装 / 更新 PassWall
 --passwall2                安装 / 更新 PassWall2
 --nikki                    安装 / 更新 Nikki
+--smartdns                 安装 / 更新 SmartDNS
 --uninstall-passwall       安全卸载 PassWall（仅主包 + 删除配置）
 --uninstall-passwall2      安全卸载 PassWall2（仅主包 + 删除配置）
 --uninstall-nikki          安全卸载 Nikki（仅主包 + 删除配置）
+--uninstall-smartdns       安全卸载 SmartDNS（仅主包 + 删除配置）
 --uninstall-openclash      安全卸载 OpenClash（仅主包 + 删除配置）
 -h, --help                 显示帮助
 ```
@@ -276,6 +302,7 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-inst
 - `apk` 环境目前仍处于逐步适配阶段，不应视为“所有插件已完全支持”
 - PassWall / PassWall2 在 `apk` 环境下暂未适配，检测到相关环境会报错退出
 - Nikki 依赖 `firewall4`（nftables），若系统为 `iptables` 会提前报错
+- SmartDNS 使用官方 GitHub Release 包安装，暂不自动生成或接管 DNS 配置
 - 部分精简固件的软件包名称、软件源配置、架构命名可能与标准环境不同，必要时需自行微调
 - 卸载脚本默认不删除 `/etc/openclash` 配置目录，避免误删订阅和已有配置
 
@@ -300,6 +327,7 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-inst
   - OpenClash 安装脚本已初步适配 `apk`，但依赖包名可能仍需调整
   - PassWall / PassWall2 脚本暂未适配 `apk`，若检测到 `apk` 会报错退出
   - Nikki 需要 `firewall4`（nftables）支持，若系统为 `iptables` 会提前报错
+  - SmartDNS 会尝试使用官方 `.apk` Release 包安装，仍建议先在目标固件验证
   - 若你使用 OpenWrt 25.12+ 遇到问题，请参考项目 issue 或使用 25.11 及更早版本
 
 ---
@@ -320,6 +348,7 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-inst
 ├─ passwall.sh
 ├─ passwall2.sh
 ├─ nikki.sh
+├─ smartdns.sh
 ├─ menu.sh
 ├─ check-updates.sh
 ├─ auto-download-pro.sh
@@ -335,3 +364,4 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/slobys/openclash-auto-inst
 - PassWall: <https://github.com/Openwrt-Passwall/openwrt-passwall>
 - PassWall2: <https://github.com/Openwrt-Passwall/openwrt-passwall2>
 - Nikki: <https://github.com/nikkinikki-org/OpenWrt-nikki>
+- SmartDNS: <https://github.com/pymumu/smartdns>
