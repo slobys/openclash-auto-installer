@@ -160,24 +160,41 @@ show_menu() {
     cat <<'EOF_MENU'
 ================ 代理插件管理菜单 ================
 1. 检查插件更新
-2. 安装 / 更新 OpenClash（自动识别 Meta / Smart）
-3. 检查 OpenClash 是否有新版本
-4. 只更新 OpenClash 插件
-5. 只安装 OpenClash 核心（自动识别 Meta / Smart）
-6. 只安装 OpenClash 普通 Meta 内核
-7. 只安装 OpenClash Smart Meta 内核
-8. 安装 / 更新 PassWall
-9. 安装 / 更新 PassWall2
-10. 安装 / 更新 Nikki
-11. 安装 / 更新 SmartDNS
-12. 卸载 PassWall
-13. 卸载 PassWall2
-14. 卸载 Nikki
-15. 卸载 SmartDNS
-16. 卸载 OpenClash
+2. 安装插件
+3. 卸载插件
 0. 退出
 ==================================================
 EOF_MENU
+}
+
+show_install_menu() {
+    cat <<'EOF_INSTALL_MENU'
+================ 安装插件 ================
+1. 安装 / 更新 OpenClash（自动识别 Meta / Smart）
+2. 只更新 OpenClash 插件
+3. 只安装 OpenClash 核心（自动识别 Meta / Smart）
+4. 只安装 OpenClash 普通 Meta 内核
+5. 只安装 OpenClash Smart Meta 内核
+6. 安装 / 更新 PassWall
+7. 安装 / 更新 PassWall2
+8. 安装 / 更新 Nikki
+9. 安装 / 更新 SmartDNS
+0. 返回上一级
+==========================================
+EOF_INSTALL_MENU
+}
+
+show_uninstall_menu() {
+    cat <<'EOF_UNINSTALL_MENU'
+================ 卸载插件 ================
+1. 卸载 PassWall
+2. 卸载 PassWall2
+3. 卸载 Nikki
+4. 卸载 SmartDNS
+5. 卸载 OpenClash
+0. 返回上一级
+==========================================
+EOF_UNINSTALL_MENU
 }
 
 show_check_update_menu() {
@@ -226,49 +243,55 @@ run_action() {
         check-update-smartdns)
             download_and_run check-updates.sh --smartdns
             ;;
-        2|openclash)
+        2|install-plugins)
+            run_install_menu
+            ;;
+        3|uninstall-plugins)
+            run_uninstall_menu
+            ;;
+        openclash)
             download_and_run install.sh
             ;;
-        3|openclash-check-update)
+        openclash-check-update)
             download_and_run install.sh --check-update --skip-opkg-update
             ;;
-        4|openclash-plugin-only)
+        openclash-plugin-only)
             download_and_run install.sh --plugin-only
             ;;
-        5|openclash-core-only)
+        openclash-core-only)
             download_and_run install.sh --core-only
             ;;
-        6|openclash-meta-core)
+        openclash-meta-core)
             download_and_run install.sh --core-only --meta-core --skip-opkg-update
             ;;
-        7|openclash-smart-core)
+        openclash-smart-core)
             download_and_run install.sh --core-only --smart-core --skip-opkg-update
             ;;
-        8|passwall)
+        passwall)
             download_and_run passwall.sh
             ;;
-        9|passwall2)
+        passwall2)
             download_and_run passwall2.sh
             ;;
-        10|nikki)
+        nikki)
             download_and_run nikki.sh
             ;;
-        11|smartdns)
+        smartdns)
             download_and_run smartdns.sh
             ;;
-        12|uninstall-passwall)
+        uninstall-passwall)
             download_and_run uninstall.sh passwall --delete-config
             ;;
-        13|uninstall-passwall2)
+        uninstall-passwall2)
             download_and_run uninstall.sh passwall2 --delete-config
             ;;
-        14|uninstall-nikki)
+        uninstall-nikki)
             download_and_run uninstall.sh nikki --delete-config
             ;;
-        15|uninstall-smartdns)
+        uninstall-smartdns)
             download_and_run uninstall.sh smartdns --delete-config
             ;;
-        16|uninstall-openclash)
+        uninstall-openclash)
             download_and_run uninstall.sh openclash --delete-config
             ;;
         0)
@@ -318,6 +341,86 @@ run_check_update_menu() {
     done
 }
 
+run_install_menu() {
+    while true; do
+        show_install_menu
+        printf '请输入选项 [0-9]: ' >/dev/tty
+        read_from_tty subchoice
+        case "$subchoice" in
+            1)
+                download_and_run install.sh
+                ;;
+            2)
+                download_and_run install.sh --plugin-only
+                ;;
+            3)
+                download_and_run install.sh --core-only
+                ;;
+            4)
+                download_and_run install.sh --core-only --meta-core --skip-opkg-update
+                ;;
+            5)
+                download_and_run install.sh --core-only --smart-core --skip-opkg-update
+                ;;
+            6)
+                download_and_run passwall.sh
+                ;;
+            7)
+                download_and_run passwall2.sh
+                ;;
+            8)
+                download_and_run nikki.sh
+                ;;
+            9)
+                download_and_run smartdns.sh
+                ;;
+            0)
+                return 0
+                ;;
+            *)
+                printf '%s\n' '[WARN] 无效选项，请重新输入'
+                ;;
+        esac
+        printf '\n按回车键返回安装插件菜单...' >/dev/tty
+        read_from_tty _subdummy
+        printf '\n'
+    done
+}
+
+run_uninstall_menu() {
+    while true; do
+        show_uninstall_menu
+        printf '请输入选项 [0-5]: ' >/dev/tty
+        read_from_tty subchoice
+        case "$subchoice" in
+            1)
+                download_and_run uninstall.sh passwall --delete-config
+                ;;
+            2)
+                download_and_run uninstall.sh passwall2 --delete-config
+                ;;
+            3)
+                download_and_run uninstall.sh nikki --delete-config
+                ;;
+            4)
+                download_and_run uninstall.sh smartdns --delete-config
+                ;;
+            5)
+                download_and_run uninstall.sh openclash --delete-config
+                ;;
+            0)
+                return 0
+                ;;
+            *)
+                printf '%s\n' '[WARN] 无效选项，请重新输入'
+                ;;
+        esac
+        printf '\n按回车键返回卸载插件菜单...' >/dev/tty
+        read_from_tty _subdummy
+        printf '\n'
+    done
+}
+
 main() {
     parse_args "$@"
     need_cmd curl
@@ -329,7 +432,7 @@ main() {
 
     while true; do
         show_menu
-        printf '请输入选项 [0-16]: ' >/dev/tty
+        printf '请输入选项 [0-3]: ' >/dev/tty
         read_from_tty choice
         run_action "$choice"
         printf '\n按回车键返回菜单...' >/dev/tty
