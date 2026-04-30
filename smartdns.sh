@@ -241,7 +241,10 @@ install_release_packages() {
     if ! $INSTALL_CMD "$LUCI_PKG"; then
         if [ "$PKG_MGR" = "opkg" ] && opkg status luci-i18n-smartdns-zh-cn >/dev/null 2>&1; then
             warn "检测到旧版 luci-i18n-smartdns-zh-cn 与新版 luci-app-smartdns 文件冲突，正在移除旧语言包后重试"
-            opkg remove luci-i18n-smartdns-zh-cn || die "移除冲突语言包失败，请手动执行: opkg remove luci-i18n-smartdns-zh-cn"
+            if ! opkg remove luci-i18n-smartdns-zh-cn; then
+                warn "旧语言包被其他元包依赖，使用 --force-depends 仅移除冲突语言包"
+                opkg remove --force-depends luci-i18n-smartdns-zh-cn || die "移除冲突语言包失败，请手动执行: opkg remove --force-depends luci-i18n-smartdns-zh-cn"
+            fi
             opkg install "$LUCI_PKG" || die "安装 LuCI SmartDNS 失败，请检查系统依赖或软件源"
         else
             die "安装 LuCI SmartDNS 失败，请检查系统依赖或软件源"
