@@ -197,9 +197,21 @@ install_release_packages() {
     log "下载 LuCI SmartDNS: $(basename "$LUCI_PKG")"
     download_url "$LUCI_URL" "$LUCI_PKG" || die "下载 LuCI SmartDNS 包失败"
 
-    log "安装 / 更新 SmartDNS 与 LuCI 界面"
+    log "安装 / 更新 SmartDNS"
     # shellcheck disable=SC2086
-    $INSTALL_CMD "$CORE_PKG" "$LUCI_PKG" || die "安装 SmartDNS 失败，请检查系统依赖或软件源"
+    $INSTALL_CMD "$CORE_PKG" || die "安装 SmartDNS 失败，请检查系统依赖或软件源"
+
+    log "安装 / 更新 LuCI SmartDNS 界面"
+    # shellcheck disable=SC2086
+    if ! $INSTALL_CMD "$LUCI_PKG"; then
+        if [ "$PKG_MGR" = "opkg" ] && opkg status luci-i18n-smartdns-zh-cn >/dev/null 2>&1; then
+            warn "检测到旧版 luci-i18n-smartdns-zh-cn 与新版 luci-app-smartdns 文件冲突，正在移除旧语言包后重试"
+            opkg remove luci-i18n-smartdns-zh-cn || die "移除冲突语言包失败，请手动执行: opkg remove luci-i18n-smartdns-zh-cn"
+            opkg install "$LUCI_PKG" || die "安装 LuCI SmartDNS 失败，请检查系统依赖或软件源"
+        else
+            die "安装 LuCI SmartDNS 失败，请检查系统依赖或软件源"
+        fi
+    fi
 }
 
 refresh_luci() {
