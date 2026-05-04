@@ -32,6 +32,7 @@ usage() {
   sh menu.sh --check-update-passwall2
   sh menu.sh --check-update-nikki
   sh menu.sh --check-update-smartdns
+  sh menu.sh --check-update-mosdns
   sh menu.sh --openclash
   sh menu.sh --openclash-check-update
   sh menu.sh --openclash-plugin-only
@@ -42,10 +43,12 @@ usage() {
   sh menu.sh --passwall2
   sh menu.sh --nikki
   sh menu.sh --smartdns
+  sh menu.sh --mosdns
   sh menu.sh --uninstall-passwall
   sh menu.sh --uninstall-passwall2
   sh menu.sh --uninstall-nikki
   sh menu.sh --uninstall-smartdns
+  sh menu.sh --uninstall-mosdns
   sh menu.sh --uninstall-openclash
 
 说明:
@@ -81,6 +84,9 @@ parse_args() {
             --check-update-smartdns)
                 NONINTERACTIVE_ACTION="check-update-smartdns"
                 ;;
+            --check-update-mosdns)
+                NONINTERACTIVE_ACTION="check-update-mosdns"
+                ;;
             --openclash-check-update)
                 NONINTERACTIVE_ACTION="openclash-check-update"
                 ;;
@@ -108,6 +114,9 @@ parse_args() {
             --smartdns)
                 NONINTERACTIVE_ACTION="smartdns"
                 ;;
+            --mosdns)
+                NONINTERACTIVE_ACTION="mosdns"
+                ;;
             --uninstall-passwall)
                 NONINTERACTIVE_ACTION="uninstall-passwall"
                 ;;
@@ -119,6 +128,9 @@ parse_args() {
                 ;;
             --uninstall-smartdns)
                 NONINTERACTIVE_ACTION="uninstall-smartdns"
+                ;;
+            --uninstall-mosdns)
+                NONINTERACTIVE_ACTION="uninstall-mosdns"
                 ;;
             --uninstall-openclash)
                 NONINTERACTIVE_ACTION="uninstall-openclash"
@@ -197,6 +209,7 @@ show_install_menu() {
 7. 安装 / 更新 PassWall2
 8. 安装 / 更新 Nikki
 9. 安装 / 更新 SmartDNS
+10. 安装 / 更新 MosDNS
 0. 返回上一级
 ==========================================
 EOF_INSTALL_MENU
@@ -209,7 +222,8 @@ show_uninstall_menu() {
 2. 卸载 PassWall2
 3. 卸载 Nikki
 4. 卸载 SmartDNS
-5. 卸载 OpenClash
+5. 卸载 MosDNS
+6. 卸载 OpenClash
 0. 返回上一级
 ==========================================
 EOF_UNINSTALL_MENU
@@ -224,6 +238,7 @@ show_check_update_menu() {
 4. 检查 PassWall2
 5. 检查 Nikki
 6. 检查 SmartDNS
+7. 检查 MosDNS
 0. 返回上一级
 ==============================================
 EOF_CHECK_MENU
@@ -261,6 +276,9 @@ run_action() {
             ;;
         check-update-smartdns)
             download_and_run check-updates.sh --smartdns
+            ;;
+        check-update-mosdns)
+            download_and_run check-updates.sh --mosdns
             ;;
         2|install-plugins)
             run_install_menu
@@ -300,6 +318,9 @@ run_action() {
         smartdns)
             download_and_run smartdns.sh
             ;;
+        mosdns)
+            download_and_run mosdns.sh
+            ;;
         uninstall-passwall)
             download_and_run uninstall.sh passwall --delete-config
             ;;
@@ -311,6 +332,9 @@ run_action() {
             ;;
         uninstall-smartdns)
             download_and_run uninstall.sh smartdns --delete-config
+            ;;
+        uninstall-mosdns)
+            download_and_run uninstall.sh mosdns --delete-config
             ;;
         uninstall-openclash)
             download_and_run uninstall.sh openclash --delete-config
@@ -328,7 +352,7 @@ run_action() {
 run_check_update_menu() {
     while true; do
         show_check_update_menu
-        printf '请输入选项 [0-6]: ' >/dev/tty
+        printf '请输入选项 [0-7]: ' >/dev/tty
         read_from_tty subchoice
         case "$subchoice" in
             1)
@@ -349,6 +373,9 @@ run_check_update_menu() {
             6)
                 download_and_run check-updates.sh --smartdns
                 ;;
+            7)
+                download_and_run check-updates.sh --mosdns
+                ;;
             0)
                 return 0
                 ;;
@@ -365,7 +392,7 @@ run_check_update_menu() {
 run_install_menu() {
     while true; do
         show_install_menu
-        printf '请输入选项 [0-9]: ' >/dev/tty
+        printf '请输入选项 [0-10]: ' >/dev/tty
         read_from_tty subchoice
         case "$subchoice" in
             1)
@@ -395,6 +422,9 @@ run_install_menu() {
             9)
                 download_and_run smartdns.sh
                 ;;
+            10)
+                download_and_run mosdns.sh
+                ;;
             0)
                 return 0
                 ;;
@@ -411,7 +441,7 @@ run_install_menu() {
 run_uninstall_menu() {
     while true; do
         show_uninstall_menu
-        printf '请输入选项 [0-5]: ' >/dev/tty
+        printf '请输入选项 [0-6]: ' >/dev/tty
         read_from_tty subchoice
         case "$subchoice" in
             1)
@@ -427,6 +457,9 @@ run_uninstall_menu() {
                 download_and_run uninstall.sh smartdns --delete-config
                 ;;
             5)
+                download_and_run uninstall.sh mosdns --delete-config
+                ;;
+            6)
                 download_and_run uninstall.sh openclash --delete-config
                 ;;
             0)

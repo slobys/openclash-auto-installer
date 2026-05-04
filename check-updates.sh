@@ -7,6 +7,7 @@ PASSWALL_API="https://api.github.com/repos/Openwrt-Passwall/openwrt-passwall/rel
 PASSWALL2_API="https://api.github.com/repos/Openwrt-Passwall/openwrt-passwall2/releases/latest"
 NIKKI_REPO_API="https://api.github.com/repos/nikkinikki-org/OpenWrt-nikki/releases/latest"
 SMARTDNS_API="https://api.github.com/repos/pymumu/smartdns/releases/latest"
+MOSDNS_API="https://api.github.com/repos/sbwml/luci-app-mosdns/releases/latest"
 TARGET="all"
 
 cleanup() {
@@ -41,6 +42,7 @@ usage() {
   sh check-updates.sh --passwall2
   sh check-updates.sh --nikki
   sh check-updates.sh --smartdns
+  sh check-updates.sh --mosdns
 
 说明:
   默认检查全部插件
@@ -67,6 +69,9 @@ parse_args() {
                 ;;
             --smartdns)
                 TARGET="smartdns"
+                ;;
+            --mosdns)
+                TARGET="mosdns"
                 ;;
             -h|--help)
                 usage
@@ -187,6 +192,17 @@ check_smartdns() {
     print_result "SmartDNS" "$INSTALLED" "$LATEST"
 }
 
+check_mosdns() {
+    if [ "$PKG_MGR" = "opkg" ]; then
+        INSTALLED="$(get_installed_opkg_version mosdns)"
+    else
+        INSTALLED="$(get_installed_apk_version mosdns)"
+    fi
+
+    LATEST="$(fetch_latest_tag_jsonfilter mosdns "$MOSDNS_API" || true)"
+    print_result "MosDNS" "$INSTALLED" "$LATEST"
+}
+
 check_nikki() {
     if [ "$PKG_MGR" = "opkg" ]; then
         INSTALLED="$(get_installed_opkg_version luci-app-nikki)"
@@ -211,7 +227,7 @@ main() {
     if command -v jsonfilter >/dev/null 2>&1; then
         :
     else
-        warn "未检测到 jsonfilter，OpenClash / Nikki / SmartDNS 的最新版本检测可能失败"
+        warn "未检测到 jsonfilter，OpenClash / Nikki / SmartDNS / MosDNS 的最新版本检测可能失败"
     fi
 
     if command -v opkg >/dev/null 2>&1; then
@@ -233,6 +249,7 @@ main() {
             check_passwall2
             check_nikki
             check_smartdns
+            check_mosdns
             ;;
         openclash)
             check_openclash
@@ -248,6 +265,9 @@ main() {
             ;;
         smartdns)
             check_smartdns
+            ;;
+        mosdns)
+            check_mosdns
             ;;
     esac
 

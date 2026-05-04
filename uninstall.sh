@@ -187,6 +187,25 @@ safe_uninstall_smartdns() {
     log "SmartDNS 安全卸载完成"
 }
 
+safe_uninstall_mosdns() {
+    PKG_MGR="$1"
+    log "开始安全卸载 MosDNS（仅卸载主包）"
+
+    stop_disable_service mosdns
+    remove_pkg_if_installed "$PKG_MGR" luci-i18n-mosdns-zh-cn
+    remove_pkg_if_installed "$PKG_MGR" luci-app-mosdns
+    remove_pkg_if_installed "$PKG_MGR" mosdns
+
+    if [ "$DELETE_CONFIG" -eq 1 ]; then
+        log "删除 MosDNS 配置文件"
+        remove_paths /etc/config/mosdns /etc/mosdns
+    else
+        warn "默认保留 /etc/config/mosdns 和 /etc/mosdns 配置文件"
+    fi
+
+    log "MosDNS 安全卸载完成"
+}
+
 safe_uninstall_openclash() {
     PKG_MGR="$1"
     log "开始安全卸载 OpenClash（仅卸载主包）"
@@ -212,6 +231,7 @@ usage() {
   sh uninstall.sh passwall2 [--delete-config]
   sh uninstall.sh nikki [--delete-config]
   sh uninstall.sh smartdns [--delete-config]
+  sh uninstall.sh mosdns [--delete-config]
   sh uninstall.sh openclash [--delete-config]
 
 说明:
@@ -261,6 +281,9 @@ main() {
             ;;
         smartdns)
             safe_uninstall_smartdns "$PKG_MGR"
+            ;;
+        mosdns)
+            safe_uninstall_mosdns "$PKG_MGR"
             ;;
         openclash)
             safe_uninstall_openclash "$PKG_MGR"

@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.2.0
+
+- 新增 `mosdns.sh`，支持从 `sbwml/luci-app-mosdns` GitHub Release 安装 / 更新 MosDNS 与 LuCI 界面
+- `menu.sh` 新增 MosDNS 安装、更新检测与安全卸载入口
+- `check-updates.sh` 新增 MosDNS 最新版本检测
+- `uninstall.sh` 新增 MosDNS 安全卸载，默认保留 MosDNS 配置文件
+- README 同步补充 MosDNS 使用方式、限制说明与项目文件列表
+
 ## v1.1.9
 
 - 修复 SmartDNS 卸载时未先移除 `app-meta-smartdns`，导致 `luci-app-smartdns` 被依赖阻止卸载的问题

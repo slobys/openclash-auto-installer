@@ -13,6 +13,7 @@
 - PassWall2
 - Nikki
 - SmartDNS
+- MosDNS
 
 ---
 
@@ -60,6 +61,7 @@ sh -c "$(curl -fsSL https://cdn.jsdelivr.net/gh/slobys/openclash-auto-installer@
 | PassWall2 | 安装 / 更新 / 卸载 / 更新检测 | 当前主要面向 `opkg` 环境 |
 | Nikki | 安装 / 更新 / 卸载 / 更新检测 | 需要 `firewall4/nftables` |
 | SmartDNS | 安装 / 更新 / 卸载 / 更新检测 | 使用官方 GitHub Release 包 |
+| MosDNS | 安装 / 更新 / 卸载 / 更新检测 | 使用 `sbwml/luci-app-mosdns` GitHub Release 包 |
 
 ---
 
@@ -71,6 +73,7 @@ sh -c "$(curl -fsSL https://cdn.jsdelivr.net/gh/slobys/openclash-auto-installer@
 - PassWall / PassWall2 暂不适配 `apk` 环境。
 - Nikki 不支持 `iptables` 防火墙栈。
 - SmartDNS 只安装程序和 LuCI 界面，不自动接管或改写 DNS 配置。
+- MosDNS 只安装程序、LuCI 界面和上游 Release 包内的基础数据包，不自动接管或改写 DNS 配置。
 - 卸载默认走安全卸载，只移除主包和对应配置，不做激进清理。
 
 ---
@@ -87,6 +90,7 @@ sh -c "$(curl -fsSL https://cdn.jsdelivr.net/gh/slobys/openclash-auto-installer@
 | `passwall2.sh` | PassWall2 安装 / 更新 |
 | `nikki.sh` | Nikki 安装 / 更新 |
 | `smartdns.sh` | SmartDNS 安装 / 更新 |
+| `mosdns.sh` | MosDNS 安装 / 更新 |
 | `check-updates.sh` | 检查插件更新 |
 | `uninstall.sh` | 安全卸载插件 |
 
@@ -99,3 +103,4 @@ sh -c "$(curl -fsSL https://cdn.jsdelivr.net/gh/slobys/openclash-auto-installer@
 - PassWall2: <https://github.com/Openwrt-Passwall/openwrt-passwall2>
 - Nikki: <https://github.com/nikkinikki-org/OpenWrt-nikki>
 - SmartDNS: <https://github.com/pymumu/smartdns>
+- MosDNS LuCI: <https://github.com/sbwml/luci-app-mosdns>
