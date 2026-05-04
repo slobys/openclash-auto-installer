@@ -137,7 +137,11 @@ download_github_api() {
 
 find_asset_url() {
     ASSET_NAME="$1"
-    sed -n 's/.*"browser_download_url":[[:space:]]*"\([^"]*\)".*/\1/p' "$TMP_ROOT/release.json" | grep "/$ASSET_NAME$" | head -n1 || true
+    sed 's/"browser_download_url"/\
+"browser_download_url"/g' "$TMP_ROOT/release.json" |
+        sed -n 's/^"browser_download_url"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' |
+        grep "/$ASSET_NAME$" |
+        head -n1 || true
 }
 
 fetch_release_json() {
