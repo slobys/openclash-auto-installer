@@ -183,6 +183,7 @@ install_if_missing_from_dir chinadns-ng passwall_packages
 install_if_missing_from_dir dns2socks passwall_packages
 
 MAIN_IPK="$(download_pkg_from_dir luci-app-passwall passwall_luci)" || die "下载 luci-app-passwall 失败，请检查当前系统版本/架构是否存在对应构建，或稍后重试。"
+LANG_IPK=""
 
 if ! opkg install "$MAIN_IPK"; then
     cat >&2 <<EOF
@@ -208,7 +209,7 @@ elif pkg_installed luci-i18n-passwall-zh-cn; then
     log "语言包检查: luci-i18n-passwall-zh-cn 已安装，跳过"
 else
     log "语言包检查: luci-i18n-passwall-zh-cn 未安装，开始下载并安装"
-    LANG_IPK="$(download_pkg_from_dir luci-i18n-passwall-zh-cn passwall_luci)" || die "下载 luci-i18n-passwall-zh-cn 失败，请稍后重试。"
+    [ -n "$LANG_IPK" ] || LANG_IPK="$(download_pkg_from_dir luci-i18n-passwall-zh-cn passwall_luci)" || die "下载 luci-i18n-passwall-zh-cn 失败，请稍后重试。"
     if ! opkg install "$LANG_IPK"; then
         cat >&2 <<EOF
 [ERROR] PassWall 中文语言包安装失败。
