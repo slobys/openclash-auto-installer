@@ -156,13 +156,31 @@ log "按接近手动 IPK 的方式安装 / 更新 PassWall2"
 
 MAIN_IPK="$(download_pkg_from_dir luci-app-passwall2 passwall2)" || die "下载 luci-app-passwall2 失败，请检查当前系统版本/架构是否存在对应构建，或稍后重试。"
 LANG_IPK="$(download_pkg_from_dir luci-i18n-passwall2-zh-cn passwall2)" || die "下载 luci-i18n-passwall2-zh-cn 失败，请稍后重试。"
+TCPING_IPK="$(download_pkg_from_dir tcping passwall_packages)" || die "下载 tcping 失败，请检查 passwall_packages 构建是否完整，或稍后重试。"
+GEOVIEW_IPK="$(download_pkg_from_dir geoview passwall_packages)" || die "下载 geoview 失败，请检查 passwall_packages 构建是否完整，或稍后重试。"
 
-if ! opkg install "$MAIN_IPK" "$LANG_IPK"; then
+if ! opkg install "$TCPING_IPK" "$GEOVIEW_IPK"; then
+    cat >&2 <<EOF
+[ERROR] PassWall2 依赖安装失败（tcping / geoview）。
+可能原因：
+1. 当前架构缺少对应依赖包，或软件源中没有兼容构建
+2. 第三方固件重写了软件源，导致依赖解析异常
+3. 当前网络环境拉取 SourceForge 资源不稳定
+
+建议排查：
+- 执行 opkg update 后重试
+- 检查 /etc/opkg/customfeeds.conf 是否存在异常或重复源
+- 如为非标准固件（如 QWRT / GDQ 等），兼容性取决于上游是否提供对应构建
+EOF
+    exit 1
+fi
+
+if ! opkg install "$MAIN_IPK"; then
     cat >&2 <<EOF
 [ERROR] PassWall2 安装失败。
 可能原因：
 1. 当前固件版本与 PassWall2 预编译包不匹配
-2. 当前架构缺少对应依赖包，或软件源中没有兼容构建
+2. 当前架构缺少对应构建，或主包与依赖版本不一致
 3. 第三方固件重写了软件源，导致依赖解析异常
 
 建议排查：
@@ -170,6 +188,22 @@ if ! opkg install "$MAIN_IPK" "$LANG_IPK"; then
 - 执行 opkg update 后重试
 - 检查 /etc/opkg/customfeeds.conf 是否存在异常或重复源
 - 如为非标准固件（如 QWRT / GDQ 等），兼容性取决于上游是否提供对应构建
+EOF
+    exit 1
+fi
+
+if opkg files luci-app-passwall2 2>/dev/null | grep -q 'passwall2\.zh-cn\.lmo'; then
+    warn "检测到 luci-app-passwall2 已内置中文语言文件，跳过独立安装 luci-i18n-passwall2-zh-cn"
+elif ! opkg install "$LANG_IPK"; then
+    cat >&2 <<EOF
+[ERROR] PassWall2 中文语言包安装失败。
+可能原因：
+1. 当前发布包存在文件冲突（主包已内置中文）
+2. 当前网络下载异常导致语言包损坏
+
+建议排查：
+- 优先确认主包是否已内置中文（一般刷新 LuCI 后可直接显示中文）
+- 如需强制安装语言包，可先手动卸载冲突文件后再重试
 EOF
     exit 1
 fi
