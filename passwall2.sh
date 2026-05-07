@@ -27,6 +27,31 @@ need_cmd() {
     command -v "$1" >/dev/null 2>&1 || die "缺少命令: $1"
 }
 
+pkg_installed() {
+    pkg="$1"
+    opkg status "$pkg" 2>/dev/null | grep -q '^Status: install '
+}
+
+install_if_missing_from_dir() {
+    pkg="$1"
+    dir="$2"
+
+    if pkg_installed "$pkg"; then
+        log "依赖检查: $pkg 已安装，跳过"
+        return 0
+    fi
+
+    log "依赖检查: $pkg 未安装，开始下载并安装"
+    ipk_path="$(download_pkg_from_dir "$pkg" "$dir")" || die "下载 $pkg 失败，请检查 ${dir} 构建是否完整，或稍后重试。"
+
+    if opkg install "$ipk_path"; then
+        log "依赖安装: $pkg 安装完成"
+        return 0
+    fi
+
+    die "$pkg 安装失败，请执行 opkg update 后重试，或检查第三方源冲突。"
+}
+
 refresh_luci() {
     rm -rf /tmp/luci-* /tmp/.luci* /tmp/etc/config/ucitrack /var/run/luci-indexcache 2>/dev/null || true
     if [ -x /etc/init.d/rpcd ]; then
@@ -154,26 +179,10 @@ OLD_VER="$(opkg status luci-app-passwall2 2>/dev/null | sed -n 's/^Version: //p'
 log "当前已安装版本: ${OLD_VER:-not installed}"
 log "按接近手动 IPK 的方式安装 / 更新 PassWall2"
 
+install_if_missing_from_dir tcping passwall_packages
+install_if_missing_from_dir geoview passwall_packages
+
 MAIN_IPK="$(download_pkg_from_dir luci-app-passwall2 passwall2)" || die "下载 luci-app-passwall2 失败，请检查当前系统版本/架构是否存在对应构建，或稍后重试。"
-LANG_IPK="$(download_pkg_from_dir luci-i18n-passwall2-zh-cn passwall2)" || die "下载 luci-i18n-passwall2-zh-cn 失败，请稍后重试。"
-TCPING_IPK="$(download_pkg_from_dir tcping passwall_packages)" || die "下载 tcping 失败，请检查 passwall_packages 构建是否完整，或稍后重试。"
-GEOVIEW_IPK="$(download_pkg_from_dir geoview passwall_packages)" || die "下载 geoview 失败，请检查 passwall_packages 构建是否完整，或稍后重试。"
-
-if ! opkg install "$TCPING_IPK" "$GEOVIEW_IPK"; then
-    cat >&2 <<EOF
-[ERROR] PassWall2 依赖安装失败（tcping / geoview）。
-可能原因：
-1. 当前架构缺少对应依赖包，或软件源中没有兼容构建
-2. 第三方固件重写了软件源，导致依赖解析异常
-3. 当前网络环境拉取 SourceForge 资源不稳定
-
-建议排查：
-- 执行 opkg update 后重试
-- 检查 /etc/opkg/customfeeds.conf 是否存在异常或重复源
-- 如为非标准固件（如 QWRT / GDQ 等），兼容性取决于上游是否提供对应构建
-EOF
-    exit 1
-fi
 
 if ! opkg install "$MAIN_IPK"; then
     cat >&2 <<EOF
@@ -192,9 +201,14 @@ EOF
     exit 1
 fi
 
+log "主包安装: luci-app-passwall2 安装完成，开始检查中文语言包状态"
 if opkg files luci-app-passwall2 2>/dev/null | grep -q 'passwall2\.zh-cn\.lmo'; then
-    warn "检测到 luci-app-passwall2 已内置中文语言文件，跳过独立安装 luci-i18n-passwall2-zh-cn"
-elif ! opkg install "$LANG_IPK"; then
+    log "语言包检查: 主包已内置 zh-cn，跳过独立安装 luci-i18n-passwall2-zh-cn"
+elif pkg_installed luci-i18n-passwall2-zh-cn; then
+    log "语言包检查: luci-i18n-passwall2-zh-cn 已安装，跳过"
+else
+    LANG_IPK="$(download_pkg_from_dir luci-i18n-passwall2-zh-cn passwall2)" || die "下载 luci-i18n-passwall2-zh-cn 失败，请稍后重试。"
+    if ! opkg install "$LANG_IPK"; then
     cat >&2 <<EOF
 [ERROR] PassWall2 中文语言包安装失败。
 可能原因：
@@ -205,7 +219,9 @@ elif ! opkg install "$LANG_IPK"; then
 - 优先确认主包是否已内置中文（一般刷新 LuCI 后可直接显示中文）
 - 如需强制安装语言包，可先手动卸载冲突文件后再重试
 EOF
-    exit 1
+        exit 1
+    fi
+    log "语言包安装: luci-i18n-passwall2-zh-cn 安装完成"
 fi
 
 NEW_VER="$(opkg status luci-app-passwall2 2>/dev/null | sed -n 's/^Version: //p' | head -n1 || true)"
