@@ -7,6 +7,7 @@
 - daed 最新版本检测仅匹配正式 `v*` Release，避免被同仓库的 `dae-lang-core` 等组件 Release 干扰。
 - daed 默认集成 `QiuSimons/luci-app-daed` 与中文包，安装后可从 LuCI“服务 → DAED”启停、查看日志和打开仪表板；OpenWrt 24.10 / 25.12 分别自动匹配 `ipk` / `apk`。
 - daed 全新安装时 LuCI“启用”选项默认不勾选，等待用户手动启用；安装结束时不再额外停止或禁用服务，需要自动启用并启动时可显式传入 `--start`。
+- daed 安装前新增 BTF 文件检查，支持 OpenWrt 25.12.4 `apk` 环境，但会拒绝缺少内置 BTF 或匹配 `vmlinux-btf` 的官方原版/裁剪固件，避免安装成功后无法运行。
 
 ## v1.2.5
 

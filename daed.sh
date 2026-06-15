@@ -307,6 +307,12 @@ version_ge_5_17() {
 check_kernel_support() {
     version_ge_5_17 || die "dae 需要 Linux 5.17+ 内核，当前内核为 $(uname -r)"
 
+    if [ ! -r /sys/kernel/btf/vmlinux ] &&
+        [ ! -r /usr/lib/debug/boot/vmlinux ] &&
+        [ ! -r "/usr/lib/debug/boot/vmlinux-$(uname -r)" ]; then
+        die "当前内核未提供 BTF。OpenWrt 官方原版固件通常不满足 daed 运行要求，请使用已开启 eBPF/BTF 的定制固件，或安装与当前内核严格匹配的 vmlinux-btf"
+    fi
+
     CONFIG_FILE="$TMP_ROOT/kernel.config"
     if [ -r /proc/config.gz ] && command -v zcat >/dev/null 2>&1; then
         zcat /proc/config.gz > "$CONFIG_FILE" 2>/dev/null || true
@@ -317,7 +323,7 @@ check_kernel_support() {
     fi
 
     if [ ! -s "$CONFIG_FILE" ]; then
-        warn "无法读取内核配置，不能确认 eBPF/BTF 能力；将继续安装，但 daed 可能无法启动"
+        warn "已检测到 BTF，但无法读取完整内核配置；不能确认其余 eBPF 能力"
         return 0
     fi
 
