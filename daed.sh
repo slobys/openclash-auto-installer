@@ -6,11 +6,16 @@ TMP_ROOT="/tmp/daed-install"
 DAED_REPO="daeuniverse/daed"
 DAED_RELEASES_API="https://api.github.com/repos/$DAED_REPO/releases?per_page=20"
 DAED_RELEASES_PAGE="https://github.com/$DAED_REPO/releases"
+LUCI_DAED_REPO="QiuSimons/luci-app-daed"
+LUCI_DAED_API="https://api.github.com/repos/$LUCI_DAED_REPO/releases/latest"
+LUCI_DAED_RELEASES_PAGE="https://github.com/$LUCI_DAED_REPO/releases/latest"
 DAED_BIN="/usr/bin/daed"
 DAED_SHARE="/usr/share/daed"
 DAED_CONFIG="/etc/daed"
 DAED_INIT="/etc/init.d/daed"
 SKIP_START="0"
+SKIP_LUCI="0"
+FORCE_PKG_UPDATE="1"
 LOCK_ACQUIRED="0"
 
 cleanup() {
@@ -61,8 +66,10 @@ usage() {
   sh daed.sh [选项]
 
 选项:
-  --skip-start   安装后不启用和启动 daed 服务
-  -h, --help     显示帮助
+  --skip-start        安装后不启用和启动 daed 服务
+  --skip-luci         跳过安装 LuCI DAED 界面
+  --skip-pkg-update   跳过 opkg update / apk update
+  -h, --help          显示帮助
 EOF_USAGE
 }
 
@@ -71,6 +78,12 @@ parse_args() {
         case "$1" in
             --skip-start)
                 SKIP_START="1"
+                ;;
+            --skip-luci)
+                SKIP_LUCI="1"
+                ;;
+            --skip-pkg-update)
+                FORCE_PKG_UPDATE="0"
                 ;;
             -h|--help)
                 usage
@@ -82,6 +95,16 @@ parse_args() {
         esac
         shift
     done
+}
+
+detect_pkg_mgr() {
+    if command -v opkg >/dev/null 2>&1; then
+        printf 'opkg'
+    elif command -v apk >/dev/null 2>&1; then
+        printf 'apk'
+    else
+        printf ''
+    fi
 }
 
 download_url() {
@@ -100,6 +123,132 @@ download_url() {
     fi
 
     return 1
+}
+
+fetch_luci_release_meta() {
+    if download_url "$LUCI_DAED_API" "$TMP_ROOT/luci-release.json"; then
+        return 0
+    fi
+
+    warn "GitHub API 获取 LuCI DAED Release 失败，改用 Release 页面兜底"
+    download_url "$LUCI_DAED_RELEASES_PAGE" "$TMP_ROOT/luci-release.html" || return 1
+    LUCI_TAG="$(sed -n 's|.*href="/'"$LUCI_DAED_REPO"'/releases/tag/\([^"/?#]*\)".*|\1|p' "$TMP_ROOT/luci-release.html" | head -n1 || true)"
+    [ -n "$LUCI_TAG" ] || return 1
+    download_url "https://github.com/$LUCI_DAED_REPO/releases/expanded_assets/$LUCI_TAG" "$TMP_ROOT/luci-assets.html" || return 1
+}
+
+find_luci_asset_url() {
+    PATTERN="$1"
+
+    if [ -f "$TMP_ROOT/luci-release.json" ]; then
+        URL="$(sed 's/"browser_download_url"/\
+"browser_download_url"/g' "$TMP_ROOT/luci-release.json" |
+            sed -n 's/^"browser_download_url"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' |
+            grep "$PATTERN" |
+            head -n1 || true)"
+        if [ -n "$URL" ]; then
+            printf '%s\n' "$URL"
+            return 0
+        fi
+    fi
+
+    for HTML in "$TMP_ROOT/luci-assets.html" "$TMP_ROOT/luci-release.html"; do
+        [ -f "$HTML" ] || continue
+        URL="$(grep -o "/$LUCI_DAED_REPO/releases/download/[^\"'<> ]*" "$HTML" |
+            grep "$PATTERN" |
+            head -n1 || true)"
+        if [ -n "$URL" ]; then
+            printf 'https://github.com%s\n' "$URL"
+            return 0
+        fi
+    done
+
+    return 0
+}
+
+maybe_update_pkg_index() {
+    PKG_MGR="$1"
+    [ "$FORCE_PKG_UPDATE" = "1" ] || {
+        log "按参数跳过软件源更新"
+        return 0
+    }
+
+    case "$PKG_MGR" in
+        opkg)
+            log "刷新 opkg 软件源索引"
+            opkg update || warn "opkg update 失败，将继续安装 LuCI DAED Release 包"
+            ;;
+        apk)
+            log "刷新 apk 软件源索引"
+            apk update || warn "apk update 失败，将继续安装 LuCI DAED Release 包"
+            ;;
+    esac
+}
+
+install_luci_daed() {
+    PKG_MGR="$1"
+
+    if [ "$SKIP_LUCI" = "1" ]; then
+        warn "已按参数跳过安装 LuCI DAED 界面"
+        return 0
+    fi
+
+    if [ -z "$PKG_MGR" ]; then
+        warn "未检测到 opkg 或 apk，无法安装 LuCI DAED 界面；daed 后端已安装"
+        return 0
+    fi
+
+    fetch_luci_release_meta || {
+        warn "无法获取 luci-app-daed 最新 Release；daed 后端已安装"
+        return 0
+    }
+
+    case "$PKG_MGR" in
+        opkg)
+            LUCI_PATTERN='luci-app-daed_.*_all-openwrt-24\.10\.ipk$'
+            I18N_PATTERN='luci-i18n-daed-zh-cn_.*_all-openwrt-24\.10\.ipk$'
+            ;;
+        apk)
+            LUCI_PATTERN='luci-app-daed-.*-openwrt-25\.12\.apk$'
+            I18N_PATTERN='luci-i18n-daed-zh-cn-.*-openwrt-25\.12\.apk$'
+            ;;
+    esac
+
+    LUCI_URL="$(find_luci_asset_url "$LUCI_PATTERN")"
+    I18N_URL="$(find_luci_asset_url "$I18N_PATTERN")"
+    if [ -z "$LUCI_URL" ] || [ -z "$I18N_URL" ]; then
+        warn "上游未发布匹配当前包管理器的 LuCI DAED 包；daed 后端已安装"
+        return 0
+    fi
+
+    LUCI_PKG="$TMP_ROOT/$(basename "$LUCI_URL")"
+    I18N_PKG="$TMP_ROOT/$(basename "$I18N_URL")"
+    log "下载 LuCI DAED: $(basename "$LUCI_PKG")"
+    download_url "$LUCI_URL" "$LUCI_PKG" || {
+        warn "下载 LuCI DAED 包失败；daed 后端已安装"
+        return 0
+    }
+    log "下载 LuCI DAED 中文包: $(basename "$I18N_PKG")"
+    download_url "$I18N_URL" "$I18N_PKG" || {
+        warn "下载 LuCI DAED 中文包失败；daed 后端已安装"
+        return 0
+    }
+
+    maybe_update_pkg_index "$PKG_MGR"
+    case "$PKG_MGR" in
+        opkg)
+            opkg install luci-compat luci-lua-runtime zoneinfo-asia ||
+                warn "部分 LuCI DAED 依赖安装失败，将继续尝试安装界面包"
+            opkg install --force-depends "$LUCI_PKG" "$I18N_PKG" ||
+                warn "LuCI DAED 界面安装失败；daed 后端仍可通过 2023 端口使用"
+            ;;
+        apk)
+            apk add luci-compat luci-lua-runtime zoneinfo-asia ||
+                warn "部分 LuCI DAED 依赖安装失败，将继续尝试安装界面包"
+            apk add --allow-untrusted --force-broken-world "$LUCI_PKG" "$I18N_PKG" ||
+                warn "LuCI DAED 界面安装失败；daed 后端仍可通过 2023 端口使用"
+            ;;
+    esac
 }
 
 detect_asset_arch() {
@@ -261,18 +410,62 @@ write_init_script() {
 START=99
 STOP=10
 USE_PROCD=1
+CONF="daed"
+LOG="/var/log/daed/daed.log"
 
 start_service() {
+    config_load "$CONF"
+
+    local enabled listen_addr log_maxbackups log_maxsize
+    config_get_bool enabled "config" "enabled" "1"
+    [ "$enabled" -eq 1 ] || return 1
+    config_get listen_addr "config" "listen_addr" "0.0.0.0:2023"
+    config_get log_maxbackups "config" "log_maxbackups" "1"
+    config_get log_maxsize "config" "log_maxsize" "5"
+
+    mkdir -p /var/log/daed
     procd_open_instance
-    procd_set_param command /usr/bin/daed run -c /etc/daed
+    procd_set_param command /usr/bin/daed run
+    procd_append_param command --config /etc/daed/
+    procd_append_param command --listen "$listen_addr"
+    procd_append_param command --logfile "$LOG"
+    procd_append_param command --logfile-maxbackups "$log_maxbackups"
+    procd_append_param command --logfile-maxsize "$log_maxsize"
+    procd_set_param env DAE_LOCATION_ASSET="/usr/share/daed"
     procd_set_param respawn 3600 5 5
     procd_set_param limits nofile="1048576 1048576"
     procd_set_param stdout 1
     procd_set_param stderr 1
     procd_close_instance
 }
+
+service_triggers() {
+    procd_add_reload_trigger "$CONF"
+}
 EOF_INIT
     chmod 755 "$DAED_INIT"
+}
+
+ensure_luci_config() {
+    mkdir -p /etc/config /var/log/daed
+    if [ ! -f /etc/config/daed ]; then
+        cat > /etc/config/daed <<'EOF_CONFIG'
+config daed 'config'
+	option enabled '1'
+	option listen_addr '0.0.0.0:2023'
+	option log_maxbackups '1'
+	option log_maxsize '5'
+EOF_CONFIG
+        chmod 600 /etc/config/daed
+    fi
+    touch /var/log/daed/daed.log
+}
+
+refresh_luci() {
+    rm -rf /tmp/luci-* /tmp/.luci* /tmp/etc/config/ucitrack /var/run/luci-indexcache 2>/dev/null || true
+    if [ -x /etc/init.d/rpcd ]; then
+        /etc/init.d/rpcd restart >/dev/null 2>&1 || warn "rpcd 重启失败"
+    fi
 }
 
 install_daed() {
@@ -307,6 +500,7 @@ install_daed() {
     chmod 755 "$DAED_BIN"
     chmod 644 "$DAED_SHARE/geoip.dat" "$DAED_SHARE/geosite.dat"
     write_init_script
+    ensure_luci_config
 }
 
 main() {
@@ -341,6 +535,7 @@ main() {
     check_disk_space
 
     ASSET_ARCH="$(detect_asset_arch)"
+    PKG_MGR="$(detect_pkg_mgr)"
     LATEST_TAG="$(find_latest_tag)"
     OLD_VER="$("$DAED_BIN" --version 2>/dev/null | awk '{print $NF}' | head -n1 || true)"
 
@@ -351,6 +546,8 @@ main() {
 
     ensure_unzip
     install_daed "$ASSET_ARCH" "$LATEST_TAG"
+    install_luci_daed "$PKG_MGR"
+    refresh_luci
     NEW_VER="$("$DAED_BIN" --version 2>/dev/null | awk '{print $NF}' | head -n1 || true)"
     log "安装后版本: ${NEW_VER:-unknown}"
 
@@ -363,6 +560,11 @@ main() {
     fi
 
     warn "daed 依赖 eBPF/BTF；部分 OpenWrt 固件即使内核版本满足，也可能因内核裁剪而无法运行"
+    if [ -f /usr/lib/lua/luci/controller/daed.lua ] || [ -f /usr/share/luci/menu.d/luci-app-daed.json ]; then
+        log "LuCI 入口: 服务 -> DAED"
+    else
+        warn "未检测到 LuCI DAED 界面，可通过 --skip-luci 跳过界面安装或检查软件源依赖"
+    fi
     log "Web 面板地址: http://路由器IP:2023"
     log "daed 处理完成"
 }

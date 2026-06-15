@@ -5,6 +5,7 @@
 - 新增 `daed.sh`，从 `daeuniverse/daed` 官方 Release 安装 / 更新 daed 静态二进制、GeoIP/GeoSite 数据与 OpenWrt procd 服务。
 - 菜单、更新检测和安全卸载新增 daed 入口；安装前检查架构、Linux 5.17+、eBPF/BTF 内核能力及磁盘空间。
 - daed 最新版本检测仅匹配正式 `v*` Release，避免被同仓库的 `dae-lang-core` 等组件 Release 干扰。
+- daed 默认集成 `QiuSimons/luci-app-daed` 与中文包，安装后可从 LuCI“服务 → DAED”启停、查看日志和打开仪表板；OpenWrt 24.10 / 25.12 分别自动匹配 `ipk` / `apk`。
 
 ## v1.2.5
 

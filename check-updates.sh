@@ -9,6 +9,7 @@ NIKKI_REPO_API="https://api.github.com/repos/nikkinikki-org/OpenWrt-nikki/releas
 SMARTDNS_API="https://api.github.com/repos/pymumu/smartdns/releases/latest"
 MOSDNS_API="https://api.github.com/repos/sbwml/luci-app-mosdns/releases/latest"
 DAED_RELEASES_API="https://api.github.com/repos/daeuniverse/daed/releases?per_page=20"
+LUCI_DAED_API="https://api.github.com/repos/QiuSimons/luci-app-daed/releases/latest"
 TARGET="all"
 
 cleanup() {
@@ -313,6 +314,14 @@ check_daed() {
             head -n1 || true)"
     fi
     print_result "daed" "$INSTALLED" "$LATEST"
+
+    if [ "$PKG_MGR" = "opkg" ]; then
+        LUCI_INSTALLED="$(get_installed_opkg_version luci-app-daed)"
+    else
+        LUCI_INSTALLED="$(get_installed_apk_version luci-app-daed)"
+    fi
+    LUCI_LATEST="$(fetch_latest_tag_jsonfilter luci-daed "$LUCI_DAED_API" || true)"
+    print_result_no_compare "daed LuCI" "$LUCI_INSTALLED" "$LUCI_LATEST" "LuCI 包版本与上游 Release 标签不是同一套版本号，不直接判断是否可更新"
 }
 
 main() {
