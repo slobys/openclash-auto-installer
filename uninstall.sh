@@ -211,6 +211,22 @@ safe_uninstall_mosdns() {
     log "MosDNS 安全卸载完成"
 }
 
+safe_uninstall_daed() {
+    log "开始安全卸载 daed"
+
+    stop_disable_service daed
+    remove_paths /usr/bin/daed /usr/share/daed /etc/init.d/daed
+
+    if [ "$DELETE_CONFIG" -eq 1 ]; then
+        log "删除 daed 配置目录"
+        remove_paths /etc/daed
+    else
+        warn "默认保留 /etc/daed 配置目录"
+    fi
+
+    log "daed 安全卸载完成"
+}
+
 safe_uninstall_openclash() {
     PKG_MGR="$1"
     log "开始安全卸载 OpenClash（仅卸载主包）"
@@ -237,6 +253,7 @@ usage() {
   sh uninstall.sh nikki [--delete-config]
   sh uninstall.sh smartdns [--delete-config]
   sh uninstall.sh mosdns [--delete-config]
+  sh uninstall.sh daed [--delete-config]
   sh uninstall.sh openclash [--delete-config]
 
 说明:
@@ -289,6 +306,9 @@ main() {
             ;;
         mosdns)
             safe_uninstall_mosdns "$PKG_MGR"
+            ;;
+        daed)
+            safe_uninstall_daed
             ;;
         openclash)
             safe_uninstall_openclash "$PKG_MGR"

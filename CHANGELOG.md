@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- 新增 `daed.sh`，从 `daeuniverse/daed` 官方 Release 安装 / 更新 daed 静态二进制、GeoIP/GeoSite 数据与 OpenWrt procd 服务。
+- 菜单、更新检测和安全卸载新增 daed 入口；安装前检查架构、Linux 5.17+、eBPF/BTF 内核能力及磁盘空间。
+- daed 最新版本检测仅匹配正式 `v*` Release，避免被同仓库的 `dae-lang-core` 等组件 Release 干扰。
+
 ## v1.2.5
 
 - 修复 PassWall 安装 / 更新时只从 SourceForge 目录抓包导致无法安装 GitHub 最新 release 的问题；`passwall.sh` 现在优先匹配 GitHub release assets（如 `26.5.20-1` 的 `23.05-24.10_*` / `25.12+_*` 包），下载时带 `gh-proxy.com` 兜底，失败后再回退 SourceForge 目录。

@@ -24,7 +24,7 @@ jobs:
 
       - name: Check shell syntax
         run: |
-          for f in install.sh update.sh uninstall.sh menu.sh; do
+          for f in *.sh; do
             echo "Checking $f"
             sh -n "$f"
           done

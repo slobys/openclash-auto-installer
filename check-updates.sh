@@ -8,6 +8,7 @@ PASSWALL2_API="https://api.github.com/repos/Openwrt-Passwall/openwrt-passwall2/r
 NIKKI_REPO_API="https://api.github.com/repos/nikkinikki-org/OpenWrt-nikki/releases/latest"
 SMARTDNS_API="https://api.github.com/repos/pymumu/smartdns/releases/latest"
 MOSDNS_API="https://api.github.com/repos/sbwml/luci-app-mosdns/releases/latest"
+DAED_RELEASES_API="https://api.github.com/repos/daeuniverse/daed/releases?per_page=20"
 TARGET="all"
 
 cleanup() {
@@ -43,6 +44,7 @@ usage() {
   sh check-updates.sh --nikki
   sh check-updates.sh --smartdns
   sh check-updates.sh --mosdns
+  sh check-updates.sh --daed
 
 说明:
   默认检查全部插件
@@ -72,6 +74,9 @@ parse_args() {
                 ;;
             --mosdns)
                 TARGET="mosdns"
+                ;;
+            --daed)
+                TARGET="daed"
                 ;;
             -h|--help)
                 usage
@@ -292,6 +297,24 @@ check_nikki() {
     fi
 }
 
+check_daed() {
+    INSTALLED=""
+    if command -v daed >/dev/null 2>&1; then
+        INSTALLED="$(daed --version 2>/dev/null | awk '{print $NF}' | head -n1 || true)"
+        [ -n "$INSTALLED" ] || INSTALLED="installed"
+    fi
+
+    OUT="$TMP_ROOT/daed-releases.json"
+    LATEST=""
+    if fetch_url "$DAED_RELEASES_API" "$OUT"; then
+        LATEST="$(sed 's/"tag_name"/\
+"tag_name"/g' "$OUT" |
+            sed -n 's/^"tag_name"[[:space:]]*:[[:space:]]*"\(v[0-9][^"]*\)".*/\1/p' |
+            head -n1 || true)"
+    fi
+    print_result "daed" "$INSTALLED" "$LATEST"
+}
+
 main() {
     parse_args "$@"
 
@@ -322,6 +345,7 @@ main() {
             check_nikki
             check_smartdns
             check_mosdns
+            check_daed
             ;;
         openclash)
             check_openclash
@@ -340,6 +364,9 @@ main() {
             ;;
         mosdns)
             check_mosdns
+            ;;
+        daed)
+            check_daed
             ;;
     esac
 

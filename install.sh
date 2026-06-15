@@ -186,7 +186,7 @@ detect_core_candidates() {
         *armv7*|*arm_cortex-a7*|*arm_cortex-a9*|*arm_cortex-a15*)
             printf '%s' 'clash-linux-armv7.tar.gz'
             ;;
-        *armv6*|*arm1176*|*arm_arm1176*)
+        *armv6*|*arm1176*)
             printf '%s' 'clash-linux-armv6.tar.gz'
             ;;
         *armv5*|*arm926*)
@@ -280,6 +280,7 @@ install_dependencies_opkg() {
     fi
 
     log "安装最小依赖包"
+    # shellcheck disable=SC2086
     opkg install $PKGS
 }
 
@@ -294,6 +295,7 @@ install_dependencies_apk() {
     fi
 
     log "安装最小依赖包"
+    # shellcheck disable=SC2086
     apk add $PKGS
 }
 
