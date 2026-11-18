@@ -1,0 +1,1699 @@
+{
+  "date": "2026-11-18",
+  "baseline": "9a576f1e67512c1f6c6d932191ba3c6a7fd27661",
+  "scope": "entrypoint lifecycle fixes; no new firmware install/core/kernel/data-plane claims",
+  "sources": [
+    {
+      "fixture": "openclash.json",
+      "url": "https://api.github.com/repos/vernesong/OpenClash/releases/latest",
+      "sha256": "0bcaccaa665dfa154f876a9127a0022df9456f1c0b6ee4bd16b0efc42c47877b",
+      "bytes": 11217
+    },
+    {
+      "fixture": "passwall.json",
+      "url": "https://api.github.com/repos/Openwrt-Passwall/openwrt-passwall/releases/latest",
+      "sha256": "dde4e6894485e3197e0cfe80328c09d2181089d68c6dfb80598b21c27957ef06",
+      "bytes": 15214
+    },
+    {
+      "fixture": "passwall2.json",
+      "url": "https://api.github.com/repos/Openwrt-Passwall/openwrt-passwall2/releases/latest",
+      "sha256": "bacb5c4ec44595425d224a1888629a0dc194ffd700616625b624bc6aa292df27",
+      "bytes": 64413
+    },
+    {
+      "fixture": "nikki.json",
+      "url": "https://api.github.com/repos/nikkinikki-org/OpenWrt-nikki/releases/latest",
+      "sha256": "931989ac7f42226a40c639cf2637b05ca70d0b1c3645ca81c370d88a2f1636e9",
+      "bytes": 115226
+    },
+    {
+      "fixture": "smartdns.json",
+      "url": "https://api.github.com/repos/pymumu/smartdns/releases/latest",
+      "sha256": "ae887e981da1c231e7361b86218224836520900be172feee6befc9e348c88864",
+      "bytes": 69036
+    },
+    {
+      "fixture": "mosdns.json",
+      "url": "https://api.github.com/repos/sbwml/luci-app-mosdns/releases/latest",
+      "sha256": "823c532a8a22dbf1b6de8b930eac6afb6e59e0db7cfcd36baa80f214f22066c7",
+      "bytes": 106864
+    },
+    {
+      "fixture": "luci-daed.json",
+      "url": "https://api.github.com/repos/QiuSimons/luci-app-daed/releases/latest",
+      "sha256": "dbdac0faae8e82136d3a9346b93678b3a6bec324ad02157a6f8e13f8b6f0fa28",
+      "bytes": 19679
+    },
+    {
+      "fixture": "daed.json",
+      "url": "https://api.github.com/repos/daeuniverse/daed/releases?per_page=20",
+      "sha256": "9ef1e7721b86130da283b8efd3c1c43792e2b463ee44011a473d375c13974ff4",
+      "bytes": 1048927
+    },
+    {
+      "fixture": "openwrt-24.10.8.html",
+      "url": "https://downloads.openwrt.org/releases/24.10.8/packages/",
+      "sha256": "a160abb33ff7cd6058bc09a3bae5d180d80fc714b9648be45cbeac68bed90afa",
+      "bytes": 7371
+    },
+    {
+      "fixture": "openwrt-25.12.6.html",
+      "url": "https://downloads.openwrt.org/releases/25.12.6/packages/",
+      "sha256": "127ff236629102f5b3d67f554449006c3c35f1f68a98a77017cd1ee7e8a2e20b",
+      "bytes": 7242
+    },
+    {
+      "fixture": "ota-x86_64.txt",
+      "url": "https://fw.koolcenter.com/iStoreOS/x86_64/version.latest.v2",
+      "sha256": "562c051849d7b876310546794309e99a8e90dffc281ef815937853ac2495f931",
+      "bytes": 880
+    },
+    {
+      "fixture": "ota-armsr.txt",
+      "url": "https://fw.koolcenter.com/iStoreOS/armsr/version.latest.v2",
+      "sha256": "e23dfd5a9ed278802af32f68caa637a370768727f701f00feece3af6463ff083",
+      "bytes": 886
+    },
+    {
+      "fixture": "ota-r4s.txt",
+      "url": "https://fw.koolcenter.com/iStoreOS/r4s/version.latest.v2",
+      "sha256": "f29ec847bb7c3412da3b609abf09ba5f03b984aaedccba6c335299da6e119cd5",
+      "bytes": 856
+    },
+    {
+      "fixture": "ota-rpi4.txt",
+      "url": "https://fw.koolcenter.com/iStoreOS/rpi4/version.latest.v2",
+      "sha256": "9e094e8cf296e745c38b517d21f192db0f2a71aed8c870eab3a7a1765cf101d7",
+      "bytes": 882
+    },
+    {
+      "fixture": "ota-rpi5.txt",
+      "url": "https://fw.koolcenter.com/iStoreOS/rpi5/version.latest.v2",
+      "sha256": "6044f1081949cb85de623a5b735073fd39a9d95e07ce730f620e429cf757345b",
+      "bytes": 882
+    },
+    {
+      "fixture": "openclash-latest.html",
+      "url": "https://github.com/vernesong/OpenClash/releases/latest",
+      "sha256": "9842a671a6264b0f23683a13d68da0d13adb2f12e924c2f495b661a87d22f13c",
+      "bytes": 167275
+    },
+    {
+      "fixture": "openclash-assets.html",
+      "url": "https://github.com/vernesong/OpenClash/releases/expanded_assets/v0.48.002",
+      "sha256": "1cbfae5d2401cc580a9a5286f5e1853dd24886789a22fa9a1d7388a749f9ebba",
+      "bytes": 12613
+    },
+    {
+      "fixture": "passwall-latest.html",
+      "url": "https://github.com/Openwrt-Passwall/openwrt-passwall/releases/latest",
+      "sha256": "7ba73bb8aa16086dfad76c96a5c113e4e84a26688e0823422c366dfe4c99143f",
+      "bytes": 152347
+    },
+    {
+      "fixture": "passwall-assets.html",
+      "url": "https://github.com/Openwrt-Passwall/openwrt-passwall/releases/expanded_assets/26.11.11-1",
+      "sha256": "09426fa05408435f1e569ae025229a7c16ec0523dea77e925282e381335efc50",
+      "bytes": 29081
+    },
+    {
+      "fixture": "passwall2-latest.html",
+      "url": "https://github.com/Openwrt-Passwall/openwrt-passwall2/releases/latest",
+      "sha256": "5ad4303f4f6069ca9bbd05aa9af2e899f80d967641d82fe8ad4fe3b90667de3a",
+      "bytes": 153268
+    },
+    {
+      "fixture": "passwall2-assets.html",
+      "url": "https://github.com/Openwrt-Passwall/openwrt-passwall2/releases/expanded_assets/26.11.11-1",
+      "sha256": "e588e59ee4f737ff0da30d08d5bb22f2524187de9bc69d1f3d5817e8349c0166",
+      "bytes": 150309
+    },
+    {
+      "fixture": "smartdns-latest.html",
+      "url": "https://github.com/pymumu/smartdns/releases/latest",
+      "sha256": "d0f1f9866094e8e2880758f344dfe955e2bf65a32fbfc262df859cb31ff8df88",
+      "bytes": 150912
+    },
+    {
+      "fixture": "smartdns-assets.html",
+      "url": "https://github.com/pymumu/smartdns/releases/expanded_assets/Release48.5-RC1",
+      "sha256": "4bd254d1855ddc704a64bee93bf1bb03b17778557f79a151eb86dab94e8ea6aa",
+      "bytes": 163059
+    },
+    {
+      "fixture": "mosdns-latest.html",
+      "url": "https://github.com/sbwml/luci-app-mosdns/releases/latest",
+      "sha256": "a4ddc48a7e1a78380c83b5e56166f56afa457a1289f78277080f295691bb9fca",
+      "bytes": 144569
+    },
+    {
+      "fixture": "mosdns-assets.html",
+      "url": "https://github.com/sbwml/luci-app-mosdns/releases/expanded_assets/v5.3.4-r15",
+      "sha256": "5e8a506a897963d9d28bc600f467b817c8049745183281c707867de5a1c9950f",
+      "bytes": 259292
+    },
+    {
+      "fixture": "luci-daed-latest.html",
+      "url": "https://github.com/QiuSimons/luci-app-daed/releases/latest",
+      "sha256": "e5fa7835c8210909881ff22947efb88e9abf58a64d9318bc142b3c4f1c3cbe77",
+      "bytes": 145910
+    },
+    {
+      "fixture": "luci-daed-assets.html",
+      "url": "https://github.com/QiuSimons/luci-app-daed/releases/expanded_assets/daed_2026.07.31-r1",
+      "sha256": "2a82ab60b2557f5df88fdccd30adac1681be44c2bc213f11f2d9736d562fee7d",
+      "bytes": 45493
+    }
+  ],
+  "releases": {
+    "openclash": {
+      "repo": "vernesong/OpenClash",
+      "tag": "v0.48.002",
+      "published_at": "2026-10-12T03:40:07Z",
+      "url": "https://github.com/vernesong/OpenClash/releases/tag/v0.48.002"
+    },
+    "passwall": {
+      "repo": "Openwrt-Passwall/openwrt-passwall",
+      "tag": "26.11.11-1",
+      "published_at": "2026-11-10T16:47:20Z",
+      "url": "https://github.com/Openwrt-Passwall/openwrt-passwall/releases/tag/26.11.11-1"
+    },
+    "passwall2": {
+      "repo": "Openwrt-Passwall/openwrt-passwall2",
+      "tag": "26.11.11-1",
+      "published_at": "2026-11-10T16:48:24Z",
+      "url": "https://github.com/Openwrt-Passwall/openwrt-passwall2/releases/tag/26.11.11-1"
+    },
+    "nikki": {
+      "repo": "nikkinikki-org/OpenWrt-nikki",
+      "tag": "v1.26.2",
+      "published_at": "2026-10-10T09:29:47Z",
+      "url": "https://github.com/nikkinikki-org/OpenWrt-nikki/releases/tag/v1.26.2"
+    },
+    "smartdns": {
+      "repo": "pymumu/smartdns",
+      "tag": "Release48.5-RC1",
+      "published_at": "2026-11-09T12:34:27Z",
+      "url": "https://github.com/pymumu/smartdns/releases/tag/Release48.5-RC1"
+    },
+    "mosdns": {
+      "repo": "sbwml/luci-app-mosdns",
+      "tag": "v5.3.4-r15",
+      "published_at": "2026-10-25T10:34:30Z",
+      "url": "https://github.com/sbwml/luci-app-mosdns/releases/tag/v5.3.4-r15"
+    },
+    "luci-daed": {
+      "repo": "QiuSimons/luci-app-daed",
+      "tag": "daed_2026.07.31-r1",
+      "published_at": "2026-07-31T07:05:41Z",
+      "url": "https://github.com/QiuSimons/luci-app-daed/releases/tag/daed_2026.07.31-r1"
+    },
+    "daed": {
+      "repo": "daeuniverse/daed",
+      "tag": "v2.1.1",
+      "published_at": "2026-09-24T09:44:15Z",
+      "url": "https://github.com/daeuniverse/daed/releases/tag/v2.1.1"
+    }
+  },
+  "live_discovery_checks": [
+    {
+      "plugin": "passwall",
+      "manager": "opkg",
+      "source": "api",
+      "url": "https://github.com/Openwrt-Passwall/openwrt-passwall/releases/download/26.11.11-1/23.05-24.10_luci-app-passwall_26.11.11-r1_all.ipk"
+    },
+    {
+      "plugin": "passwall",
+      "manager": "opkg",
+      "source": "html",
+      "url": "https://github.com/Openwrt-Passwall/openwrt-passwall/releases/download/26.11.11-1/23.05-24.10_luci-app-passwall_26.11.11-r1_all.ipk"
+    },
+    {
+      "plugin": "passwall",
+      "manager": "apk",
+      "source": "api",
+      "url": "https://github.com/Openwrt-Passwall/openwrt-passwall/releases/download/26.11.11-1/25.12+_luci-app-passwall-26.11.11-r1.apk"
+    },
+    {
+      "plugin": "passwall",
+      "manager": "apk",
+      "source": "html",
+      "url": "https://github.com/Openwrt-Passwall/openwrt-passwall/releases/download/26.11.11-1/25.12+_luci-app-passwall-26.11.11-r1.apk"
+    },
+    {
+      "plugin": "passwall2",
+      "manager": "opkg",
+      "source": "api",
+      "url": "https://github.com/Openwrt-Passwall/openwrt-passwall2/releases/download/26.11.11-1/luci-app-passwall2_26.11.11-r1_all.ipk"
+    },
+    {
+      "plugin": "passwall2",
+      "manager": "opkg",
+      "source": "html",
+      "url": "https://github.com/Openwrt-Passwall/openwrt-passwall2/releases/download/26.11.11-1/luci-app-passwall2_26.11.11-r1_all.ipk"
+    },
+    {
+      "plugin": "passwall2",
+      "manager": "apk",
+      "source": "api",
+      "url": "https://github.com/Openwrt-Passwall/openwrt-passwall2/releases/download/26.11.11-1/luci-app-passwall2-26.11.11-r1.apk"
+    },
+    {
+      "plugin": "passwall2",
+      "manager": "apk",
+      "source": "html",
+      "url": "https://github.com/Openwrt-Passwall/openwrt-passwall2/releases/download/26.11.11-1/luci-app-passwall2-26.11.11-r1.apk"
+    },
+    {
+      "plugin": "openclash",
+      "manager": "opkg",
+      "source": "api",
+      "url": "https://github.com/vernesong/OpenClash/releases/download/v0.48.002/luci-app-openclash_0.48.002_all.ipk"
+    },
+    {
+      "plugin": "openclash",
+      "manager": "opkg",
+      "source": "html",
+      "url": "https://github.com/vernesong/OpenClash/releases/download/v0.48.002/luci-app-openclash_0.48.002_all.ipk"
+    },
+    {
+      "plugin": "openclash",
+      "manager": "apk",
+      "source": "api",
+      "url": "https://github.com/vernesong/OpenClash/releases/download/v0.48.002/luci-app-openclash-0.48.002.apk"
+    },
+    {
+      "plugin": "openclash",
+      "manager": "apk",
+      "source": "html",
+      "url": "https://github.com/vernesong/OpenClash/releases/download/v0.48.002/luci-app-openclash-0.48.002.apk"
+    }
+  ],
+  "architecture_metadata": [
+    {
+      "firmware": "24.10.8",
+      "arch": "aarch64_cortex-a53",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "clash-linux-arm64.tar.gz",
+      "smartdns_mapping": "aarch64",
+      "daed_mapping": "arm64",
+      "nikki_asset": "nikki_aarch64_cortex-a53-openwrt-24.10.tar.gz",
+      "mosdns_asset": "aarch64_cortex-a53-openwrt-24.10.tar.gz",
+      "smartdns_asset": "smartdns.1.2026.11.09-1235.aarch64-openwrt-all.ipk",
+      "daed_generic_asset": "daed-linux-arm64.zip",
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [
+        "clash-linux-arm64.tar.gz"
+      ],
+      "openclash_smart_assets": [
+        "clash-linux-arm64.tar.gz"
+      ]
+    },
+    {
+      "firmware": "24.10.8",
+      "arch": "aarch64_cortex-a72",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "clash-linux-arm64.tar.gz",
+      "smartdns_mapping": "aarch64",
+      "daed_mapping": "arm64",
+      "nikki_asset": "nikki_aarch64_cortex-a72-openwrt-24.10.tar.gz",
+      "mosdns_asset": "aarch64_cortex-a72-openwrt-24.10.tar.gz",
+      "smartdns_asset": "smartdns.1.2026.11.09-1235.aarch64-openwrt-all.ipk",
+      "daed_generic_asset": "daed-linux-arm64.zip",
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [
+        "clash-linux-arm64.tar.gz"
+      ],
+      "openclash_smart_assets": [
+        "clash-linux-arm64.tar.gz"
+      ]
+    },
+    {
+      "firmware": "24.10.8",
+      "arch": "aarch64_cortex-a76",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "clash-linux-arm64.tar.gz",
+      "smartdns_mapping": "aarch64",
+      "daed_mapping": "arm64",
+      "nikki_asset": "nikki_aarch64_cortex-a76-openwrt-24.10.tar.gz",
+      "mosdns_asset": "aarch64_cortex-a76-openwrt-24.10.tar.gz",
+      "smartdns_asset": "smartdns.1.2026.11.09-1235.aarch64-openwrt-all.ipk",
+      "daed_generic_asset": "daed-linux-arm64.zip",
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [
+        "clash-linux-arm64.tar.gz"
+      ],
+      "openclash_smart_assets": [
+        "clash-linux-arm64.tar.gz"
+      ]
+    },
+    {
+      "firmware": "24.10.8",
+      "arch": "aarch64_generic",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "clash-linux-arm64.tar.gz",
+      "smartdns_mapping": "aarch64",
+      "daed_mapping": "arm64",
+      "nikki_asset": "nikki_aarch64_generic-openwrt-24.10.tar.gz",
+      "mosdns_asset": "aarch64_generic-openwrt-24.10.tar.gz",
+      "smartdns_asset": "smartdns.1.2026.11.09-1235.aarch64-openwrt-all.ipk",
+      "daed_generic_asset": "daed-linux-arm64.zip",
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [
+        "clash-linux-arm64.tar.gz"
+      ],
+      "openclash_smart_assets": [
+        "clash-linux-arm64.tar.gz"
+      ]
+    },
+    {
+      "firmware": "24.10.8",
+      "arch": "arm_arm1176jzf-s_vfp",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "clash-linux-armv6.tar.gz",
+      "smartdns_mapping": "arm",
+      "daed_mapping": "",
+      "nikki_asset": null,
+      "mosdns_asset": "arm_arm1176jzf-s_vfp-openwrt-24.10.tar.gz",
+      "smartdns_asset": "smartdns.1.2026.11.09-1235.arm-openwrt-all.ipk",
+      "daed_generic_asset": null,
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [
+        "clash-linux-armv6.tar.gz"
+      ],
+      "openclash_smart_assets": [
+        "clash-linux-armv6.tar.gz"
+      ]
+    },
+    {
+      "firmware": "24.10.8",
+      "arch": "arm_arm926ej-s",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "clash-linux-armv5.tar.gz",
+      "smartdns_mapping": "arm",
+      "daed_mapping": "",
+      "nikki_asset": null,
+      "mosdns_asset": "arm_arm926ej-s-openwrt-24.10.tar.gz",
+      "smartdns_asset": "smartdns.1.2026.11.09-1235.arm-openwrt-all.ipk",
+      "daed_generic_asset": null,
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [
+        "clash-linux-armv5.tar.gz"
+      ],
+      "openclash_smart_assets": [
+        "clash-linux-armv5.tar.gz"
+      ]
+    },
+    {
+      "firmware": "24.10.8",
+      "arch": "arm_cortex-a15_neon-vfpv4",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "clash-linux-armv7.tar.gz",
+      "smartdns_mapping": "arm",
+      "daed_mapping": "",
+      "nikki_asset": "nikki_arm_cortex-a15_neon-vfpv4-openwrt-24.10.tar.gz",
+      "mosdns_asset": "arm_cortex-a15_neon-vfpv4-openwrt-24.10.tar.gz",
+      "smartdns_asset": "smartdns.1.2026.11.09-1235.arm-openwrt-all.ipk",
+      "daed_generic_asset": null,
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [
+        "clash-linux-armv7.tar.gz"
+      ],
+      "openclash_smart_assets": [
+        "clash-linux-armv7.tar.gz"
+      ]
+    },
+    {
+      "firmware": "24.10.8",
+      "arch": "arm_cortex-a5_vfpv4",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "clash-linux-armv7.tar.gz",
+      "smartdns_mapping": "arm",
+      "daed_mapping": "",
+      "nikki_asset": "nikki_arm_cortex-a5_vfpv4-openwrt-24.10.tar.gz",
+      "mosdns_asset": "arm_cortex-a5_vfpv4-openwrt-24.10.tar.gz",
+      "smartdns_asset": "smartdns.1.2026.11.09-1235.arm-openwrt-all.ipk",
+      "daed_generic_asset": null,
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [
+        "clash-linux-armv7.tar.gz"
+      ],
+      "openclash_smart_assets": [
+        "clash-linux-armv7.tar.gz"
+      ]
+    },
+    {
+      "firmware": "24.10.8",
+      "arch": "arm_cortex-a7",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "clash-linux-armv7.tar.gz",
+      "smartdns_mapping": "arm",
+      "daed_mapping": "",
+      "nikki_asset": null,
+      "mosdns_asset": "arm_cortex-a7-openwrt-24.10.tar.gz",
+      "smartdns_asset": "smartdns.1.2026.11.09-1235.arm-openwrt-all.ipk",
+      "daed_generic_asset": null,
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [
+        "clash-linux-armv7.tar.gz"
+      ],
+      "openclash_smart_assets": [
+        "clash-linux-armv7.tar.gz"
+      ]
+    },
+    {
+      "firmware": "24.10.8",
+      "arch": "arm_cortex-a7_neon-vfpv4",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "clash-linux-armv7.tar.gz",
+      "smartdns_mapping": "arm",
+      "daed_mapping": "",
+      "nikki_asset": "nikki_arm_cortex-a7_neon-vfpv4-openwrt-24.10.tar.gz",
+      "mosdns_asset": "arm_cortex-a7_neon-vfpv4-openwrt-24.10.tar.gz",
+      "smartdns_asset": "smartdns.1.2026.11.09-1235.arm-openwrt-all.ipk",
+      "daed_generic_asset": null,
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [
+        "clash-linux-armv7.tar.gz"
+      ],
+      "openclash_smart_assets": [
+        "clash-linux-armv7.tar.gz"
+      ]
+    },
+    {
+      "firmware": "24.10.8",
+      "arch": "arm_cortex-a7_vfpv4",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "clash-linux-armv7.tar.gz",
+      "smartdns_mapping": "arm",
+      "daed_mapping": "",
+      "nikki_asset": null,
+      "mosdns_asset": "arm_cortex-a7_vfpv4-openwrt-24.10.tar.gz",
+      "smartdns_asset": "smartdns.1.2026.11.09-1235.arm-openwrt-all.ipk",
+      "daed_generic_asset": null,
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [
+        "clash-linux-armv7.tar.gz"
+      ],
+      "openclash_smart_assets": [
+        "clash-linux-armv7.tar.gz"
+      ]
+    },
+    {
+      "firmware": "24.10.8",
+      "arch": "arm_cortex-a8_vfpv3",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "clash-linux-armv7.tar.gz",
+      "smartdns_mapping": "arm",
+      "daed_mapping": "",
+      "nikki_asset": "nikki_arm_cortex-a8_vfpv3-openwrt-24.10.tar.gz",
+      "mosdns_asset": "arm_cortex-a8_vfpv3-openwrt-24.10.tar.gz",
+      "smartdns_asset": "smartdns.1.2026.11.09-1235.arm-openwrt-all.ipk",
+      "daed_generic_asset": null,
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [
+        "clash-linux-armv7.tar.gz"
+      ],
+      "openclash_smart_assets": [
+        "clash-linux-armv7.tar.gz"
+      ]
+    },
+    {
+      "firmware": "24.10.8",
+      "arch": "arm_cortex-a9",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "clash-linux-armv7.tar.gz",
+      "smartdns_mapping": "arm",
+      "daed_mapping": "",
+      "nikki_asset": "nikki_arm_cortex-a9-openwrt-24.10.tar.gz",
+      "mosdns_asset": "arm_cortex-a9-openwrt-24.10.tar.gz",
+      "smartdns_asset": "smartdns.1.2026.11.09-1235.arm-openwrt-all.ipk",
+      "daed_generic_asset": null,
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [
+        "clash-linux-armv7.tar.gz"
+      ],
+      "openclash_smart_assets": [
+        "clash-linux-armv7.tar.gz"
+      ]
+    },
+    {
+      "firmware": "24.10.8",
+      "arch": "arm_cortex-a9_neon",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "clash-linux-armv7.tar.gz",
+      "smartdns_mapping": "arm",
+      "daed_mapping": "",
+      "nikki_asset": "nikki_arm_cortex-a9_neon-openwrt-24.10.tar.gz",
+      "mosdns_asset": "arm_cortex-a9_neon-openwrt-24.10.tar.gz",
+      "smartdns_asset": "smartdns.1.2026.11.09-1235.arm-openwrt-all.ipk",
+      "daed_generic_asset": null,
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [
+        "clash-linux-armv7.tar.gz"
+      ],
+      "openclash_smart_assets": [
+        "clash-linux-armv7.tar.gz"
+      ]
+    },
+    {
+      "firmware": "24.10.8",
+      "arch": "arm_cortex-a9_vfpv3-d16",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "clash-linux-armv7.tar.gz",
+      "smartdns_mapping": "arm",
+      "daed_mapping": "",
+      "nikki_asset": "nikki_arm_cortex-a9_vfpv3-d16-openwrt-24.10.tar.gz",
+      "mosdns_asset": "arm_cortex-a9_vfpv3-d16-openwrt-24.10.tar.gz",
+      "smartdns_asset": "smartdns.1.2026.11.09-1235.arm-openwrt-all.ipk",
+      "daed_generic_asset": null,
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [
+        "clash-linux-armv7.tar.gz"
+      ],
+      "openclash_smart_assets": [
+        "clash-linux-armv7.tar.gz"
+      ]
+    },
+    {
+      "firmware": "24.10.8",
+      "arch": "arm_fa526",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "",
+      "smartdns_mapping": "",
+      "daed_mapping": "",
+      "nikki_asset": null,
+      "mosdns_asset": "arm_fa526-openwrt-24.10.tar.gz",
+      "smartdns_asset": null,
+      "daed_generic_asset": null,
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [],
+      "openclash_smart_assets": []
+    },
+    {
+      "firmware": "24.10.8",
+      "arch": "arm_xscale",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "clash-linux-armv5.tar.gz",
+      "smartdns_mapping": "arm",
+      "daed_mapping": "",
+      "nikki_asset": null,
+      "mosdns_asset": "arm_xscale-openwrt-24.10.tar.gz",
+      "smartdns_asset": "smartdns.1.2026.11.09-1235.arm-openwrt-all.ipk",
+      "daed_generic_asset": null,
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [
+        "clash-linux-armv5.tar.gz"
+      ],
+      "openclash_smart_assets": [
+        "clash-linux-armv5.tar.gz"
+      ]
+    },
+    {
+      "firmware": "24.10.8",
+      "arch": "armeb_xscale",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "",
+      "smartdns_mapping": "",
+      "daed_mapping": "",
+      "nikki_asset": null,
+      "mosdns_asset": null,
+      "smartdns_asset": null,
+      "daed_generic_asset": null,
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [],
+      "openclash_smart_assets": []
+    },
+    {
+      "firmware": "24.10.8",
+      "arch": "i386_pentium-mmx",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "clash-linux-386.tar.gz",
+      "smartdns_mapping": "x86",
+      "daed_mapping": "x86_32",
+      "nikki_asset": null,
+      "mosdns_asset": "i386_pentium-mmx-openwrt-24.10.tar.gz",
+      "smartdns_asset": "smartdns.1.2026.11.09-1235.x86-openwrt-all.ipk",
+      "daed_generic_asset": "daed-linux-x86_32.zip",
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [
+        "clash-linux-386.tar.gz"
+      ],
+      "openclash_smart_assets": [
+        "clash-linux-386.tar.gz"
+      ]
+    },
+    {
+      "firmware": "24.10.8",
+      "arch": "i386_pentium4",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "clash-linux-386.tar.gz",
+      "smartdns_mapping": "x86",
+      "daed_mapping": "x86_32",
+      "nikki_asset": "nikki_i386_pentium4-openwrt-24.10.tar.gz",
+      "mosdns_asset": "i386_pentium4-openwrt-24.10.tar.gz",
+      "smartdns_asset": "smartdns.1.2026.11.09-1235.x86-openwrt-all.ipk",
+      "daed_generic_asset": "daed-linux-x86_32.zip",
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [
+        "clash-linux-386.tar.gz"
+      ],
+      "openclash_smart_assets": [
+        "clash-linux-386.tar.gz"
+      ]
+    },
+    {
+      "firmware": "24.10.8",
+      "arch": "loongarch64_generic",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "clash-linux-loong64-abi2.tar.gz",
+      "smartdns_mapping": "",
+      "daed_mapping": "",
+      "nikki_asset": null,
+      "mosdns_asset": "loongarch64_generic-openwrt-24.10.tar.gz",
+      "smartdns_asset": null,
+      "daed_generic_asset": null,
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [
+        "clash-linux-loong64-abi2.tar.gz"
+      ],
+      "openclash_smart_assets": [
+        "clash-linux-loong64-abi2.tar.gz"
+      ]
+    },
+    {
+      "firmware": "24.10.8",
+      "arch": "mips64_mips64r2",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "clash-linux-mips64.tar.gz",
+      "smartdns_mapping": "mips",
+      "daed_mapping": "mips64",
+      "nikki_asset": null,
+      "mosdns_asset": "mips64_mips64r2-openwrt-24.10.tar.gz",
+      "smartdns_asset": "smartdns.1.2026.11.09-1235.mips-openwrt-all.ipk",
+      "daed_generic_asset": "daed-linux-mips64.zip",
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [
+        "clash-linux-mips64.tar.gz"
+      ],
+      "openclash_smart_assets": [
+        "clash-linux-mips64.tar.gz"
+      ]
+    },
+    {
+      "firmware": "24.10.8",
+      "arch": "mips64_octeonplus",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "clash-linux-mips64.tar.gz",
+      "smartdns_mapping": "mips",
+      "daed_mapping": "mips64",
+      "nikki_asset": "nikki_mips64_octeonplus-openwrt-24.10.tar.gz",
+      "mosdns_asset": "mips64_octeonplus-openwrt-24.10.tar.gz",
+      "smartdns_asset": "smartdns.1.2026.11.09-1235.mips-openwrt-all.ipk",
+      "daed_generic_asset": "daed-linux-mips64.zip",
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [
+        "clash-linux-mips64.tar.gz"
+      ],
+      "openclash_smart_assets": [
+        "clash-linux-mips64.tar.gz"
+      ]
+    },
+    {
+      "firmware": "24.10.8",
+      "arch": "mips64el_mips64r2",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "clash-linux-mips64le.tar.gz",
+      "smartdns_mapping": "mipsel",
+      "daed_mapping": "mips64le",
+      "nikki_asset": null,
+      "mosdns_asset": "mips64el_mips64r2-openwrt-24.10.tar.gz",
+      "smartdns_asset": "smartdns.1.2026.11.09-1235.mipsel-openwrt-all.ipk",
+      "daed_generic_asset": "daed-linux-mips64le.zip",
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [
+        "clash-linux-mips64le.tar.gz"
+      ],
+      "openclash_smart_assets": [
+        "clash-linux-mips64le.tar.gz"
+      ]
+    },
+    {
+      "firmware": "24.10.8",
+      "arch": "mips_24kc",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "clash-linux-mips-softfloat.tar.gz",
+      "smartdns_mapping": "mips",
+      "daed_mapping": "mips32",
+      "nikki_asset": "nikki_mips_24kc-openwrt-24.10.tar.gz",
+      "mosdns_asset": "mips_24kc-openwrt-24.10.tar.gz",
+      "smartdns_asset": "smartdns.1.2026.11.09-1235.mips-openwrt-all.ipk",
+      "daed_generic_asset": "daed-linux-mips32.zip",
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [
+        "clash-linux-mips-softfloat.tar.gz"
+      ],
+      "openclash_smart_assets": [
+        "clash-linux-mips-softfloat.tar.gz"
+      ]
+    },
+    {
+      "firmware": "24.10.8",
+      "arch": "mips_4kec",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "clash-linux-mips-softfloat.tar.gz",
+      "smartdns_mapping": "mips",
+      "daed_mapping": "mips32",
+      "nikki_asset": "nikki_mips_4kec-openwrt-24.10.tar.gz",
+      "mosdns_asset": "mips_4kec-openwrt-24.10.tar.gz",
+      "smartdns_asset": "smartdns.1.2026.11.09-1235.mips-openwrt-all.ipk",
+      "daed_generic_asset": "daed-linux-mips32.zip",
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [
+        "clash-linux-mips-softfloat.tar.gz"
+      ],
+      "openclash_smart_assets": [
+        "clash-linux-mips-softfloat.tar.gz"
+      ]
+    },
+    {
+      "firmware": "24.10.8",
+      "arch": "mips_mips32",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "clash-linux-mips-softfloat.tar.gz",
+      "smartdns_mapping": "mips",
+      "daed_mapping": "mips32",
+      "nikki_asset": "nikki_mips_mips32-openwrt-24.10.tar.gz",
+      "mosdns_asset": "mips_mips32-openwrt-24.10.tar.gz",
+      "smartdns_asset": "smartdns.1.2026.11.09-1235.mips-openwrt-all.ipk",
+      "daed_generic_asset": "daed-linux-mips32.zip",
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [
+        "clash-linux-mips-softfloat.tar.gz"
+      ],
+      "openclash_smart_assets": [
+        "clash-linux-mips-softfloat.tar.gz"
+      ]
+    },
+    {
+      "firmware": "24.10.8",
+      "arch": "mipsel_24kc",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "clash-linux-mipsle-softfloat.tar.gz",
+      "smartdns_mapping": "mipsel",
+      "daed_mapping": "mips32le",
+      "nikki_asset": "nikki_mipsel_24kc-openwrt-24.10.tar.gz",
+      "mosdns_asset": "mipsel_24kc-openwrt-24.10.tar.gz",
+      "smartdns_asset": "smartdns.1.2026.11.09-1235.mipsel-openwrt-all.ipk",
+      "daed_generic_asset": "daed-linux-mips32le.zip",
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [
+        "clash-linux-mipsle-softfloat.tar.gz"
+      ],
+      "openclash_smart_assets": [
+        "clash-linux-mipsle-softfloat.tar.gz"
+      ]
+    },
+    {
+      "firmware": "24.10.8",
+      "arch": "mipsel_24kc_24kf",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "clash-linux-mipsle-softfloat.tar.gz",
+      "smartdns_mapping": "mipsel",
+      "daed_mapping": "mips32le",
+      "nikki_asset": "nikki_mipsel_24kc_24kf-openwrt-24.10.tar.gz",
+      "mosdns_asset": "mipsel_24kc_24kf-openwrt-24.10.tar.gz",
+      "smartdns_asset": "smartdns.1.2026.11.09-1235.mipsel-openwrt-all.ipk",
+      "daed_generic_asset": "daed-linux-mips32le.zip",
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [
+        "clash-linux-mipsle-softfloat.tar.gz"
+      ],
+      "openclash_smart_assets": [
+        "clash-linux-mipsle-softfloat.tar.gz"
+      ]
+    },
+    {
+      "firmware": "24.10.8",
+      "arch": "mipsel_74kc",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "clash-linux-mipsle-softfloat.tar.gz",
+      "smartdns_mapping": "mipsel",
+      "daed_mapping": "mips32le",
+      "nikki_asset": "nikki_mipsel_74kc-openwrt-24.10.tar.gz",
+      "mosdns_asset": "mipsel_74kc-openwrt-24.10.tar.gz",
+      "smartdns_asset": "smartdns.1.2026.11.09-1235.mipsel-openwrt-all.ipk",
+      "daed_generic_asset": "daed-linux-mips32le.zip",
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [
+        "clash-linux-mipsle-softfloat.tar.gz"
+      ],
+      "openclash_smart_assets": [
+        "clash-linux-mipsle-softfloat.tar.gz"
+      ]
+    },
+    {
+      "firmware": "24.10.8",
+      "arch": "mipsel_mips32",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "clash-linux-mipsle-softfloat.tar.gz",
+      "smartdns_mapping": "mipsel",
+      "daed_mapping": "mips32le",
+      "nikki_asset": "nikki_mipsel_mips32-openwrt-24.10.tar.gz",
+      "mosdns_asset": "mipsel_mips32-openwrt-24.10.tar.gz",
+      "smartdns_asset": "smartdns.1.2026.11.09-1235.mipsel-openwrt-all.ipk",
+      "daed_generic_asset": "daed-linux-mips32le.zip",
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [
+        "clash-linux-mipsle-softfloat.tar.gz"
+      ],
+      "openclash_smart_assets": [
+        "clash-linux-mipsle-softfloat.tar.gz"
+      ]
+    },
+    {
+      "firmware": "24.10.8",
+      "arch": "powerpc64_e5500",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "",
+      "smartdns_mapping": "",
+      "daed_mapping": "",
+      "nikki_asset": null,
+      "mosdns_asset": null,
+      "smartdns_asset": null,
+      "daed_generic_asset": null,
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [],
+      "openclash_smart_assets": []
+    },
+    {
+      "firmware": "24.10.8",
+      "arch": "powerpc_464fp",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "",
+      "smartdns_mapping": "",
+      "daed_mapping": "",
+      "nikki_asset": null,
+      "mosdns_asset": null,
+      "smartdns_asset": null,
+      "daed_generic_asset": null,
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [],
+      "openclash_smart_assets": []
+    },
+    {
+      "firmware": "24.10.8",
+      "arch": "powerpc_8548",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "",
+      "smartdns_mapping": "",
+      "daed_mapping": "",
+      "nikki_asset": null,
+      "mosdns_asset": null,
+      "smartdns_asset": null,
+      "daed_generic_asset": null,
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [],
+      "openclash_smart_assets": []
+    },
+    {
+      "firmware": "24.10.8",
+      "arch": "riscv64_riscv64",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "clash-linux-riscv64.tar.gz",
+      "smartdns_mapping": "",
+      "daed_mapping": "riscv64",
+      "nikki_asset": "nikki_riscv64_riscv64-openwrt-24.10.tar.gz",
+      "mosdns_asset": "riscv64_riscv64-openwrt-24.10.tar.gz",
+      "smartdns_asset": null,
+      "daed_generic_asset": "daed-linux-riscv64.zip",
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [
+        "clash-linux-riscv64.tar.gz"
+      ],
+      "openclash_smart_assets": [
+        "clash-linux-riscv64.tar.gz"
+      ]
+    },
+    {
+      "firmware": "24.10.8",
+      "arch": "x86_64",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "clash-linux-amd64.tar.gz",
+      "smartdns_mapping": "x86_64",
+      "daed_mapping": "x86_64",
+      "nikki_asset": "nikki_x86_64-openwrt-24.10.tar.gz",
+      "mosdns_asset": "x86_64-openwrt-24.10.tar.gz",
+      "smartdns_asset": "smartdns.1.2026.11.09-1235.x86_64-openwrt-all.ipk",
+      "daed_generic_asset": "daed-linux-x86_64.zip",
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [
+        "clash-linux-amd64.tar.gz"
+      ],
+      "openclash_smart_assets": [
+        "clash-linux-amd64.tar.gz"
+      ]
+    },
+    {
+      "firmware": "25.12.6",
+      "arch": "aarch64_cortex-a53",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "clash-linux-arm64.tar.gz",
+      "smartdns_mapping": "aarch64",
+      "daed_mapping": "arm64",
+      "nikki_asset": "nikki_aarch64_cortex-a53-openwrt-25.12.tar.gz",
+      "mosdns_asset": "aarch64_cortex-a53-openwrt-25.12.tar.gz",
+      "smartdns_asset": "smartdns.1.2026.11.09-1235.aarch64-openwrt-all.apk",
+      "daed_generic_asset": "daed-linux-arm64.zip",
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [
+        "clash-linux-arm64.tar.gz"
+      ],
+      "openclash_smart_assets": [
+        "clash-linux-arm64.tar.gz"
+      ]
+    },
+    {
+      "firmware": "25.12.6",
+      "arch": "aarch64_cortex-a72",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "clash-linux-arm64.tar.gz",
+      "smartdns_mapping": "aarch64",
+      "daed_mapping": "arm64",
+      "nikki_asset": "nikki_aarch64_cortex-a72-openwrt-25.12.tar.gz",
+      "mosdns_asset": "aarch64_cortex-a72-openwrt-25.12.tar.gz",
+      "smartdns_asset": "smartdns.1.2026.11.09-1235.aarch64-openwrt-all.apk",
+      "daed_generic_asset": "daed-linux-arm64.zip",
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [
+        "clash-linux-arm64.tar.gz"
+      ],
+      "openclash_smart_assets": [
+        "clash-linux-arm64.tar.gz"
+      ]
+    },
+    {
+      "firmware": "25.12.6",
+      "arch": "aarch64_cortex-a76",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "clash-linux-arm64.tar.gz",
+      "smartdns_mapping": "aarch64",
+      "daed_mapping": "arm64",
+      "nikki_asset": "nikki_aarch64_cortex-a76-openwrt-25.12.tar.gz",
+      "mosdns_asset": "aarch64_cortex-a76-openwrt-25.12.tar.gz",
+      "smartdns_asset": "smartdns.1.2026.11.09-1235.aarch64-openwrt-all.apk",
+      "daed_generic_asset": "daed-linux-arm64.zip",
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [
+        "clash-linux-arm64.tar.gz"
+      ],
+      "openclash_smart_assets": [
+        "clash-linux-arm64.tar.gz"
+      ]
+    },
+    {
+      "firmware": "25.12.6",
+      "arch": "aarch64_generic",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "clash-linux-arm64.tar.gz",
+      "smartdns_mapping": "aarch64",
+      "daed_mapping": "arm64",
+      "nikki_asset": "nikki_aarch64_generic-openwrt-25.12.tar.gz",
+      "mosdns_asset": "aarch64_generic-openwrt-25.12.tar.gz",
+      "smartdns_asset": "smartdns.1.2026.11.09-1235.aarch64-openwrt-all.apk",
+      "daed_generic_asset": "daed-linux-arm64.zip",
+      "daed_apk_asset": "daed-2026.07.31-r1-aarch64_generic-openwrt-25.12.apk",
+      "openclash_meta_assets": [
+        "clash-linux-arm64.tar.gz"
+      ],
+      "openclash_smart_assets": [
+        "clash-linux-arm64.tar.gz"
+      ]
+    },
+    {
+      "firmware": "25.12.6",
+      "arch": "arm_arm1176jzf-s_vfp",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "clash-linux-armv6.tar.gz",
+      "smartdns_mapping": "arm",
+      "daed_mapping": "",
+      "nikki_asset": null,
+      "mosdns_asset": "arm_arm1176jzf-s_vfp-openwrt-25.12.tar.gz",
+      "smartdns_asset": "smartdns.1.2026.11.09-1235.arm-openwrt-all.apk",
+      "daed_generic_asset": null,
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [
+        "clash-linux-armv6.tar.gz"
+      ],
+      "openclash_smart_assets": [
+        "clash-linux-armv6.tar.gz"
+      ]
+    },
+    {
+      "firmware": "25.12.6",
+      "arch": "arm_arm926ej-s",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "clash-linux-armv5.tar.gz",
+      "smartdns_mapping": "arm",
+      "daed_mapping": "",
+      "nikki_asset": null,
+      "mosdns_asset": "arm_arm926ej-s-openwrt-25.12.tar.gz",
+      "smartdns_asset": "smartdns.1.2026.11.09-1235.arm-openwrt-all.apk",
+      "daed_generic_asset": null,
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [
+        "clash-linux-armv5.tar.gz"
+      ],
+      "openclash_smart_assets": [
+        "clash-linux-armv5.tar.gz"
+      ]
+    },
+    {
+      "firmware": "25.12.6",
+      "arch": "arm_cortex-a15_neon-vfpv4",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "clash-linux-armv7.tar.gz",
+      "smartdns_mapping": "arm",
+      "daed_mapping": "",
+      "nikki_asset": "nikki_arm_cortex-a15_neon-vfpv4-openwrt-25.12.tar.gz",
+      "mosdns_asset": "arm_cortex-a15_neon-vfpv4-openwrt-25.12.tar.gz",
+      "smartdns_asset": "smartdns.1.2026.11.09-1235.arm-openwrt-all.apk",
+      "daed_generic_asset": null,
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [
+        "clash-linux-armv7.tar.gz"
+      ],
+      "openclash_smart_assets": [
+        "clash-linux-armv7.tar.gz"
+      ]
+    },
+    {
+      "firmware": "25.12.6",
+      "arch": "arm_cortex-a5_vfpv4",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "clash-linux-armv7.tar.gz",
+      "smartdns_mapping": "arm",
+      "daed_mapping": "",
+      "nikki_asset": "nikki_arm_cortex-a5_vfpv4-openwrt-25.12.tar.gz",
+      "mosdns_asset": "arm_cortex-a5_vfpv4-openwrt-25.12.tar.gz",
+      "smartdns_asset": "smartdns.1.2026.11.09-1235.arm-openwrt-all.apk",
+      "daed_generic_asset": null,
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [
+        "clash-linux-armv7.tar.gz"
+      ],
+      "openclash_smart_assets": [
+        "clash-linux-armv7.tar.gz"
+      ]
+    },
+    {
+      "firmware": "25.12.6",
+      "arch": "arm_cortex-a7",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "clash-linux-armv7.tar.gz",
+      "smartdns_mapping": "arm",
+      "daed_mapping": "",
+      "nikki_asset": null,
+      "mosdns_asset": "arm_cortex-a7-openwrt-25.12.tar.gz",
+      "smartdns_asset": "smartdns.1.2026.11.09-1235.arm-openwrt-all.apk",
+      "daed_generic_asset": null,
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [
+        "clash-linux-armv7.tar.gz"
+      ],
+      "openclash_smart_assets": [
+        "clash-linux-armv7.tar.gz"
+      ]
+    },
+    {
+      "firmware": "25.12.6",
+      "arch": "arm_cortex-a7_neon-vfpv4",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "clash-linux-armv7.tar.gz",
+      "smartdns_mapping": "arm",
+      "daed_mapping": "",
+      "nikki_asset": "nikki_arm_cortex-a7_neon-vfpv4-openwrt-25.12.tar.gz",
+      "mosdns_asset": "arm_cortex-a7_neon-vfpv4-openwrt-25.12.tar.gz",
+      "smartdns_asset": "smartdns.1.2026.11.09-1235.arm-openwrt-all.apk",
+      "daed_generic_asset": null,
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [
+        "clash-linux-armv7.tar.gz"
+      ],
+      "openclash_smart_assets": [
+        "clash-linux-armv7.tar.gz"
+      ]
+    },
+    {
+      "firmware": "25.12.6",
+      "arch": "arm_cortex-a7_vfpv4",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "clash-linux-armv7.tar.gz",
+      "smartdns_mapping": "arm",
+      "daed_mapping": "",
+      "nikki_asset": null,
+      "mosdns_asset": "arm_cortex-a7_vfpv4-openwrt-25.12.tar.gz",
+      "smartdns_asset": "smartdns.1.2026.11.09-1235.arm-openwrt-all.apk",
+      "daed_generic_asset": null,
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [
+        "clash-linux-armv7.tar.gz"
+      ],
+      "openclash_smart_assets": [
+        "clash-linux-armv7.tar.gz"
+      ]
+    },
+    {
+      "firmware": "25.12.6",
+      "arch": "arm_cortex-a8_vfpv3",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "clash-linux-armv7.tar.gz",
+      "smartdns_mapping": "arm",
+      "daed_mapping": "",
+      "nikki_asset": "nikki_arm_cortex-a8_vfpv3-openwrt-25.12.tar.gz",
+      "mosdns_asset": "arm_cortex-a8_vfpv3-openwrt-25.12.tar.gz",
+      "smartdns_asset": "smartdns.1.2026.11.09-1235.arm-openwrt-all.apk",
+      "daed_generic_asset": null,
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [
+        "clash-linux-armv7.tar.gz"
+      ],
+      "openclash_smart_assets": [
+        "clash-linux-armv7.tar.gz"
+      ]
+    },
+    {
+      "firmware": "25.12.6",
+      "arch": "arm_cortex-a9",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "clash-linux-armv7.tar.gz",
+      "smartdns_mapping": "arm",
+      "daed_mapping": "",
+      "nikki_asset": "nikki_arm_cortex-a9-openwrt-25.12.tar.gz",
+      "mosdns_asset": "arm_cortex-a9-openwrt-25.12.tar.gz",
+      "smartdns_asset": "smartdns.1.2026.11.09-1235.arm-openwrt-all.apk",
+      "daed_generic_asset": null,
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [
+        "clash-linux-armv7.tar.gz"
+      ],
+      "openclash_smart_assets": [
+        "clash-linux-armv7.tar.gz"
+      ]
+    },
+    {
+      "firmware": "25.12.6",
+      "arch": "arm_cortex-a9_neon",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "clash-linux-armv7.tar.gz",
+      "smartdns_mapping": "arm",
+      "daed_mapping": "",
+      "nikki_asset": "nikki_arm_cortex-a9_neon-openwrt-25.12.tar.gz",
+      "mosdns_asset": "arm_cortex-a9_neon-openwrt-25.12.tar.gz",
+      "smartdns_asset": "smartdns.1.2026.11.09-1235.arm-openwrt-all.apk",
+      "daed_generic_asset": null,
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [
+        "clash-linux-armv7.tar.gz"
+      ],
+      "openclash_smart_assets": [
+        "clash-linux-armv7.tar.gz"
+      ]
+    },
+    {
+      "firmware": "25.12.6",
+      "arch": "arm_cortex-a9_vfpv3-d16",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "clash-linux-armv7.tar.gz",
+      "smartdns_mapping": "arm",
+      "daed_mapping": "",
+      "nikki_asset": "nikki_arm_cortex-a9_vfpv3-d16-openwrt-25.12.tar.gz",
+      "mosdns_asset": "arm_cortex-a9_vfpv3-d16-openwrt-25.12.tar.gz",
+      "smartdns_asset": "smartdns.1.2026.11.09-1235.arm-openwrt-all.apk",
+      "daed_generic_asset": null,
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [
+        "clash-linux-armv7.tar.gz"
+      ],
+      "openclash_smart_assets": [
+        "clash-linux-armv7.tar.gz"
+      ]
+    },
+    {
+      "firmware": "25.12.6",
+      "arch": "arm_fa526",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "",
+      "smartdns_mapping": "",
+      "daed_mapping": "",
+      "nikki_asset": null,
+      "mosdns_asset": "arm_fa526-openwrt-25.12.tar.gz",
+      "smartdns_asset": null,
+      "daed_generic_asset": null,
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [],
+      "openclash_smart_assets": []
+    },
+    {
+      "firmware": "25.12.6",
+      "arch": "arm_xscale",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "clash-linux-armv5.tar.gz",
+      "smartdns_mapping": "arm",
+      "daed_mapping": "",
+      "nikki_asset": null,
+      "mosdns_asset": "arm_xscale-openwrt-25.12.tar.gz",
+      "smartdns_asset": "smartdns.1.2026.11.09-1235.arm-openwrt-all.apk",
+      "daed_generic_asset": null,
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [
+        "clash-linux-armv5.tar.gz"
+      ],
+      "openclash_smart_assets": [
+        "clash-linux-armv5.tar.gz"
+      ]
+    },
+    {
+      "firmware": "25.12.6",
+      "arch": "armeb_xscale",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "",
+      "smartdns_mapping": "",
+      "daed_mapping": "",
+      "nikki_asset": null,
+      "mosdns_asset": null,
+      "smartdns_asset": null,
+      "daed_generic_asset": null,
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [],
+      "openclash_smart_assets": []
+    },
+    {
+      "firmware": "25.12.6",
+      "arch": "i386_pentium-mmx",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "clash-linux-386.tar.gz",
+      "smartdns_mapping": "x86",
+      "daed_mapping": "x86_32",
+      "nikki_asset": null,
+      "mosdns_asset": "i386_pentium-mmx-openwrt-25.12.tar.gz",
+      "smartdns_asset": "smartdns.1.2026.11.09-1235.x86-openwrt-all.apk",
+      "daed_generic_asset": "daed-linux-x86_32.zip",
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [
+        "clash-linux-386.tar.gz"
+      ],
+      "openclash_smart_assets": [
+        "clash-linux-386.tar.gz"
+      ]
+    },
+    {
+      "firmware": "25.12.6",
+      "arch": "i386_pentium4",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "clash-linux-386.tar.gz",
+      "smartdns_mapping": "x86",
+      "daed_mapping": "x86_32",
+      "nikki_asset": "nikki_i386_pentium4-openwrt-25.12.tar.gz",
+      "mosdns_asset": "i386_pentium4-openwrt-25.12.tar.gz",
+      "smartdns_asset": "smartdns.1.2026.11.09-1235.x86-openwrt-all.apk",
+      "daed_generic_asset": "daed-linux-x86_32.zip",
+      "daed_apk_asset": "daed-2026.07.31-r1-i386_pentium4-openwrt-25.12.apk",
+      "openclash_meta_assets": [
+        "clash-linux-386.tar.gz"
+      ],
+      "openclash_smart_assets": [
+        "clash-linux-386.tar.gz"
+      ]
+    },
+    {
+      "firmware": "25.12.6",
+      "arch": "loongarch64_generic",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "clash-linux-loong64-abi2.tar.gz",
+      "smartdns_mapping": "",
+      "daed_mapping": "",
+      "nikki_asset": "nikki_loongarch64_generic-openwrt-25.12.tar.gz",
+      "mosdns_asset": "loongarch64_generic-openwrt-25.12.tar.gz",
+      "smartdns_asset": null,
+      "daed_generic_asset": null,
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [
+        "clash-linux-loong64-abi2.tar.gz"
+      ],
+      "openclash_smart_assets": [
+        "clash-linux-loong64-abi2.tar.gz"
+      ]
+    },
+    {
+      "firmware": "25.12.6",
+      "arch": "mips64_mips64r2",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "clash-linux-mips64.tar.gz",
+      "smartdns_mapping": "mips",
+      "daed_mapping": "mips64",
+      "nikki_asset": null,
+      "mosdns_asset": "mips64_mips64r2-openwrt-25.12.tar.gz",
+      "smartdns_asset": "smartdns.1.2026.11.09-1235.mips-openwrt-all.apk",
+      "daed_generic_asset": "daed-linux-mips64.zip",
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [
+        "clash-linux-mips64.tar.gz"
+      ],
+      "openclash_smart_assets": [
+        "clash-linux-mips64.tar.gz"
+      ]
+    },
+    {
+      "firmware": "25.12.6",
+      "arch": "mips64_octeonplus",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "clash-linux-mips64.tar.gz",
+      "smartdns_mapping": "mips",
+      "daed_mapping": "mips64",
+      "nikki_asset": "nikki_mips64_octeonplus-openwrt-25.12.tar.gz",
+      "mosdns_asset": "mips64_octeonplus-openwrt-25.12.tar.gz",
+      "smartdns_asset": "smartdns.1.2026.11.09-1235.mips-openwrt-all.apk",
+      "daed_generic_asset": "daed-linux-mips64.zip",
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [
+        "clash-linux-mips64.tar.gz"
+      ],
+      "openclash_smart_assets": [
+        "clash-linux-mips64.tar.gz"
+      ]
+    },
+    {
+      "firmware": "25.12.6",
+      "arch": "mips64el_mips64r2",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "clash-linux-mips64le.tar.gz",
+      "smartdns_mapping": "mipsel",
+      "daed_mapping": "mips64le",
+      "nikki_asset": null,
+      "mosdns_asset": "mips64el_mips64r2-openwrt-25.12.tar.gz",
+      "smartdns_asset": "smartdns.1.2026.11.09-1235.mipsel-openwrt-all.apk",
+      "daed_generic_asset": "daed-linux-mips64le.zip",
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [
+        "clash-linux-mips64le.tar.gz"
+      ],
+      "openclash_smart_assets": [
+        "clash-linux-mips64le.tar.gz"
+      ]
+    },
+    {
+      "firmware": "25.12.6",
+      "arch": "mips_24kc",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "clash-linux-mips-softfloat.tar.gz",
+      "smartdns_mapping": "mips",
+      "daed_mapping": "mips32",
+      "nikki_asset": "nikki_mips_24kc-openwrt-25.12.tar.gz",
+      "mosdns_asset": "mips_24kc-openwrt-25.12.tar.gz",
+      "smartdns_asset": "smartdns.1.2026.11.09-1235.mips-openwrt-all.apk",
+      "daed_generic_asset": "daed-linux-mips32.zip",
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [
+        "clash-linux-mips-softfloat.tar.gz"
+      ],
+      "openclash_smart_assets": [
+        "clash-linux-mips-softfloat.tar.gz"
+      ]
+    },
+    {
+      "firmware": "25.12.6",
+      "arch": "mips_mips32",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "clash-linux-mips-softfloat.tar.gz",
+      "smartdns_mapping": "mips",
+      "daed_mapping": "mips32",
+      "nikki_asset": "nikki_mips_mips32-openwrt-25.12.tar.gz",
+      "mosdns_asset": "mips_mips32-openwrt-25.12.tar.gz",
+      "smartdns_asset": "smartdns.1.2026.11.09-1235.mips-openwrt-all.apk",
+      "daed_generic_asset": "daed-linux-mips32.zip",
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [
+        "clash-linux-mips-softfloat.tar.gz"
+      ],
+      "openclash_smart_assets": [
+        "clash-linux-mips-softfloat.tar.gz"
+      ]
+    },
+    {
+      "firmware": "25.12.6",
+      "arch": "mipsel_24kc",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "clash-linux-mipsle-softfloat.tar.gz",
+      "smartdns_mapping": "mipsel",
+      "daed_mapping": "mips32le",
+      "nikki_asset": "nikki_mipsel_24kc-openwrt-25.12.tar.gz",
+      "mosdns_asset": "mipsel_24kc-openwrt-25.12.tar.gz",
+      "smartdns_asset": "smartdns.1.2026.11.09-1235.mipsel-openwrt-all.apk",
+      "daed_generic_asset": "daed-linux-mips32le.zip",
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [
+        "clash-linux-mipsle-softfloat.tar.gz"
+      ],
+      "openclash_smart_assets": [
+        "clash-linux-mipsle-softfloat.tar.gz"
+      ]
+    },
+    {
+      "firmware": "25.12.6",
+      "arch": "mipsel_24kc_24kf",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "clash-linux-mipsle-softfloat.tar.gz",
+      "smartdns_mapping": "mipsel",
+      "daed_mapping": "mips32le",
+      "nikki_asset": "nikki_mipsel_24kc_24kf-openwrt-25.12.tar.gz",
+      "mosdns_asset": "mipsel_24kc_24kf-openwrt-25.12.tar.gz",
+      "smartdns_asset": "smartdns.1.2026.11.09-1235.mipsel-openwrt-all.apk",
+      "daed_generic_asset": "daed-linux-mips32le.zip",
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [
+        "clash-linux-mipsle-softfloat.tar.gz"
+      ],
+      "openclash_smart_assets": [
+        "clash-linux-mipsle-softfloat.tar.gz"
+      ]
+    },
+    {
+      "firmware": "25.12.6",
+      "arch": "mipsel_74kc",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "clash-linux-mipsle-softfloat.tar.gz",
+      "smartdns_mapping": "mipsel",
+      "daed_mapping": "mips32le",
+      "nikki_asset": "nikki_mipsel_74kc-openwrt-25.12.tar.gz",
+      "mosdns_asset": "mipsel_74kc-openwrt-25.12.tar.gz",
+      "smartdns_asset": "smartdns.1.2026.11.09-1235.mipsel-openwrt-all.apk",
+      "daed_generic_asset": "daed-linux-mips32le.zip",
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [
+        "clash-linux-mipsle-softfloat.tar.gz"
+      ],
+      "openclash_smart_assets": [
+        "clash-linux-mipsle-softfloat.tar.gz"
+      ]
+    },
+    {
+      "firmware": "25.12.6",
+      "arch": "mipsel_mips32",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "clash-linux-mipsle-softfloat.tar.gz",
+      "smartdns_mapping": "mipsel",
+      "daed_mapping": "mips32le",
+      "nikki_asset": "nikki_mipsel_mips32-openwrt-25.12.tar.gz",
+      "mosdns_asset": "mipsel_mips32-openwrt-25.12.tar.gz",
+      "smartdns_asset": "smartdns.1.2026.11.09-1235.mipsel-openwrt-all.apk",
+      "daed_generic_asset": "daed-linux-mips32le.zip",
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [
+        "clash-linux-mipsle-softfloat.tar.gz"
+      ],
+      "openclash_smart_assets": [
+        "clash-linux-mipsle-softfloat.tar.gz"
+      ]
+    },
+    {
+      "firmware": "25.12.6",
+      "arch": "powerpc64_e5500",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "",
+      "smartdns_mapping": "",
+      "daed_mapping": "",
+      "nikki_asset": null,
+      "mosdns_asset": null,
+      "smartdns_asset": null,
+      "daed_generic_asset": null,
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [],
+      "openclash_smart_assets": []
+    },
+    {
+      "firmware": "25.12.6",
+      "arch": "powerpc_464fp",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "",
+      "smartdns_mapping": "",
+      "daed_mapping": "",
+      "nikki_asset": null,
+      "mosdns_asset": null,
+      "smartdns_asset": null,
+      "daed_generic_asset": null,
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [],
+      "openclash_smart_assets": []
+    },
+    {
+      "firmware": "25.12.6",
+      "arch": "powerpc_8548",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "",
+      "smartdns_mapping": "",
+      "daed_mapping": "",
+      "nikki_asset": null,
+      "mosdns_asset": null,
+      "smartdns_asset": null,
+      "daed_generic_asset": null,
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [],
+      "openclash_smart_assets": []
+    },
+    {
+      "firmware": "25.12.6",
+      "arch": "riscv64_generic",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "clash-linux-riscv64.tar.gz",
+      "smartdns_mapping": "",
+      "daed_mapping": "riscv64",
+      "nikki_asset": "nikki_riscv64_generic-openwrt-25.12.tar.gz",
+      "mosdns_asset": "riscv64_generic-openwrt-25.12.tar.gz",
+      "smartdns_asset": null,
+      "daed_generic_asset": "daed-linux-riscv64.zip",
+      "daed_apk_asset": null,
+      "openclash_meta_assets": [
+        "clash-linux-riscv64.tar.gz"
+      ],
+      "openclash_smart_assets": [
+        "clash-linux-riscv64.tar.gz"
+      ]
+    },
+    {
+      "firmware": "25.12.6",
+      "arch": "x86_64",
+      "level": "selector_and_asset_metadata_only",
+      "openclash_mapping": "clash-linux-amd64.tar.gz",
+      "smartdns_mapping": "x86_64",
+      "daed_mapping": "x86_64",
+      "nikki_asset": "nikki_x86_64-openwrt-25.12.tar.gz",
+      "mosdns_asset": "x86_64-openwrt-25.12.tar.gz",
+      "smartdns_asset": "smartdns.1.2026.11.09-1235.x86_64-openwrt-all.apk",
+      "daed_generic_asset": "daed-linux-x86_64.zip",
+      "daed_apk_asset": "daed-2026.07.31-r1-x86_64-openwrt-25.12.apk",
+      "openclash_meta_assets": [
+        "clash-linux-amd64.tar.gz"
+      ],
+      "openclash_smart_assets": [
+        "clash-linux-amd64.tar.gz"
+      ]
+    }
+  ],
+  "istoreos_ota": {
+    "x86_64": [
+      "[istoreos-25.12.6-2026110611-x86-64-squashfs-combined.img.gz](istoreos-25.12.6-2026110611-x86-64-squashfs-combined.img.gz)",
+      "SHA256: b36f027a7335fe70ee6a9e1fef23add44daba5ea004c0b637c1f0ed7c6c5a285"
+    ],
+    "armsr": [
+      "[istoreos-25.12.6-2026110611-armsr-squashfs-combined-efi.img.gz](istoreos-25.12.6-2026110611-armsr-squashfs-combined-efi.img.gz)",
+      "SHA256: 6e7d93695465884ccc402b22b61ea49d3e50f2c7a59b7124d090587ea7241d92"
+    ],
+    "r4s": [
+      "[istoreos-25.12.6-2026110611-r4s-squashfs.img.gz](istoreos-25.12.6-2026110611-r4s-squashfs.img.gz)",
+      "SHA256: eabb6115cd1f2c9258f939a53128deae8e54795454ceb6f9b71889146ffeac47"
+    ],
+    "rpi4": [
+      "[istoreos-25.12.6-2026110611-raspberrypi-rpi4-squashfs.img.gz](istoreos-25.12.6-2026110611-raspberrypi-rpi4-squashfs.img.gz)",
+      "SHA256: f3a732a9eedc0ae821802515c6f5db88cdbcc4898a4e65ca5b7a0d5a31ce0194"
+    ],
+    "rpi5": [
+      "[istoreos-25.12.6-2026110611-raspberrypi-rpi5-squashfs.img.gz](istoreos-25.12.6-2026110611-raspberrypi-rpi5-squashfs.img.gz)",
+      "SHA256: 724b62188f652c473d5cc9a92dc8d29879a4ef23344020bdfe52045f4e201cf9"
+    ]
+  },
+  "additional_sources": [
+    {
+      "name": "passwall-signing-key",
+      "url": "https://sourceforge.net/projects/openwrt-passwall-build/files/apk.pub/download",
+      "bytes": 178,
+      "sha256": "52802b143489214e13b78f96599a147a638205cc22d9dd6d71229504e38ddc00"
+    },
+    {
+      "name": "nikki-feed-helper",
+      "url": "https://raw.githubusercontent.com/nikkinikki-org/OpenWrt-nikki/main/feed.sh",
+      "bytes": 1491,
+      "sha256": "98452f02f3e87e9e52820dc9a58d7a59ef2df80394336e752ba6083622050b51"
+    },
+    {
+      "name": "nikki-install-helper",
+      "url": "https://raw.githubusercontent.com/nikkinikki-org/OpenWrt-nikki/main/install.sh",
+      "bytes": 2092,
+      "sha256": "9e7539af6caead12827c6095965ef718d967c884bfb908f5c893200cef1d00de"
+    },
+    {
+      "name": "openclash-meta-assets",
+      "url": "https://api.github.com/repos/vernesong/OpenClash/contents/master/meta?ref=core",
+      "bytes": 19870,
+      "sha256": "f4201137d287663b04a2c450f1c4bc06d8b53a94e95e6a6a992d5c531b722a50"
+    },
+    {
+      "name": "openclash-smart-assets",
+      "url": "https://api.github.com/repos/vernesong/OpenClash/contents/master/smart?ref=core",
+      "bytes": 19996,
+      "sha256": "bf17aeb3b3b1783f0b2f6020c7a6dd710d7ef519ea1e838a1ff1cd1b992174fc"
+    },
+    {
+      "name": "btf-source",
+      "url": "https://opkg.cooluc.com/",
+      "bytes": 31426,
+      "sha256": "42ee9090d6344ecf5f1f9e3a7aa8de40d5f12e2baa07c82c49209ab800434d40"
+    },
+    {
+      "name": "istoreos-seed-ac1-directory",
+      "url": "https://fw.koolcenter.com/iStoreOS/seed-ac1/",
+      "bytes": 27948,
+      "sha256": "a27c1f9a097ffdd5a180fed42582778da488be79b71bd184221b691c105c707c"
+    }
+  ],
+  "verification": {
+    "unit_tests": 26,
+    "shells": [
+      "POSIX sh (dash)",
+      "BusyBox ash"
+    ],
+    "shellcheck_version": "0.11.0",
+    "shell_scripts_syntax_checked": 14,
+    "actual_new_installs": false,
+    "core_runtime_retested": false,
+    "kernel_services_retested": false,
+    "router_modified": false
+  },
+  "script_sha256": {
+    "auto-download-pro.sh": "9687822e2e9b60b07143d720fc71304a392532a6baf654ca07b0030e27947048",
+    "check-updates.sh": "89a0c87646a33c8edf9bb86042a9ef4800f028e365b9b9d6ecbe7c31a5bc0e25",
+    "daed.sh": "4ee5bf4f84c399b2c127ed7dc58efee51a511db0a857523fddd4ffdb734c26c2",
+    "install.sh": "9a2c24e70661723305b632a772e4b0c4a0979ba7c3727cec4f3c0443a45db59a",
+    "menu.sh": "840c9c04e10ffdd954966334bcce45448dc5def134b2782687b6111c77733862",
+    "mosdns.sh": "038ae63179d3b69d3974a751bb0cd2dca304a94ada16d8ffacdcffca4e87d1d7",
+    "nikki.sh": "4f43f6f576397b8f81a37a3c7c050cbe080b0fc6bfa84c929aeb640904ab864c",
+    "passwall.sh": "1cd01cb5b648d038db934711386a180529e45c673c8f6c296b7fd9670d2e7927",
+    "passwall2.sh": "d1f793922cd11d87039496a4e1a73ccd0d55870af015cce35dfc5a5083a7cf4a",
+    "repair.sh": "f46a30ffd0f71af8f2e0b278ede360abe18663b3663dd973eff2814998141afc",
+    "smartdns.sh": "549e6d2b4d6aefa1fb80be422ac216fbfd76e8c18614507cbcbf4cfe2176bca4",
+    "test-auto-download.sh": "b3d8d3fae5d51266de9a92fa5fa3f83e3c7c5d48eb796942f409e3017a50dcfd",
+    "uninstall.sh": "02f146457ecb2597ecbbacb98a8622b14867779c3bd53137d924516a56a2461d",
+    "update.sh": "1376c4d3997873d74f5bc2868a2068554a8431cb977d335cdde4909c27b32902"
+  }
+}

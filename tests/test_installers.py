@@ -4,10 +4,14 @@ import json
 import os
 from pathlib import Path
 import re
+import shlex
+import shutil
 import subprocess
 import tempfile
 import unittest
 
+SH = shlex.split(os.environ.get("TEST_SHELL", "sh"))
+SH[0] = shutil.which(SH[0]) or SH[0]
 ROOT = Path(__file__).resolve().parents[1]
 
 
@@ -20,7 +24,7 @@ def function(script, name):
 
 
 def shell(code, **env):
-    return subprocess.run(['sh', '-c', 'set -eu\n' + code], text=True,
+    return subprocess.run(SH + ['-c', 'set -eu\n' + code], text=True,
                           capture_output=True, env={**os.environ, **env})
 
 
@@ -116,7 +120,7 @@ apk() {
                 source = source.removesuffix('main "$@"\n') + overrides + '\nmain "$@"\n'
                 script = root / 'installer.sh'
                 script.write_text(source)
-                args = ['sh', str(script), '--skip-restart']
+                args = SH + [str(script), '--skip-restart']
                 if behavior not in ('no-core', 'core-download-error'):
                     args.append('--plugin-only')
                 result = subprocess.run(args,

@@ -15,6 +15,7 @@ detect_pkg_mgr() {
     fi
 }
 
+LOCK_ACQUIRED="0"
 LOCKDIR="/tmp/nikki-install.lock"
 FEED_SCRIPT_URL="https://raw.githubusercontent.com/nikkinikki-org/OpenWrt-nikki/main/feed.sh"
 INSTALL_SCRIPT_URL="https://raw.githubusercontent.com/nikkinikki-org/OpenWrt-nikki/main/install.sh"
@@ -23,10 +24,14 @@ TMP_SCRIPT=""
 
 cleanup() {
     [ -z "$TMP_SCRIPT" ] || rm -f "$TMP_SCRIPT"
-    rmdir "$LOCKDIR" 2>/dev/null || true
+    if [ "$LOCK_ACQUIRED" = "1" ]; then
+        rmdir "$LOCKDIR" 2>/dev/null || true
+    fi
 }
 
-trap cleanup EXIT INT TERM
+trap cleanup EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
 
 log() {
     printf '%s\n' "==> $*"
@@ -115,6 +120,7 @@ get_installed_nikki_version() {
 if ! mkdir "$LOCKDIR" 2>/dev/null; then
     die "已有另一个 Nikki 任务正在运行"
 fi
+LOCK_ACQUIRED="1"
 
 [ -f /etc/openwrt_release ] || die "未检测到 /etc/openwrt_release"
 # shellcheck disable=SC1091

@@ -15,7 +15,7 @@ detect_pkg_mgr() {
     fi
 }
 
-TMP_ROOT="/tmp/plugin-update-check"
+TMP_ROOT=""
 OPENCLASH_API="https://api.github.com/repos/vernesong/OpenClash/releases/latest"
 PASSWALL_API="https://api.github.com/repos/Openwrt-Passwall/openwrt-passwall/releases/latest"
 PASSWALL2_API="https://api.github.com/repos/Openwrt-Passwall/openwrt-passwall2/releases/latest"
@@ -28,11 +28,12 @@ LUCI_DAED_API="https://api.github.com/repos/QiuSimons/luci-app-daed/releases/lat
 TARGET="all"
 
 cleanup() {
-    rm -rf "$TMP_ROOT"
+    [ -z "$TMP_ROOT" ] || rm -rf "$TMP_ROOT"
 }
 
-trap cleanup EXIT INT TERM
-mkdir -p "$TMP_ROOT"
+trap cleanup EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
 
 log() {
     printf '%s\n' "==> $*"
@@ -361,6 +362,7 @@ check_daed() {
 
 main() {
     parse_args "$@"
+    TMP_ROOT="$(mktemp -d /tmp/plugin-update-check.XXXXXX)"
 
     need_cmd sed
     need_cmd head

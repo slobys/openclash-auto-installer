@@ -8,7 +8,8 @@ set -eu
 
 REPO="slobys/openclash-auto-installer"
 BRANCH="main"
-TMP_SCRIPT="/tmp/passwall-installer.sh"
+BASE_URL="${OPENCLASH_AUTO_BASE_URL:-https://raw.githubusercontent.com/$REPO/$BRANCH}"
+TMP_ROOT=""
 
 log() {
     printf '%s\n' "==> $*"
@@ -24,7 +25,25 @@ if [ -f "./passwall.sh" ]; then
     exec sh ./passwall.sh "$@"
 fi
 
-command -v curl >/dev/null 2>&1 || die "缺少 curl 命令，无法下载 passwall.sh"
-log "auto-download-pro.sh 已合并到 passwall.sh，下载最新 passwall.sh"
-curl -fsSL --retry 3 "https://raw.githubusercontent.com/$REPO/$BRANCH/passwall.sh" -o "$TMP_SCRIPT" || die "下载 passwall.sh 失败"
-exec sh "$TMP_SCRIPT" "$@"
+cleanup() {
+    [ -z "$TMP_ROOT" ] || rm -rf "$TMP_ROOT"
+}
+
+trap cleanup EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
+
+TMP_ROOT="$(mktemp -d /tmp/passwall-installer.XXXXXX)"
+TMP_SCRIPT="$TMP_ROOT/passwall.sh"
+SCRIPT_URL="$BASE_URL/passwall.sh"
+
+log "下载最新 passwall.sh"
+DOWNLOADED="0"
+if command -v curl >/dev/null 2>&1 && curl -fsSL --retry 3 "$SCRIPT_URL" -o "$TMP_SCRIPT"; then
+    DOWNLOADED="1"
+elif command -v wget >/dev/null 2>&1 && wget -qO "$TMP_SCRIPT" "$SCRIPT_URL"; then
+    DOWNLOADED="1"
+fi
+[ "$DOWNLOADED" = "1" ] || die "下载 passwall.sh 失败，请检查 curl / wget 和网络连接"
+[ -s "$TMP_SCRIPT" ] || die "下载的 passwall.sh 为空"
+sh "$TMP_SCRIPT" "$@"

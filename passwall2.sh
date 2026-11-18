@@ -15,7 +15,9 @@ detect_pkg_mgr() {
     fi
 }
 
+LOCK_ACQUIRED="0"
 LOCKDIR="/tmp/passwall2-install.lock"
+TMP_ROOT="/tmp/passwall2-install"
 GH_API="https://api.github.com/repos/Openwrt-Passwall/openwrt-passwall2/releases/latest"
 GH_REPO_PAGE="https://github.com/Openwrt-Passwall/openwrt-passwall2"
 SF_BASE="https://sourceforge.net/projects/openwrt-passwall-build/files"
@@ -26,13 +28,18 @@ register_tmp() {
 }
 
 cleanup() {
-    rmdir "$LOCKDIR" 2>/dev/null || true
     for f in $TMPFILES; do
         rm -f "$f" 2>/dev/null || true
     done
+    if [ "$LOCK_ACQUIRED" = "1" ]; then
+        rm -rf "$TMP_ROOT"
+        rmdir "$LOCKDIR" 2>/dev/null || true
+    fi
 }
 
-trap cleanup EXIT INT TERM
+trap cleanup EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
 
 log() {
     printf '%s\n' "==> $*"
@@ -119,7 +126,7 @@ download_pkg_from_dir() {
     esac
 
     filename="$(basename "$link")"
-    output="/tmp/$filename"
+    output="$TMP_ROOT/$filename"
     register_tmp "$output"
     download_url="https://sourceforge.net${link}/download"
 
@@ -174,7 +181,7 @@ download_passwall2_pkg() {
 
     if [ -n "$url" ]; then
         filename="$(basename "$url")"
-        output="/tmp/$filename"
+        output="$TMP_ROOT/$filename"
         register_tmp "$output"
         log "下载: $filename" >&2
         if download_file "$url" "$output" && [ -s "$output" ]; then
@@ -274,6 +281,8 @@ install_passwall2_dependencies() {
 if ! mkdir "$LOCKDIR" 2>/dev/null; then
     die "已有另一个 PassWall2 任务正在运行"
 fi
+LOCK_ACQUIRED="1"
+mkdir -p "$TMP_ROOT"
 
 PKG_MGR="$(detect_pkg_mgr)"
 

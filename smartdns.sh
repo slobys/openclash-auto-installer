@@ -1,6 +1,7 @@
 #!/bin/sh
 set -eu
 
+LOCK_ACQUIRED="0"
 LOCKDIR="/tmp/smartdns-install.lock"
 TMP_ROOT="/tmp/smartdns-install"
 SMARTDNS_API="https://api.github.com/repos/pymumu/smartdns/releases/latest"
@@ -8,11 +9,15 @@ RESTART_SERVICES="1"
 FORCE_PKG_UPDATE="1"
 
 cleanup() {
-    rm -rf "$TMP_ROOT"
-    rmdir "$LOCKDIR" 2>/dev/null || true
+    if [ "$LOCK_ACQUIRED" = "1" ]; then
+        rm -rf "$TMP_ROOT"
+        rmdir "$LOCKDIR" 2>/dev/null || true
+    fi
 }
 
-trap cleanup EXIT INT TERM
+trap cleanup EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
 
 log() {
     printf '%s\n' "==> $*"
@@ -291,6 +296,7 @@ main() {
     if ! mkdir "$LOCKDIR" 2>/dev/null; then
         die "已有另一个 SmartDNS 任务正在运行"
     fi
+    LOCK_ACQUIRED="1"
     mkdir -p "$TMP_ROOT"
 
     need_cmd sed

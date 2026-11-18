@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased — 2026-11-18
+
+- 修复 OpenClash、PassWall、PassWall2、Nikki、SmartDNS、MosDNS 的锁清理归属：未获取锁的第二个任务、帮助和错误参数不再释放其他任务的锁或删除其临时文件。
+- PassWall / PassWall2 将包文件收拢到锁保护的专用目录，修复命令替换子 shell 中 `register_tmp` 状态丢失导致安装包残留，并避免两个插件的同名依赖包互相覆盖。
+- 七个安装器及菜单/检查/更新入口收到 INT / TERM 后分别以 130 / 143 退出，由 EXIT 统一清理，避免清理后继续安装。
+- 菜单动作、commit 查询、更新检查和三个兼容更新入口改用独立临时目录，避免并发覆盖下载结果；退出后清理本次目录。
+- `update.sh`、`auto-download-pro.sh`、`test-auto-download.sh` 增加 wget 和 curl 失败后的 wget 回退，拒绝下载失败/空文件，保留子任务失败状态；支持 `OPENCLASH_AUTO_BASE_URL` 镜像覆盖，检查模式保留附加参数。
+- 新增真实入口的并发、锁归属、信号、下载器与失败传播回归；本轮 26 项测试在 POSIX sh / BusyBox ash 均通过。核对当前上游发布、12 项真实 API/HTML 资产选择及 71 项官方 ABI 元数据；不将元数据检查冒充全架构安装/内核实测，详见 `docs/validation-maintenance-2026-11-18.md`。
+
 ## Unreleased — 2026-10-22
 
 - 修复 OpenClash 在 `apk update` 仅部分索引失败时被 `set -e` 提前中断：警告后检查已安装依赖并尝试现有索引，真正缺失依赖安装失败仍明确停止，不修改或禁用用户软件源。

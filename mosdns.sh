@@ -1,6 +1,7 @@
 #!/bin/sh
 set -eu
 
+LOCK_ACQUIRED="0"
 LOCKDIR="/tmp/mosdns-install.lock"
 TMP_ROOT="/tmp/mosdns-install"
 MOSDNS_REPO="sbwml/luci-app-mosdns"
@@ -10,11 +11,15 @@ RESTART_SERVICES="1"
 FORCE_PKG_UPDATE="1"
 
 cleanup() {
-    rm -rf "$TMP_ROOT"
-    rmdir "$LOCKDIR" 2>/dev/null || true
+    if [ "$LOCK_ACQUIRED" = "1" ]; then
+        rm -rf "$TMP_ROOT"
+        rmdir "$LOCKDIR" 2>/dev/null || true
+    fi
 }
 
-trap cleanup EXIT INT TERM
+trap cleanup EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
 
 log() {
     printf '%s\n' "==> $*"
@@ -301,6 +306,7 @@ main() {
     if ! mkdir "$LOCKDIR" 2>/dev/null; then
         die "已有另一个 MosDNS 任务正在运行"
     fi
+    LOCK_ACQUIRED="1"
     mkdir -p "$TMP_ROOT"
 
     need_cmd sed

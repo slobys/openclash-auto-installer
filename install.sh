@@ -4,6 +4,7 @@ set -eu
 # OpenClash 一键安装 / 更新脚本
 # 适用场景：OpenWrt / iStoreOS / ImmortalWrt 等兼容 opkg / apk 的环境
 
+LOCK_ACQUIRED="0"
 LOCKDIR="/tmp/openclash-auto-install.lock"
 TMP_ROOT="/tmp/openclash-auto-install"
 API_URL="https://api.github.com/repos/vernesong/OpenClash/releases/latest"
@@ -17,8 +18,10 @@ OPKG_RETRY_SECONDS="10"
 CHECK_ONLY="0"
 
 cleanup() {
-    rm -rf "$TMP_ROOT"
-    rmdir "$LOCKDIR" 2>/dev/null || true
+    if [ "$LOCK_ACQUIRED" = "1" ]; then
+        rm -rf "$TMP_ROOT"
+        rmdir "$LOCKDIR" 2>/dev/null || true
+    fi
 }
 
 log() {
@@ -98,13 +101,16 @@ parse_args() {
     done
 }
 
-trap cleanup EXIT INT TERM
+trap cleanup EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
 
 parse_args "$@"
 
 if ! mkdir "$LOCKDIR" 2>/dev/null; then
     die "已有另一个安装/更新任务正在运行"
 fi
+LOCK_ACQUIRED="1"
 
 mkdir -p "$TMP_ROOT"
 

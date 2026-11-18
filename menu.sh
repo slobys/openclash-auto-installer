@@ -6,8 +6,17 @@ BRANCH="main"
 DEFAULT_BASE_URL="https://raw.githubusercontent.com/$REPO/$BRANCH"
 BASE_URL="${OPENCLASH_AUTO_BASE_URL:-$DEFAULT_BASE_URL}"
 RESOLVED_BASE_URL=""
-TMP_SCRIPT="/tmp/openclash-menu-action.sh"
+TMP_ROOT=""
+TMP_SCRIPT=""
 NONINTERACTIVE_ACTION=""
+
+cleanup() {
+    [ -z "$TMP_ROOT" ] || rm -rf "$TMP_ROOT"
+}
+
+trap cleanup EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
 
 log() {
     printf '%s\n' "==> $*"
@@ -195,7 +204,7 @@ resolve_base_url() {
         return 0
     fi
 
-    COMMIT_JSON="/tmp/openclash-menu-commit.json"
+    COMMIT_JSON="$TMP_ROOT/commit.json"
     rm -f "$COMMIT_JSON"
     LATEST_SHA=""
     if download_file "https://api.github.com/repos/$REPO/commits/$BRANCH" "$COMMIT_JSON"; then
@@ -559,6 +568,8 @@ run_uninstall_menu() {
 main() {
     parse_args "$@"
     need_downloader
+    TMP_ROOT="$(mktemp -d /tmp/openclash-menu.XXXXXX)"
+    TMP_SCRIPT="$TMP_ROOT/action.sh"
     choice=""
 
     if [ -n "$NONINTERACTIVE_ACTION" ]; then
